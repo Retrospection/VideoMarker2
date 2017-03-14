@@ -1,0 +1,231 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="State">
+      <UniqueIdentifier>{61920604-c172-45cc-879e-137f1b8c8f74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CvvImage">
+      <UniqueIdentifier>{9b4fe784-882a-4968-9620-9ffae33e3bd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="View">
+      <UniqueIdentifier>{4854ec52-78a7-46cd-9654-1dddc137c91a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Presenter">
+      <UniqueIdentifier>{1df502fb-023d-4ec3-94f2-8b8c6e7e7426}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Model">
+      <UniqueIdentifier>{c1ffe4a3-a6b2-4ed4-bf4d-1c037150846c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="App">
+      <UniqueIdentifier>{1a3ed256-6ca2-4004-9cc0-544dabb915d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="State\InitState">
+      <UniqueIdentifier>{b87de61b-75dc-4005-8a96-6e00931c5d37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="State\StateFactory">
+      <UniqueIdentifier>{bd31ab3b-4d10-410f-a355-b23057368087}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="State\EditMarkState">
+      <UniqueIdentifier>{8a9d1664-dd60-4e39-b38a-ac33693098ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="State\StateBase">
+      <UniqueIdentifier>{a935c75d-d959-4d37-bffd-9a3924fc0308}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="State\PlayState">
+      <UniqueIdentifier>{c52436ed-b103-4507-a401-461a4aecec03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="State\PauseState">
+      <UniqueIdentifier>{6a84476e-03f3-4e5c-a1e2-6294958a57e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="State\OpenTextFileState">
+      <UniqueIdentifier>{e5214608-7257-4706-bffb-868b76533464}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="State\StateHeader">
+      <UniqueIdentifier>{3714edd3-4929-4ac8-8d0a-59d56cb4aa76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="State\StopState">
+      <UniqueIdentifier>{98af68d3-6c85-43f3-862d-d7ef1ff09e82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util">
+      <UniqueIdentifier>{87b7555d-2128-41e9-9de5-871d5cc80cc0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoMarkerPresenter.h">
+      <Filter>Presenter</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameInfo.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CvvImage.h">
+      <Filter>CvvImage</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoMarker2Dlg.h">
+      <Filter>View</Filter>
+    </ClInclude>
+    <ClInclude Include="TextFileManager.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoPlayer.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoMarker2.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="InitState.h">
+      <Filter>State\InitState</Filter>
+    </ClInclude>
+    <ClInclude Include="StateFactory.h">
+      <Filter>State\StateFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="EditMarkState.h">
+      <Filter>State\EditMarkState</Filter>
+    </ClInclude>
+    <ClInclude Include="StateBase.h">
+      <Filter>State\StateBase</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayState.h">
+      <Filter>State\PlayState</Filter>
+    </ClInclude>
+    <ClInclude Include="PauseState.h">
+      <Filter>State\PauseState</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenTextFileState.h">
+      <Filter>State\OpenTextFileState</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h">
+      <Filter>State\StateHeader</Filter>
+    </ClInclude>
+    <ClInclude Include="StopState.h">
+      <Filter>State\StopState</Filter>
+    </ClInclude>
+    <ClInclude Include="NameInputDialog.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PictureBox.h">
+      <Filter>View</Filter>
+    </ClInclude>
+    <ClInclude Include="StringHelper.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="RectHelper.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="IDrawable.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DBox.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="IVideoMarker2.h">
+      <Filter>View</Filter>
+    </ClInclude>
+    <ClInclude Include="Transformer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DataExchange.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoMarkerPresenter.cpp">
+      <Filter>Presenter</Filter>
+    </ClCompile>
+    <ClCompile Include="CvvImage.cpp">
+      <Filter>CvvImage</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoMarker2Dlg.cpp">
+      <Filter>View</Filter>
+    </ClCompile>
+    <ClCompile Include="TextFileManager.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoPlayer.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoMarker2.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="InitState.cpp">
+      <Filter>State\InitState</Filter>
+    </ClCompile>
+    <ClCompile Include="StateFactory.cpp">
+      <Filter>State\StateFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="EditMarkState.cpp">
+      <Filter>State\EditMarkState</Filter>
+    </ClCompile>
+    <ClCompile Include="StateBase.cpp">
+      <Filter>State\StateBase</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayState.cpp">
+      <Filter>State\PlayState</Filter>
+    </ClCompile>
+    <ClCompile Include="PauseState.cpp">
+      <Filter>State\PauseState</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenTextFileState.cpp">
+      <Filter>State\OpenTextFileState</Filter>
+    </ClCompile>
+    <ClCompile Include="StopState.cpp">
+      <Filter>State\StopState</Filter>
+    </ClCompile>
+    <ClCompile Include="NameInputDialog.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PictureBox.cpp">
+      <Filter>View</Filter>
+    </ClCompile>
+    <ClCompile Include="StringHelper.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Transformer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="VideoMarker2.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\VideoMarker2.rc2">
+      <Filter>资源文件</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\VideoMarker2.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="..\..\..\data\background.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
