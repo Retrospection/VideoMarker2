@@ -18,7 +18,6 @@ CPictureBox::CPictureBox(CStateBase* pState) :CStatic()
 {
 	m_pState = pState;
 	m_bDrawing = false;
-	m_pTrans = nullptr;
 }
 
 CPictureBox::~CPictureBox()
@@ -50,6 +49,7 @@ void CPictureBox::OnMouseMove(UINT nFlags, CPoint point)
 		return;
 	}
 	m_ActivePoints[1] = { point.x, point.y };
+	((CVideoMarker2Dlg*)GetParent())->PrepareImage();
 	Invalidate(FALSE);
 	CStatic::OnMouseMove(nFlags, point);
 }
@@ -73,8 +73,12 @@ void CPictureBox::OnLButtonUp(UINT nFlags, CPoint point)
 		return;
 	}
 	((CVideoMarker2Dlg*)GetParent())->m_AddPersonName.push_back(dlg.m_strPersonName);
-	m_boxes.emplace_back(m_ActivePoints[0], m_ActivePoints[1]);
+
+	// 此处保证了位于 m_boxes 中的所有盒子所处的坐标系为 roi 坐标系
+	m_boxes.push_back(*GetActiveRect());
 	Invalidate(FALSE);
+	m_ActivePoints[0] = {};
+	m_ActivePoints[1] = {};
 	CStatic::OnLButtonUp(nFlags, point);
 }
 
@@ -90,33 +94,30 @@ void CPictureBox::SetState(CStateBase* pState)
 	m_pState = pState; 
 }
 
-cv::Point CPictureBox::ConvertMousePointToPicturePoint(const cv::Point& point)
-{
-	cv::Point ret;
-// 	ret.x = point.x - ((CVideoMarker2Dlg*)GetParent())->GetROIRect().x;
-// 	ret.y = point.y - ((CVideoMarker2Dlg*)GetParent())->GetROIRect().y;
-	return ret;
-}
+// const cv::Point* CPictureBox::GetActivePoints() const
+// {
+// 	if (m_ActivePoints[0].x == 0 && m_ActivePoints[0].y == 0 && m_ActivePoints[1].x == 0 && m_ActivePoints[1].y == 0)
+// 	{
+// 		return nullptr;
+// 	}
+// 
+// 	return m_ActivePoints;
+// }
 
-const cv::Point* CPictureBox::GetActivePoints() const
+
+const cv::Rect* CPictureBox::GetActiveRect() const
 {
 	if (m_ActivePoints[0].x == 0 && m_ActivePoints[0].y == 0 && m_ActivePoints[1].x == 0 && m_ActivePoints[1].y == 0)
 	{
 		return nullptr;
 	}
-
-	return m_ActivePoints;
-}
-
-
-const cv::Rect* CPictureBox::GetActiveRect() const
-{
-
+	return new cv::Rect(m_pTrans->Trans({m_ActivePoints[0], m_ActivePoints[1]}, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Roi));
 }
 
 
 void CPictureBox::SetImage(const cv::Mat& image)
 {
+	m_pTrans = &((CVideoMarker2Dlg*)GetParent())->m_Trans;
 	if (m_image.empty())
 	{
 		CRect rc;
@@ -127,21 +128,25 @@ void CPictureBox::SetImage(const cv::Mat& image)
 	m_image = image;
 }
 
-std::vector<cv::Rect> CPictureBox::GetUnsavedBoxes()
+std::vector<cv::Rect> CPictureBox::GetUnsavedBoxesInRaw()
 {
-	
 	std::vector<cv::Rect> ret;
 	for (const auto& rect : m_boxes)
 	{
-		ret.push_back(m_pTrans->Trans(rect,Transformer::Coordinate::PictureBox, Transformer::Coordinate::Roi));
+		ret.push_back(m_pTrans->Trans(rect,Transformer::Coordinate::Roi, Transformer::Coordinate::Raw));
 	}
 	return std::move(ret);
 }
 
+std::vector<cv::Rect> CPictureBox::GetUnsavedBoxesInRoi()
+{
+	return m_boxes;
+}
+
+
 
 void CPictureBox::PreSubclassWindow()
 {
-	// TODO:  在此添加专用代码和/或调用基类
 	DWORD dwStyle = GetStyle();
 	SetWindowLong(GetSafeHwnd(), GWL_STYLE, dwStyle | SS_OWNERDRAW);
 	CStatic::PreSubclassWindow();

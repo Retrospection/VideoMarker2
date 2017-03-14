@@ -61,6 +61,9 @@
     <Filter Include="Util">
       <UniqueIdentifier>{87b7555d-2128-41e9-9de5-871d5cc80cc0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Interface">
+      <UniqueIdentifier>{5b201fa2-d549-4025-930a-4f9b37e0d9fe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -135,20 +138,20 @@
     <ClInclude Include="RectHelper.h">
       <Filter>Util</Filter>
     </ClInclude>
-    <ClInclude Include="IDrawable.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="DBox.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="IVideoMarker2.h">
       <Filter>View</Filter>
     </ClInclude>
-    <ClInclude Include="Transformer.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="DataExchange.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Transformer.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="IDrawable.h">
+      <Filter>Interface</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -207,7 +210,7 @@
       <Filter>Util</Filter>
     </ClCompile>
     <ClCompile Include="Transformer.cpp">
-      <Filter>源文件</Filter>
+      <Filter>Util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -222,9 +225,6 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\VideoMarker2.ico">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="..\..\..\data\background.bmp">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>

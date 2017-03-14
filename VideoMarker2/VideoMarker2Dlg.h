@@ -74,29 +74,20 @@ public:
 
 	virtual std::vector<cv::Rect> GetUnsavedBox() override;
 
-//public:
-//	void SetStartPoint(const cv::Point& startPoint);
-//	void SetEndPoint(const cv::Point& endPoint);
-
-
-
 //////////////////////////////////////////////////////  实现  ////////////////////////////////////////////////
 
 // Refresh
 private:
 	void Resize();
 	void SetROI();
-	//void CalcRect();
 	void DrawFrameInfo();
 	void PrepareImage();
 	void RefreshSlider();
-//	cv::Rect AdjustFaceBoxByScaleRatio(const cv::Rect& box);
 
 
 private:
 	CVideoMarkerPresenter* m_pPresenter;
 	CNameInputDialog* m_pNameDlg;
-//	Transformer* m_pTrans;
 	Transformer m_Trans;
 
 private:
@@ -112,7 +103,6 @@ private:
 	int m_nOutputFrameWidth;
 	int m_nOutputFrameHeight;
 	int m_nTotalFrameCount;
-//	double m_dScaleRatio;
 	cv::Mat m_matRawFrame;
 	cv::Mat m_matBackGround;
 	cv::Mat m_matROI;
@@ -125,7 +115,6 @@ private:
 	CString m_cstrVideoFileName;
 	std::vector<CString> m_AddPersonName;
 	bool m_bFirstFrame;
-//	cv::Rect m_ROIRect;
 	
 	std::vector<IDrawable*> drawables;
 
@@ -134,6 +123,8 @@ private:
 private:
 	CSliderCtrl m_Slider;
 	int m_nCurrentFrameIndex;
+	CListBox m_ListBox;
+	CPictureBox* m_pPictureBox;
 
 
 // 状态管理
@@ -147,7 +138,6 @@ private:
 
 
 private:
-//	void ShowImage(const cv::Mat& frame, UINT ID);
 	void SetState(const std::string& state);
 	void ShowFrameInfoInListBox();
 	std::wstring ConvertFromFrameInfo(const FaceInfo& faceInfo);
@@ -186,13 +176,9 @@ public:
 	afx_msg void OnBnClickedPauseButton();
 	afx_msg void OnBnClickedAddMark();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
-private:
-	CListBox m_ListBox;
-	CPictureBox* m_pPictureBox;
-public:
-//	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-//	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-//	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnBnClickedButton4();
 	afx_msg void OnLbnDblclkList1();
+
+
+
 };

@@ -123,7 +123,6 @@ void CVideoMarkerPresenter::AddMark()
 
 void CVideoMarkerPresenter::SaveMark()
 {
-//	m_pTextMgr->AddFaceInfo(m_pVideoPlayer->m_nCurrentFrameIndex, m_cstrAddPersonName, m_AddPoints[0]*m_pDlg->m_dScaleRatio, m_AddPoints[1]*m_pDlg->m_dScaleRatio);
 	if (m_pDlg->m_pPictureBox->m_boxes.empty())
 	{
 		return;
@@ -133,7 +132,7 @@ void CVideoMarkerPresenter::SaveMark()
 
 	for (size_t i = 0; i < unsavedBox.size(); ++i)
 	{
-		m_pTextMgr->AddFaceInfo(m_pVideoPlayer->m_nCurrentFrameIndex, m_pDlg->m_AddPersonName[i], m_pDlg->m_Trans.ScreenToText(unsavedBox[i]));
+		m_pTextMgr->AddFaceInfo(m_pVideoPlayer->m_nCurrentFrameIndex, m_pDlg->m_AddPersonName[i], unsavedBox[i]);
 	}
 	m_pTextMgr->SaveToTextFile();
 	m_pDlg->m_AddPersonName.clear();

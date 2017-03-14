@@ -50,36 +50,6 @@ cv::Rect Transformer::GetRoiRect() const
 	return m_Roi;
 }
 
-cv::Rect Transformer::RawToScreen(const cv::Rect& raw) const
-{
-	return std::move(raw / m_Ratio);
-}
-
-cv::Rect Transformer::ScreenToRaw(const cv::Rect& screen) const
-{
-	return std::move(screen * m_Ratio);
-}
-
-cv::Rect Transformer::MouseToScreen(const cv::Rect& mouse) const
-{
-	return{ mouse.x - m_Roi.x, mouse.y - m_Roi.y, mouse.width, mouse.height };
-}
-
-cv::Rect Transformer::ScreenToMouse(const cv::Rect& screen) const
-{
-	return{ screen.x + m_Roi.x, screen.y + m_Roi.y, screen.width, screen.height };
-}
-
-cv::Rect Transformer::ScreenToText(const cv::Rect& screen) const
-{
-	return screen*m_Ratio;
-}
-
-cv::Rect Transformer::TextToScreen(const cv::Rect& text) const
-{
-	return text / m_Ratio;
-}
-
 Transformer Transformer::Default()
 {
 	return Make({ 1, 1 }, { 1, 1 });
@@ -94,17 +64,17 @@ cv::Rect Transformer::Trans(const cv::Rect& input, int src, int dst) const
 	}
 	switch (src * 10 + dst)
 	{
-	case 0*10+1:
+	case Raw * 10 + Roi:
 		return RawToRoi(input);
-	case 1*10+0:
+	case Roi * 10 + Raw:
 		return RoiToRaw(input);
-	case 0*10+2:
+	case Raw * 10 + PictureBox:
 		return RawToPictureBox(input);
-	case 2*10+0:
+	case PictureBox * 10 + Raw:
 		return PictureBoxToRaw(input);
-	case 1*10+2:
+	case Roi * 10 + PictureBox:
 		return RoiToPictureBox(input);
-	case 2*10+1:
+	case PictureBox * 10 + Roi:
 		return PictureBoxToRoi(input);
 	default:
 		assert(false);
@@ -112,47 +82,43 @@ cv::Rect Transformer::Trans(const cv::Rect& input, int src, int dst) const
 	}
 }
 
-// std::function<cv::Rect(const cv::Rect)> Transformer::GetTransform(int src, int dst) const
-// {
-// 	return m_Transforms[src][dst];
-// }
 
 cv::Rect Transformer::DefaultTransform(const cv::Rect& input) const
 {
 	return input;
 }
 
-cv::Rect Transformer::RawToRoi(const cv::Rect& raw) const
+cv::Rect Transformer::RawToRoi(const cv::Rect& input) const
 {
-	return raw / m_Ratio;
+	return input / m_Ratio;
 }
 
-cv::Rect Transformer::RoiToRaw(const cv::Rect& screen) const
+cv::Rect Transformer::RoiToRaw(const cv::Rect& input) const
 {
-	return screen * m_Ratio;
-
-}
-
-cv::Rect Transformer::RawToPictureBox(const cv::Rect& mouse) const
-{
-	return{};
+	return input * m_Ratio;
 
 }
 
-cv::Rect Transformer::PictureBoxToRaw(const cv::Rect& screen) const
+cv::Rect Transformer::RawToPictureBox(const cv::Rect& input) const
 {
-	return{};
+	return RoiToPictureBox(RawToRoi(input));
 
 }
 
-cv::Rect Transformer::RoiToPictureBox(const cv::Rect& screen) const
+cv::Rect Transformer::PictureBoxToRaw(const cv::Rect& input) const
 {
-	return{};
+	return RoiToRaw(PictureBoxToRoi(input));
 
 }
 
-cv::Rect Transformer::PictureBoxToRoi(const cv::Rect& text) const
+cv::Rect Transformer::RoiToPictureBox(const cv::Rect& input) const
 {
-	return{};
+	return{input.x + m_Roi.x, input.y + m_Roi.y, input.width, input.height};
 
+}
+
+cv::Rect Transformer::PictureBoxToRoi(const cv::Rect& input) const
+{
+
+	return{input.x - m_Roi.x, input.y - m_Roi.y, input.width, input.height};
 }

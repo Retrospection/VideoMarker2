@@ -22,32 +22,6 @@
 
 
 
-// cv::Rect CalcMaxFit(cv::Size target, cv::Size src, double& ratio)
-// {
-// 	// 宽高计算
-// 	int width = 0;
-// 	int height = 0;
-// 	int x = 0;
-// 	int y = 0;
-// 	if (RatioOf(src) > RatioOf(target))
-// 	{
-// 		width = target.width;
-// 		ratio = ((double)src.width) / target.width;
-// 		height = src.height / ratio;
-// 		x = 0;
-// 		y = ((target.height / 2) - (height / 2));
-// 	}
-// 	else
-// 	{
-// 		height = target.height;
-// 		ratio = ((double)src.height) / target.height;
-// 		width = src.width / ratio;
-// 		y = 0;
-// 		x = ((target.width / 2) - (width / 2));
-// 	}
-// 	return  cv::Rect{ x, y, width, height };
-// }
-
 const cv::Scalar Green{ 0, 255, 0 };
 const cv::Scalar Red{ 0, 0, 255 };
 const cv::Scalar Black{ 0, 0, 0 };
@@ -254,36 +228,6 @@ void CVideoMarker2Dlg::SetROI()
 	m_matROI = m_matBackGround(m_Trans.GetRoiRect());
 }
 
-//void CVideoMarker2Dlg::CalcRect()
-//{
-//	//	m_ROIRect = cv::Rect(0, 0, 100, 100);
-//
-//	double nOutputFrameAspectRatio = ((double)m_nOutputFrameWidth) / m_nOutputFrameHeight;
-//	double nRawFrameAspectRatio = ((double)m_matRawFrame.cols) / m_matRawFrame.rows;
-//
-//	// 宽高计算
-//	int width = 0;
-//	int height = 0;
-//	int x = 0;
-//	int y = 0;
-//	if (nRawFrameAspectRatio > nOutputFrameAspectRatio)
-//	{
-//		width = m_nOutputFrameWidth;
-//		m_dScaleRatio = ((double)m_matRawFrame.cols) / m_nOutputFrameWidth;
-//		height = m_matRawFrame.rows / m_dScaleRatio;
-//		x = 0;
-//		y = ((m_nOutputFrameHeight / 2) - (height / 2));
-//	}
-//	else
-//	{
-//		height = m_nOutputFrameHeight;
-//		m_dScaleRatio = ((double)m_matRawFrame.rows) / m_nOutputFrameHeight;
-//		width = m_matRawFrame.cols / m_dScaleRatio;
-//		y = 0;
-//		x = ((m_nOutputFrameWidth / 2) - (width / 2));
-//	}
-//	m_ROIRect = cv::Rect{ x, y, width, height };
-//}
 
 void CVideoMarker2Dlg::RefreshSlider()
 {
@@ -322,15 +266,15 @@ void CVideoMarker2Dlg::DrawFrameInfo()
 	{
 		drawables.push_back(new DBox(m_Trans.Trans(faceInfo.box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi),ColorSaved));
 	}
-	for (const auto& rect : m_pPictureBox->GetUnsavedBoxes())
+	for (const auto& rect : m_pPictureBox->GetUnsavedBoxesInRoi())
 	{
-		drawables.push_back(new DBox(rect, ColorSaved));
+		drawables.push_back(new DBox(rect, ColorUnsaved));
 	}
-	//const cv::Point* pPoints = m_pPictureBox->GetActivePoints();
-	const cv::Rect* pRect = m_pPictureBox 
-	if (pPoints)
+	const cv::Rect* pRect = m_pPictureBox->GetActiveRect();
+	if (pRect)
 	{
-		drawables.push_back(new DBox({ pPoints[0], pPoints[1] }, ColorUnsaved));
+		drawables.push_back(new DBox(*pRect, ColorUnsaved));
+		delete pRect;
 	}
 	drawables.push_back(new DBox(m_HighLight, ColorHighLight));
 	for (const auto& drawable : drawables)
@@ -357,31 +301,6 @@ void CVideoMarker2Dlg::SetState(const std::string& state)
 	Refresh();
 }
 
-// void CVideoMarker2Dlg::ShowImage(const cv::Mat& frame, UINT ID)
-// {
-// 	if (!m_bStatus)
-// 	{
-// 		return;
-// 	}
-// 	CDC* pDC = GetDlgItem(ID)->GetDC();
-// 	HDC hDC = pDC->GetSafeHdc();
-// 
-// 	CRect rect;
-// 	GetDlgItem(ID)->GetClientRect(&rect);
-// 
-// 	int clientWidth = rect.right - rect.left; 
-// 	int clientHeight = rect.bottom - rect.top;
-// 	int iwidth = frame.cols;
-// 	int iheight = frame.rows;
-// 	int tx = (int)(clientWidth - iwidth) / 2;
-// 	int ty = (int)(clientHeight - iheight) / 2;
-// 
-// 	SetRect(rect, tx, ty, tx + iwidth, ty + iheight);
-// 	CvvImage cimg;
-// 	cimg.CopyOf(&IplImage(frame));
-// 	cimg.DrawToHDC(hDC, &rect);
-// 	ReleaseDC(pDC);
-// }
 
 void CVideoMarker2Dlg::OnBnClickedOpenFileButton()
 {
@@ -406,6 +325,7 @@ void CVideoMarker2Dlg::OnBnClickedPlayVideoButton()
 
 void CVideoMarker2Dlg::OnBnClickedBackOneFrame()
 {
+	m_pState->BackOneFrame(m_nCurrentFrameIndex);
 }
 
 void CVideoMarker2Dlg::OnBnClickedForwardOneFrame()
@@ -476,22 +396,6 @@ void CVideoMarker2Dlg::ShowFrameInfoInListBox()
 	DataExchange de(&m_FrameInfo, &m_ListBox);
 	de.Update(true);
 
-	//m_ListBox.ResetContent();
-
-	//for (auto faceInfo : m_FrameInfo.facesInfo)
-	//{
-	//	m_ListBox.AddString(ConvertFromFrameInfo(faceInfo).c_str());
-	//}
-	//if (m_AddPersonName.empty())
-	//{
-	//	return;
-	//}
-	//std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
-	//for (size_t i = 0; i < m_AddPersonName.size(); ++i)
-	//{
-	//	m_ListBox.AddString(ConvertFromFrameInfo({ conv.to_bytes(m_AddPersonName[i].GetBuffer()), m_pPictureBox->m_boxes[i] }).c_str());
-	//}
-
 }
 
 
@@ -506,50 +410,10 @@ std::wstring CVideoMarker2Dlg::ConvertFromFrameInfo(const FaceInfo& faceInfo)
 }
 
 
-//void CVideoMarker2Dlg::OnLButtonDown(UINT nFlags, CPoint point)
-//{
-//	// TODO:  在此添加消息处理程序代码和/或调用默认值
-//
-//	m_pState->OnLButtonDown(nFlags, ConvertFromCPoint(point));
-//	CDialogEx::OnLButtonDown(nFlags, point);
-//}
-
-
-//void CVideoMarker2Dlg::OnMouseMove(UINT nFlags, CPoint point)
-//{
-//	// TODO:  在此添加消息处理程序代码和/或调用默认值
-//	m_pState->OnMouseMove(nFlags, ConvertFromCPoint(point));
-//	CDialogEx::OnMouseMove(nFlags, point);
-//}
-
-
-//void CVideoMarker2Dlg::OnLButtonUp(UINT nFlags, CPoint point)
-//{
-//	// TODO:  在此添加消息处理程序代码和/或调用默认值
-//	m_pState->OnLButtonUp(nFlags, ConvertFromCPoint(point));
-//	CDialogEx::OnLButtonUp(nFlags, point);
-//}
-
 cv::Point CVideoMarker2Dlg::ConvertFromCPoint(const CPoint& point)
 {
 	return{ point.x, point.y };
 }
-
-//void CVideoMarker2Dlg::SetStartPoint(const cv::Point& startPoint)
-//{
-//	m_pPictureBox->m_TempPoints[0] = startPoint;
-//}
-//
-//void CVideoMarker2Dlg::SetEndPoint(const cv::Point& endPoint)
-//{
-//	m_pPictureBox->m_TempPoints[1] = endPoint;
-//}
-
-// cv::Rect CVideoMarker2Dlg::GetROIRect() const
-// {
-// 	return m_ROIRect;
-// }
-
 
 void CVideoMarker2Dlg::OnBnClickedButton4()
 {
@@ -570,11 +434,6 @@ void CVideoMarker2Dlg::OnLbnDblclkList1()
 	std::string strItem = conv.to_bytes(item.GetBuffer());
 
 	std::vector<std::string> info = Split(strItem, " ");
-
-// 	m_HighLight.x = atoi(info[4].c_str()) / m_dScaleRatio;
-// 	m_HighLight.y = atoi(info[3].c_str()) / m_dScaleRatio;
-// 	m_HighLight.width = atoi(info[2].c_str()) / m_dScaleRatio;
-// 	m_HighLight.height = atoi(info[1].c_str()) / m_dScaleRatio;
 
 	Refresh();
 
@@ -603,5 +462,5 @@ std::vector<std::string> CVideoMarker2Dlg::Split(const std::string& str, const s
 
 std::vector<cv::Rect> CVideoMarker2Dlg::GetUnsavedBox()
 {
-	return m_pPictureBox->GetUnsavedBoxes();
+	return m_pPictureBox->GetUnsavedBoxesInRaw();
 }

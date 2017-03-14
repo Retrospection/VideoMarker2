@@ -20,11 +20,12 @@ public:
 
 
 public:
-	const cv::Point* GetActivePoints() const;
+//	const cv::Point* GetActivePoints() const;
 	const cv::Rect* GetActiveRect() const;
 	void SetImage(const cv::Mat& image);
 
-	std::vector<cv::Rect> GetUnsavedBoxes();
+	std::vector<cv::Rect> GetUnsavedBoxesInRaw();
+	std::vector<cv::Rect> GetUnsavedBoxesInRoi();
 
 public:
 	Transformer* m_pTrans;
@@ -35,7 +36,6 @@ private:
 	cv::Point m_ActivePoints[2];
 	bool m_bDrawing;
 	cv::Point ConvertFromCPoint(const CPoint& point);
-	cv::Point ConvertMousePointToPicturePoint(const cv::Point& point);
 	cv::Mat m_image;
 
 protected:
@@ -45,7 +45,7 @@ public:
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	virtual void PreSubclassWindow();
-	virtual void DrawItem(LPDRAWITEMSTRUCT /*lpDrawItemStruct*/);
+	virtual void DrawItem(LPDRAWITEMSTRUCT);
 };
 
 
