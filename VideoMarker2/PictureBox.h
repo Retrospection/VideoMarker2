@@ -20,22 +20,17 @@ public:
 
 
 public:
-//	const cv::Point* GetActivePoints() const;
-	const cv::Rect* GetActiveRect() const;
 	void SetImage(const cv::Mat& image);
-
+	const cv::Rect* GetActiveBox() const;
 	std::vector<cv::Rect> GetUnsavedBoxesInRaw();
 	std::vector<cv::Rect> GetUnsavedBoxesInRoi();
 
 public:
 	Transformer* m_pTrans;
 	std::vector<cv::Rect> m_boxes;
-
-private:
 	CStateBase* m_pState;
 	cv::Point m_ActivePoints[2];
 	bool m_bDrawing;
-	cv::Point ConvertFromCPoint(const CPoint& point);
 	cv::Mat m_image;
 
 protected:

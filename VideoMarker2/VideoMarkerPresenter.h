@@ -32,15 +32,7 @@ public:
 	int GetTotalFrameCount() const;
 
 
-// private:
-// 	cv::Point ConvertMousePointToPicturePoint(const cv::Point& point);
 
-private:
-//	cv::Point m_AddPoints[2];
-	std::vector<cv::Point> m_AddPoints;
-	std::vector<CString> m_AddPersonNames;
-	CString m_cstrAddPersonName;
-	bool m_bDrawing;
 
 private:
 	CVideoPlayer* m_pVideoPlayer;

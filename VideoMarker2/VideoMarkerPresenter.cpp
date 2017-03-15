@@ -9,7 +9,7 @@
 
 
 CVideoMarkerPresenter::CVideoMarkerPresenter(CVideoMarker2Dlg* pDlg)
-	:m_pDlg(pDlg), m_bDrawing(false)
+	:m_pDlg(pDlg)
 {
 	this->m_pVideoPlayer = new CVideoPlayer();
 	this->m_pTextMgr = new CTextFileManager();

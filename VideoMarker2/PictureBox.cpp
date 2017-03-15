@@ -33,79 +33,14 @@ END_MESSAGE_MAP()
 
 // CPictureBox 消息处理程序
 
-void CPictureBox::OnLButtonDown(UINT nFlags, CPoint point)
-{
-	m_bDrawing = true;
-	m_ActivePoints[0] = { point.x, point.y };
-	Invalidate(FALSE);
-	CStatic::OnLButtonDown(nFlags, point);
-}
-
-
-void CPictureBox::OnMouseMove(UINT nFlags, CPoint point)
-{
-	if (!m_bDrawing)
-	{
-		return;
-	}
-	m_ActivePoints[1] = { point.x, point.y };
-	((CVideoMarker2Dlg*)GetParent())->PrepareImage();
-	Invalidate(FALSE);
-	CStatic::OnMouseMove(nFlags, point);
-}
-
-void CPictureBox::OnLButtonUp(UINT nFlags, CPoint point)
-{
-	if (!m_bDrawing)
-	{
-		return;
-	}
-
-	m_bDrawing = false;
-
-	CNameInputDialog dlg;
-	if (dlg.DoModal() == IDCANCEL)
-	{
-		m_ActivePoints[0] = {};
-		m_ActivePoints[1] = {};
-		Invalidate(FALSE);
-		CStatic::OnLButtonUp(nFlags, point);
-		return;
-	}
-	((CVideoMarker2Dlg*)GetParent())->m_AddPersonName.push_back(dlg.m_strPersonName);
-
-	// 此处保证了位于 m_boxes 中的所有盒子所处的坐标系为 roi 坐标系
-	m_boxes.push_back(*GetActiveRect());
-	Invalidate(FALSE);
-	m_ActivePoints[0] = {};
-	m_ActivePoints[1] = {};
-	CStatic::OnLButtonUp(nFlags, point);
-}
-
-
-
-cv::Point CPictureBox::ConvertFromCPoint(const CPoint& point)
-{
-	return{ point.x, point.y };
-}
-
 void CPictureBox::SetState(CStateBase* pState)
 {
 	m_pState = pState; 
 }
 
-// const cv::Point* CPictureBox::GetActivePoints() const
-// {
-// 	if (m_ActivePoints[0].x == 0 && m_ActivePoints[0].y == 0 && m_ActivePoints[1].x == 0 && m_ActivePoints[1].y == 0)
-// 	{
-// 		return nullptr;
-// 	}
-// 
-// 	return m_ActivePoints;
-// }
 
 
-const cv::Rect* CPictureBox::GetActiveRect() const
+const cv::Rect* CPictureBox::GetActiveBox() const
 {
 	if (m_ActivePoints[0].x == 0 && m_ActivePoints[0].y == 0 && m_ActivePoints[1].x == 0 && m_ActivePoints[1].y == 0)
 	{
@@ -143,6 +78,60 @@ std::vector<cv::Rect> CPictureBox::GetUnsavedBoxesInRoi()
 	return m_boxes;
 }
 
+
+
+void CPictureBox::OnLButtonUp(UINT nFlags, CPoint point)
+{
+	if (!m_bDrawing)
+	{
+		return;
+	}
+
+	m_bDrawing = false;
+
+	CNameInputDialog dlg;
+	if (dlg.DoModal() == IDCANCEL)
+	{
+		m_ActivePoints[0] = {};
+		m_ActivePoints[1] = {};
+		((CVideoMarker2Dlg*)GetParent())->PrepareImage();
+		Invalidate(FALSE);
+		CStatic::OnLButtonUp(nFlags, point);
+		return;
+	}
+	((CVideoMarker2Dlg*)GetParent())->m_AddPersonName.push_back(dlg.m_strPersonName);
+
+	// 此处保证了位于 m_boxes 中的所有盒子所处的坐标系为 roi 坐标系
+	m_boxes.push_back(*GetActiveBox());
+	Invalidate(FALSE);
+	m_ActivePoints[0] = {};
+	m_ActivePoints[1] = {};
+	CStatic::OnLButtonUp(nFlags, point);
+}
+
+
+
+
+
+void CPictureBox::OnMouseMove(UINT nFlags, CPoint point)
+{
+	if (!m_bDrawing)
+	{
+		return;
+	}
+	m_ActivePoints[1] = { point.x, point.y };
+	((CVideoMarker2Dlg*)GetParent())->PrepareImage();
+	Invalidate(FALSE);
+	CStatic::OnMouseMove(nFlags, point);
+}
+
+void CPictureBox::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	m_bDrawing = true;
+	m_ActivePoints[0] = { point.x, point.y };
+	Invalidate(FALSE);
+	CStatic::OnLButtonDown(nFlags, point);
+}
 
 
 void CPictureBox::PreSubclassWindow()

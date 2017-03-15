@@ -270,7 +270,7 @@ void CVideoMarker2Dlg::DrawFrameInfo()
 	{
 		drawables.push_back(new DBox(rect, ColorUnsaved));
 	}
-	const cv::Rect* pRect = m_pPictureBox->GetActiveRect();
+	const cv::Rect* pRect = m_pPictureBox->GetActiveBox();
 	if (pRect)
 	{
 		drawables.push_back(new DBox(*pRect, ColorUnsaved));
