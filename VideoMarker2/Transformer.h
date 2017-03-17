@@ -50,4 +50,6 @@ public:
 
 	cv::Rect Trans(const cv::Rect& input, int src, int dst) const;
 
+
+
 };

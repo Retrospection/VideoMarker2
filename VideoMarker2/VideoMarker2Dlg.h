@@ -8,7 +8,7 @@
 #include <highgui/highgui.hpp>
 #include <imgproc/imgproc.hpp>
 #include <features2d/features2d.hpp>
-#include <video/video.hpp>
+
 #include "afxcmn.h"
 
 #include "VideoMarkerPresenter.h"
@@ -23,7 +23,7 @@
 
 #include "IVideoMarker2.h"
 
-#include "Transformer.h"
+//#include "Transformer.h"
 
 
 class CVideoMarkerPresenter;
@@ -33,7 +33,6 @@ class CStateBase;
 class CPictureBox;
 
 
-class IDrawable;
 #include <vector>
 
 // CVideoMarker2Dlg 对话框
@@ -49,10 +48,10 @@ public:
 
 // Getter
 public:
-	int GetOutputFrameWidth() const;
-	int GetOutputFrameHeight() const;
-	CString GetFileName()const;
-	CString GetTextFileName()const;
+// 	int GetOutputFrameWidth() const;
+// 	int GetOutputFrameHeight() const;
+	std::string GetFileName() const;
+	std::string GetTextFileName()const;
 //	cv::Rect GetROIRect() const;
 
 // States Manager
@@ -69,26 +68,32 @@ public:
 	void SetCurrentFrameIndex(int nCurrentFrameIndex);
 	void SetFileOpenedStatus(bool status);
 
+	void ClearUnsavedFrameInfo();
+
+	
+
 public:
 	void SetFrameInfo(const FrameInfo& frameInfo);
+//	bool OnNameSaved();
 
 	virtual std::vector<cv::Rect> GetUnsavedBox() override;
+	virtual std::vector<std::string> GetUnsavedName() override;
 
 //////////////////////////////////////////////////////  实现  ////////////////////////////////////////////////
 
 // Refresh
 private:
-	void Resize();
-	void SetROI();
-	void DrawFrameInfo();
-	void PrepareImage();
+//	void Resize();
+//	void SetROI();
+//	void DrawFrameInfo();
+//	void PrepareImage();
 	void RefreshSlider();
 
 
 private:
 	CVideoMarkerPresenter* m_pPresenter;
 	CNameInputDialog* m_pNameDlg;
-	Transformer m_Trans;
+//	Transformer m_Trans;
 
 private:
 	bool m_bStatus;
@@ -100,23 +105,23 @@ private:
 
 // 绘制图像信息相关成员
 private:
-	int m_nOutputFrameWidth;
-	int m_nOutputFrameHeight;
-	int m_nTotalFrameCount;
-	cv::Mat m_matRawFrame;
-	cv::Mat m_matBackGround;
-	cv::Mat m_matROI;
+// 	int m_nOutputFrameWidth;
+// 	int m_nOutputFrameHeight;
+ 	int m_nTotalFrameCount;
+// 	cv::Mat m_matRawFrame;
+// 	cv::Mat m_matBackGround;
+// 	cv::Mat m_matROI;
 
 	FrameInfo m_FrameInfo;
 
-	cv::Rect m_HighLight;
+	std::vector<cv::Rect> m_HighLight;
 
 private:
 	CString m_cstrVideoFileName;
-	std::vector<CString> m_AddPersonName;
-	bool m_bFirstFrame;
+//	std::vector<std::string> m_AddPersonName;
+//	bool m_bFirstFrame;
 	
-	std::vector<IDrawable*> drawables;
+//	std::vector<IDrawable*> m_drawables;
 
 
 // 控件
@@ -140,9 +145,10 @@ private:
 private:
 	void SetState(const std::string& state);
 	void ShowFrameInfoInListBox();
-	std::wstring ConvertFromFrameInfo(const FaceInfo& faceInfo);
-	cv::Point ConvertFromCPoint(const CPoint& point);
+//	std::wstring ConvertFromFrameInfo(const FaceInfo& faceInfo);
+//	cv::Point ConvertFromCPoint(const CPoint& point);
 
+	void ClearHighLight();
 	std::vector<std::string> Split(const std::string& str, const std::string& delim);
 
 //////////////////////////////////////////////////////  实现  ////////////////////////////////////////////////

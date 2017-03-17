@@ -27,6 +27,7 @@ void CStateBase::Stop()
 void CStateBase::SetState(const std::string& state)
 {
 	_pDlg->SetState(state);
+	_pDlg->ClearHighLight();
 }
 
 void CStateBase::Init()
@@ -59,17 +60,20 @@ void CStateBase::Pause()
 void CStateBase::SeekTo(int nPos)
 {
 	GetPresenter()->SeekTo(nPos);
+	_pDlg->ClearHighLight();
 }
 
 
 void CStateBase::ForwardOneFrame(int nCurrentFrameIndex)
 {
 	GetPresenter()->ForwardOneFrame(nCurrentFrameIndex);
+	_pDlg->ClearHighLight();
 }
 
 void CStateBase::BackOneFrame(int nCurrentFrameIndex)
 {
 	GetPresenter()->BackOneFrame(nCurrentFrameIndex);
+	_pDlg->ClearHighLight();
 }
 
 CVideoMarkerPresenter* CStateBase::GetPresenter()

@@ -12,9 +12,10 @@ public:
 	~CTextFileManager();
 
 	bool Open(const std::string& strFileName);
-	bool GetFrameInfoByPos(FrameInfo& frameInfo, int nPos);
-	void AddFaceInfo(int nPos, CString& strPersonName, const cv::Point& p1, const cv::Point& p2);
-	void AddFaceInfo(int nPos, CString& strPersonName, const cv::Rect boxes);
+	bool GetFrameInfoByPos(FrameInfo& frameInfo, size_t nPos);
+	void AddFaceInfo(int nPos, const std::string& strPersonName, const cv::Point& p1, const cv::Point& p2);
+	void AddFaceInfo(int nPos, const std::string& strPersonName, const cv::Rect boxes);
+	void AddFaceInfo(size_t nPos, const FrameInfo& newFrameInfo);
 	void SaveToTextFile(); 
 
 private:

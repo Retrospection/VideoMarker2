@@ -38,9 +38,9 @@ bool CTextFileManager::Open(const std::string& strFileName)
 	return ParseAllFrameInfoFromTextFile(ifs);
 }
 
-bool CTextFileManager::GetFrameInfoByPos(FrameInfo& frameInfo, int nPos)
+bool CTextFileManager::GetFrameInfoByPos(FrameInfo& frameInfo, size_t nPos)
 {
-	if (m_FrameInfos.empty())
+	if (m_FrameInfos.empty() || nPos >= m_FrameInfos.size())
 	{
 		return false;
 	}
@@ -110,16 +110,21 @@ std::vector<std::string> CTextFileManager::Split(const std::string& str, const s
 	return std::move(ret);
 }
 
-void CTextFileManager::AddFaceInfo(int nPos, CString& strPersonName, const cv::Point& p1, const cv::Point& p2)
+void CTextFileManager::AddFaceInfo(int nPos, const std::string&  strPersonName, const cv::Point& p1, const cv::Point& p2)
 {
-	std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
-	m_FrameInfos[nPos].facesInfo.push_back({ conv.to_bytes(strPersonName.GetBuffer()), { p1, p2 } });
+	m_FrameInfos[nPos].facesInfo.push_back({ strPersonName, { p1, p2 } });
 }
 
-void CTextFileManager::AddFaceInfo(int nPos, CString& strPersonName, const cv::Rect boxes)
+void CTextFileManager::AddFaceInfo(int nPos, const std::string&  strPersonName, const cv::Rect boxes)
 {
-	std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
-	m_FrameInfos[nPos].facesInfo.push_back({ conv.to_bytes(strPersonName.GetBuffer()), boxes });
+	m_FrameInfos[nPos].facesInfo.push_back({ strPersonName, boxes });
+}
+
+void CTextFileManager::AddFaceInfo(size_t nPos, const FrameInfo& newFrameInfo)
+{
+	assert(nPos < m_FrameInfos.size());
+	m_FrameInfos[nPos].facesInfo.insert(m_FrameInfos[nPos].facesInfo.end(),newFrameInfo.facesInfo.begin(), newFrameInfo.facesInfo.end());
+	SaveToTextFile();
 }
 
 void CTextFileManager::SaveToTextFile()

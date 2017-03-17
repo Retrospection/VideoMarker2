@@ -24,10 +24,7 @@ CVideoMarkerPresenter::~CVideoMarkerPresenter()
 
 void CVideoMarkerPresenter::Open()
 {
-	CString cstrFileName = m_pDlg->GetFileName();
-	std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
-	std::wstring wstrFileName(cstrFileName.GetBuffer()); 
-	std::string strFileName = conv.to_bytes(wstrFileName);
+	std::string strFileName = m_pDlg->GetFileName();
 	m_pDlg->SetFileOpenedStatus(m_pVideoPlayer->Open(strFileName));
 	cv::Mat frame;
 	m_pVideoPlayer->GetNextFrame(frame);
@@ -99,10 +96,7 @@ void CVideoMarkerPresenter::ForwardOneFrame(int nCurrentFrameIndex)
 
 void CVideoMarkerPresenter::OpenTextFile()
 {
-	CString cstrFileName = m_pDlg->GetTextFileName();
-	std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
-	std::wstring wstrFileName(cstrFileName.GetBuffer());
-	std::string strFileName = conv.to_bytes(wstrFileName);
+	std::string strFileName = m_pDlg->GetTextFileName();
 	m_pDlg->SetTextFileOpenedStatus(m_pTextMgr->Open(strFileName));
 	FrameInfo frameInfo;
 	m_pTextMgr->GetFrameInfoByPos(frameInfo,m_pVideoPlayer->m_nCurrentFrameIndex);
@@ -123,22 +117,31 @@ void CVideoMarkerPresenter::AddMark()
 
 void CVideoMarkerPresenter::SaveMark()
 {
-	if (m_pDlg->m_pPictureBox->m_boxes.empty())
+// 	if (m_pDlg->m_pPictureBox->m_boxes.empty())
+// 	{
+// 		return;
+// 	}
+
+	std::vector<cv::Rect> unsavedBox = m_pDlg->GetUnsavedBox();
+	std::vector<std::string> unsavedName = m_pDlg->GetUnsavedName();
+	assert(unsavedName.size() == unsavedBox.size());
+	if (unsavedBox.empty())
 	{
 		return;
 	}
+	FrameInfo newFrameInfo;
+	newFrameInfo.facesInfo.resize(unsavedName.size());
+	std::transform(unsavedBox.begin(), unsavedBox.end(), unsavedName.begin(), newFrameInfo.facesInfo.begin(), [](const cv::Rect& rc, const std::string& name)->FaceInfo { return{ name, rc }; });
 
-	std::vector<cv::Rect> unsavedBox = m_pDlg->GetUnsavedBox();
-
-	for (size_t i = 0; i < unsavedBox.size(); ++i)
-	{
-		m_pTextMgr->AddFaceInfo(m_pVideoPlayer->m_nCurrentFrameIndex, m_pDlg->m_AddPersonName[i], unsavedBox[i]);
-	}
-	m_pTextMgr->SaveToTextFile();
-	m_pDlg->m_AddPersonName.clear();
-	m_pDlg->m_pPictureBox->m_boxes.clear();
+	assert(m_pVideoPlayer->m_nCurrentFrameIndex >= 0);
+	size_t frameIndex = static_cast<size_t>(m_pVideoPlayer->m_nCurrentFrameIndex);
+	m_pTextMgr->AddFaceInfo(frameIndex, newFrameInfo);
+	m_pDlg->ClearUnsavedFrameInfo();
+//	m_pDlg->m_AddPersonName.clear();
+//	m_pDlg->m_pPictureBox->m_boxes.clear();
 	FrameInfo frameInfo;
-	m_pTextMgr->GetFrameInfoByPos(frameInfo, m_pVideoPlayer->m_nCurrentFrameIndex);
+	bool result = m_pTextMgr->GetFrameInfoByPos(frameInfo, frameIndex);
+	assert(result);
 	m_pDlg->SetFrameInfo(frameInfo);
 	m_pDlg->Refresh();
 }

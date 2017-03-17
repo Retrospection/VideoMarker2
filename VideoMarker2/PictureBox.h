@@ -2,10 +2,12 @@
 
 #include <core/core.hpp>
 #include "StateBase.h"
+#include "Transformer.h"
 
-class Transformer;
 
 class CStateBase;
+
+class IDrawable;
 
 class CPictureBox : public CStatic
 {
@@ -21,17 +23,36 @@ public:
 
 public:
 	void SetImage(const cv::Mat& image);
-	const cv::Rect* GetActiveBox() const;
+	void SetFrameInfo(const FrameInfo& frameInfo);
+	void SetHighLight(const std::vector<cv::Rect>& highLight);
 	std::vector<cv::Rect> GetUnsavedBoxesInRaw();
-	std::vector<cv::Rect> GetUnsavedBoxesInRoi();
+	std::vector<std::string> GetUnsavedNames()const;
+//	std::vector<cv::Rect> GetUnsavedBoxesInRoi();
 
-public:
-	Transformer* m_pTrans;
-	std::vector<cv::Rect> m_boxes;
+	void ClearUnsavedBoxes();
+	void ClearUnsavedNames();
+
+
+
+
+private:
+	void DrawFrameInfo(cv::Mat& img);
+	bool GetActiveBox(cv::Rect& activeBox) const;
+
+
+	Transformer m_Trans;
+	
 	CStateBase* m_pState;
+
 	cv::Point m_ActivePoints[2];
+	std::vector<cv::Rect> m_boxes;
+	std::vector<cv::Rect> m_HighLights;
+	FrameInfo m_FrameInfo;
+	std::vector<std::string> m_UnsavedNames;
 	bool m_bDrawing;
 	cv::Mat m_image;
+
+	std::vector<IDrawable*> m_drawables;
 
 protected:
 	DECLARE_MESSAGE_MAP()

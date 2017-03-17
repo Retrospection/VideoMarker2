@@ -15,27 +15,26 @@
 #include <codecvt>
 #include <cassert>
 
-#include "CvvImage.h"
+
 #include "StateFactory.h"
-#include "DBox.h"
 #include "DataExchange.h"
+#include "StringHelper.h"
 
 
-
-const cv::Scalar Green{ 0, 255, 0 };
-const cv::Scalar Red{ 0, 0, 255 };
-const cv::Scalar Black{ 0, 0, 0 };
-
-const cv::Scalar ColorUnsaved = Red;
-const cv::Scalar ColorSaved = Red;
-const cv::Scalar ColorHighLight = Green;
+// const cv::Scalar Green{ 0, 255, 0 };
+// const cv::Scalar Red{ 0, 0, 255 };
+// const cv::Scalar Black{ 0, 0, 0 };
+// 
+// const cv::Scalar ColorUnsaved = Red;
+// const cv::Scalar ColorSaved = Red;
+// const cv::Scalar ColorHighLight = Green;
 
 
 
 // CVideoMarker2Dlg ¶Ô»°¿ò
 
 CVideoMarker2Dlg::CVideoMarker2Dlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(CVideoMarker2Dlg::IDD, pParent), m_Trans(Transformer::Default())
+	: CDialogEx(CVideoMarker2Dlg::IDD, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	m_pPictureBox = new CPictureBox(m_pState);
@@ -82,11 +81,13 @@ BOOL CVideoMarker2Dlg::OnInitDialog()
 	m_Slider.SetRange(1, 100);
 	m_Slider.SetTicFreq(20);
 
-	CRect rc;
-	GetDlgItem(IDC_STATIC_FRAME)->GetClientRect(&rc);
-	m_nOutputFrameHeight = rc.Height();
-	m_nOutputFrameWidth = rc.Width();
-	m_matBackGround = cv::Mat(m_nOutputFrameHeight, m_nOutputFrameWidth, CV_8UC3, Black);
+//	CRect rc;
+//	GetDlgItem(IDC_STATIC_FRAME)->GetClientRect(&rc);
+// 	m_nOutputFrameHeight = rc.Height();
+// 	m_nOutputFrameWidth = rc.Width();
+// 	m_matBackGround = cv::Mat(m_nOutputFrameHeight, m_nOutputFrameWidth, CV_8UC3, Black);
+
+	
 
 	SetState(INIT);
 
@@ -153,43 +154,44 @@ void CVideoMarker2Dlg::Refresh()
 	m_pState->RefreshButton();
 	GetDlgItem(IDC_BUTTON7)->EnableWindow((m_nCurrentFrameIndex > 0) ? TRUE : FALSE);
 	GetDlgItem(IDC_BUTTON8)->EnableWindow((m_nCurrentFrameIndex < m_nTotalFrameCount) ? TRUE : FALSE);
-	PrepareImage();
-	m_pPictureBox->SetImage(m_matBackGround);
+// 	PrepareImage();
+// 	m_pPictureBox->SetImage(m_matBackGround);
 	ShowFrameInfoInListBox();
-	Invalidate(FALSE);
+	Invalidate(FALSE);   // FIX IT
 	
 }
+// 
+// int CVideoMarker2Dlg::GetOutputFrameWidth() const
+// {
+// 	CRect rc;
+// 	GetDlgItem(IDC_STATIC_FRAME)->GetClientRect(&rc);
+// 	return rc.Width();
+// }
+// 
+// int CVideoMarker2Dlg::GetOutputFrameHeight() const
+// {
+// 	CRect rc;
+// 	GetDlgItem(IDC_STATIC_FRAME)->GetClientRect(&rc);
+// 	return rc.Height();
+// }
 
-int CVideoMarker2Dlg::GetOutputFrameWidth() const
+std::string CVideoMarker2Dlg::GetFileName() const 
 {
-	CRect rc;
-	GetDlgItem(IDC_STATIC_FRAME)->GetClientRect(&rc);
-	return rc.Width();
-}
-
-int CVideoMarker2Dlg::GetOutputFrameHeight() const
-{
-	CRect rc;
-	GetDlgItem(IDC_STATIC_FRAME)->GetClientRect(&rc);
-	return rc.Height();
-}
-
-CString CVideoMarker2Dlg::GetFileName() const
-{
-	return m_cstrVideoFileName;
+	return CStringHelper::ConvertCStringToString(m_cstrVideoFileName);
 }
 
 void CVideoMarker2Dlg::SetFileOpenedStatus(bool status)
 {
 	m_bStatus = status;
-	m_bFirstFrame = status;
-	m_matBackGround = cv::Mat(m_nOutputFrameHeight, m_nOutputFrameWidth, CV_8UC3, cv::Scalar(0, 0, 0));
+//	m_bFirstFrame = status;
+//	m_matBackGround = cv::Mat(m_nOutputFrameHeight, m_nOutputFrameWidth, CV_8UC3, cv::Scalar(0, 0, 0));
 }
 
 void CVideoMarker2Dlg::SetRawFrame(const cv::Mat& frame)
 {
 	assert(m_bStatus);
-	m_matRawFrame = frame;
+//	m_matRawFrame = frame;
+	m_pPictureBox->SetImage(frame);
 }
 
 void CVideoMarker2Dlg::SetTotalFrameCount(int nTotalFrameCount)
@@ -209,24 +211,24 @@ void CVideoMarker2Dlg::SetTextFileOpenedStatus(bool status)
 	m_bTextStatus = status;
 }
 
-void CVideoMarker2Dlg::Resize()
-{
-	if (m_bFirstFrame)
-	{
-		SetROI();
-		m_bFirstFrame = false;
-	}
-	cv::resize(m_matRawFrame, m_matROI, m_matROI.size());
-
-
-}
-
-void CVideoMarker2Dlg::SetROI()
-{
-	assert(m_bFirstFrame);
-	m_Trans = Transformer::Make({ m_nOutputFrameWidth, m_nOutputFrameHeight }, m_matRawFrame.size());
-	m_matROI = m_matBackGround(m_Trans.GetRoiRect());
-}
+// void CVideoMarker2Dlg::Resize()
+// {
+// 	if (m_bFirstFrame)
+// 	{
+// 		SetROI();
+// 		m_bFirstFrame = false;
+// 	}
+// 	cv::resize(m_matRawFrame, m_matROI, m_matROI.size());
+// 
+// 
+// }
+// 
+// void CVideoMarker2Dlg::SetROI()
+// {
+// 	assert(m_bFirstFrame);
+// 	m_Trans = Transformer::Make({ m_nOutputFrameWidth, m_nOutputFrameHeight }, m_matRawFrame.size());
+// 	m_matROI = m_matBackGround(m_Trans.GetRoiRect());
+// }
 
 
 void CVideoMarker2Dlg::RefreshSlider()
@@ -236,54 +238,54 @@ void CVideoMarker2Dlg::RefreshSlider()
 	pSlidCtrl->SetRange(0, m_nTotalFrameCount == 0 ? 0 : m_nTotalFrameCount - 1);
 }
 
-CString CVideoMarker2Dlg::GetTextFileName() const
+std::string CVideoMarker2Dlg::GetTextFileName() const
 {
-	return m_cstrTextFileName;
+	return CStringHelper::ConvertCStringToString(m_cstrTextFileName);
 }
 
 void CVideoMarker2Dlg::SetFrameInfo(const FrameInfo& frameInfo)
 {
+	m_pPictureBox->SetFrameInfo(frameInfo);
 	m_FrameInfo = frameInfo;
 }
 
-void CVideoMarker2Dlg::PrepareImage()
-{
-	if (!m_bStatus)
-	{
-		return;
-	}
-	Resize();
-	if (!m_bTextStatus)
-	{
-		return;
-	}
-	DrawFrameInfo();
-}
+// void CVideoMarker2Dlg::PrepareImage()
+// {
+// 	if (!m_bStatus)
+// 	{
+// 		return;
+// 	}
+// 	Resize();
+// // 	if (!m_bTextStatus)
+// // 	{
+// // 		return;
+// // 	}
+// //	DrawFrameInfo();
+// }
 
-void CVideoMarker2Dlg::DrawFrameInfo()
-{
-	for (const auto& faceInfo: m_FrameInfo.facesInfo)
-	{
-		drawables.push_back(new DBox(m_Trans.Trans(faceInfo.box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi),ColorSaved));
-	}
-	for (const auto& rect : m_pPictureBox->GetUnsavedBoxesInRoi())
-	{
-		drawables.push_back(new DBox(rect, ColorUnsaved));
-	}
-	const cv::Rect* pRect = m_pPictureBox->GetActiveBox();
-	if (pRect)
-	{
-		drawables.push_back(new DBox(*pRect, ColorUnsaved));
-		delete pRect;
-	}
-	drawables.push_back(new DBox(m_HighLight, ColorHighLight));
-	for (const auto& drawable : drawables)
-	{
-		drawable->Draw(m_matROI);
-		delete drawable;
-	}
-	drawables.clear();
-}
+// void CVideoMarker2Dlg::DrawFrameInfo()
+// {
+// // 	for (const auto& faceInfo: m_FrameInfo.facesInfo)
+// // 	{
+// // 		m_drawables.push_back(new DBox(m_Trans.Trans(faceInfo.box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi),ColorSaved));
+// // 	}
+// // 	for (const auto& rect : m_pPictureBox->GetUnsavedBoxesInRoi())
+// // 	{
+// // 		m_drawables.push_back(new DBox(rect, ColorUnsaved));
+// // 	}
+// // 	cv::Rect rect;
+// // 	if (m_pPictureBox->GetActiveBox(rect))
+// // 	{
+// // 		m_drawables.push_back(new DBox(rect, ColorUnsaved));
+// // 	}
+// //	m_drawables.push_back(new DBox(m_HighLight, ColorHighLight));
+// 	for (const auto& drawable : m_drawables)
+// 	{
+// 		drawable->Draw(m_matROI);
+// 		delete drawable;
+// 	}
+// 	m_drawables.clear();
+// }
 
 void CVideoMarker2Dlg::SetState(const std::string& state)
 {
@@ -326,6 +328,7 @@ void CVideoMarker2Dlg::OnBnClickedPlayVideoButton()
 void CVideoMarker2Dlg::OnBnClickedBackOneFrame()
 {
 	m_pState->BackOneFrame(m_nCurrentFrameIndex);
+
 }
 
 void CVideoMarker2Dlg::OnBnClickedForwardOneFrame()
@@ -398,22 +401,21 @@ void CVideoMarker2Dlg::ShowFrameInfoInListBox()
 
 }
 
-
-std::wstring CVideoMarker2Dlg::ConvertFromFrameInfo(const FaceInfo& faceInfo)
-{
-	std::wstringstream wss;
-	wss << faceInfo.strPersonName.c_str() << " ";
-	wss << faceInfo.box.height << " " << faceInfo.box.width << " " << faceInfo.box.y << " " << faceInfo.box.x;
-	// 	wss << faceInfo.box.x << " " << faceInfo.box.y << " " << faceInfo.box.width << " " << faceInfo.box.height << " ";
-	// 	wss << faceInfo.strPersonName.c_str();
-	return wss.str();
-}
-
-
-cv::Point CVideoMarker2Dlg::ConvertFromCPoint(const CPoint& point)
-{
-	return{ point.x, point.y };
-}
+// 
+// std::wstring CVideoMarker2Dlg::ConvertFromFrameInfo(const FaceInfo& faceInfo)
+// {
+// 	std::wstringstream wss;
+// 	wss << faceInfo.strPersonName.c_str() << " ";
+// 	wss << faceInfo.box.height << " " << faceInfo.box.width << " " << faceInfo.box.y << " " << faceInfo.box.x;
+// 	
+// 	return wss.str();
+// }
+// 
+// 
+// cv::Point CVideoMarker2Dlg::ConvertFromCPoint(const CPoint& point)
+// {
+// 	return{ point.x, point.y };
+// }
 
 void CVideoMarker2Dlg::OnBnClickedButton4()
 {
@@ -435,7 +437,11 @@ void CVideoMarker2Dlg::OnLbnDblclkList1()
 
 	std::vector<std::string> info = Split(strItem, " ");
 
-	Refresh();
+	m_HighLight = { { atoi(info[1].c_str()), atoi(info[2].c_str()), atoi(info[3].c_str()), atoi(info[4].c_str()) } };
+
+	m_pPictureBox->SetHighLight(m_HighLight);
+
+	
 
 }
 
@@ -463,4 +469,34 @@ std::vector<std::string> CVideoMarker2Dlg::Split(const std::string& str, const s
 std::vector<cv::Rect> CVideoMarker2Dlg::GetUnsavedBox()
 {
 	return m_pPictureBox->GetUnsavedBoxesInRaw();
+}
+
+// bool CVideoMarker2Dlg::OnNameSaved()
+// {
+// 	CNameInputDialog dlg;
+// 	if (dlg.DoModal() == IDCANCEL)
+// 	{
+// 		return false;
+// 	}
+// 	m_AddPersonName.push_back(CStringHelper::ConvertCStringToString(dlg.m_strPersonName));
+// 	m_pPictureBox->SetUnsavedName(m_AddPersonName);
+// 	return true;
+// }
+
+void CVideoMarker2Dlg::ClearHighLight()
+{
+	m_pPictureBox->SetHighLight({});
+	m_HighLight = {};
+}
+
+std::vector<std::string> CVideoMarker2Dlg::GetUnsavedName()
+{
+	return m_pPictureBox->GetUnsavedNames();
+}
+
+void CVideoMarker2Dlg::ClearUnsavedFrameInfo()
+{
+//	m_AddPersonName.clear();
+	m_pPictureBox->ClearUnsavedNames();
+	m_pPictureBox->ClearUnsavedBoxes();
 }

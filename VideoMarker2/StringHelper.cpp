@@ -21,7 +21,10 @@ std::wstring CStringHelper::ConvertCStringToWString(const CString& cstr)
 
 std::string CStringHelper::ConvertCStringToString(const CString& cstr)
 {
-	return{};
+	std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
+	CString str = cstr;
+	std::wstring wstr(str.GetBuffer());
+	return conv.to_bytes(wstr);
 }
 
 std::string CStringHelper::ConvertWStringToString(const std::wstring& wstr)

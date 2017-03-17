@@ -29,6 +29,7 @@ void CInitState::Open()
 {
 	GetPresenter()->Open();
 	SetState(STOP);
+
 }
 
 

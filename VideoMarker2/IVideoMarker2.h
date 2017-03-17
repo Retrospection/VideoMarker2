@@ -11,4 +11,5 @@ public:
 	
 public:
 	virtual std::vector<cv::Rect> GetUnsavedBox() = 0;
+	virtual std::vector<std::string> GetUnsavedName() = 0;
 };
