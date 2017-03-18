@@ -7,8 +7,6 @@ class RectHelper
 public:
 	RectHelper() = delete;
 
-public:
-	//static cv::Rect& operator /=
 
 };
 

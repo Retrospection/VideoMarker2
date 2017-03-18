@@ -36,3 +36,23 @@ std::wstring CStringHelper::ConvertStringToWString(const std::string& str)
 {
 	return{};
 }
+
+std::vector<std::string> CStringHelper::Split(const std::string& str, const std::string& delim)
+{
+	std::vector<std::string> ret;
+	std::string::size_type pos1, pos2;
+	pos2 = str.find(delim);
+	pos1 = 0;
+	while (std::string::npos != pos2)
+	{
+		ret.push_back(str.substr(pos1, pos2 - pos1));
+
+		pos1 = pos2 + delim.size();
+		pos2 = str.find(delim, pos1);
+	}
+	if (pos1 != str.length())
+	{
+		ret.push_back(str.substr(pos1));
+	}
+	return std::move(ret);
+}

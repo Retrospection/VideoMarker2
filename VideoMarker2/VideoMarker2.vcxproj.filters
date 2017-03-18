@@ -61,8 +61,8 @@
     <Filter Include="Util">
       <UniqueIdentifier>{87b7555d-2128-41e9-9de5-871d5cc80cc0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Interface">
-      <UniqueIdentifier>{5b201fa2-d549-4025-930a-4f9b37e0d9fe}</UniqueIdentifier>
+    <Filter Include="Drawable">
+      <UniqueIdentifier>{3e236ee6-15a8-44fc-b056-e74f72a6c0f7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -138,9 +138,6 @@
     <ClInclude Include="RectHelper.h">
       <Filter>Util</Filter>
     </ClInclude>
-    <ClInclude Include="DBox.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="IVideoMarker2.h">
       <Filter>View</Filter>
     </ClInclude>
@@ -150,11 +147,14 @@
     <ClInclude Include="Transformer.h">
       <Filter>Util</Filter>
     </ClInclude>
-    <ClInclude Include="IDrawable.h">
-      <Filter>Interface</Filter>
+    <ClInclude Include="DBox.h">
+      <Filter>Drawable</Filter>
     </ClInclude>
     <ClInclude Include="DText.h">
-      <Filter>头文件</Filter>
+      <Filter>Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="IDrawable.h">
+      <Filter>Drawable</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

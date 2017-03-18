@@ -9,29 +9,21 @@
 #include <imgproc/imgproc.hpp>
 #include <features2d/features2d.hpp>
 
+#include <unordered_map>
+
 #include "afxcmn.h"
+#include "afxwin.h"
 
 #include "VideoMarkerPresenter.h"
 #include "FrameInfo.h"
-
 #include "State.h"
 #include "PictureBox.h"
-
-#include <unordered_map>
-#include "afxwin.h"
 #include "NameInputDialog.h"
-
 #include "IVideoMarker2.h"
 
-//#include "Transformer.h"
-
-
 class CVideoMarkerPresenter;
-
 class CStateBase;
-
 class CPictureBox;
-
 
 #include <vector>
 
@@ -45,84 +37,34 @@ public:
 
 public:
 	void Refresh();
-
-// Getter
+	void RefreshSlider();
 public:
-// 	int GetOutputFrameWidth() const;
-// 	int GetOutputFrameHeight() const;
 	std::string GetFileName() const;
 	std::string GetTextFileName()const;
-//	cv::Rect GetROIRect() const;
-
-// States Manager
+	virtual std::vector<cv::Rect> GetUnsavedBox() override;
+	virtual std::vector<std::string> GetUnsavedName() override;
 public:
 	void SetTextFileOpenedStatus(bool status);
-
-	/*
-	 * 由CInitState::Open()使用，设置 m_matRawFrame / m_nTotalFrameCount / m_nCurrentFrameIndex / m_bStatus
-	 * 
-	 */
-public:
 	void SetRawFrame(const cv::Mat& frame);
 	void SetTotalFrameCount(int nTotalFrameCount);
 	void SetCurrentFrameIndex(int nCurrentFrameIndex);
 	void SetFileOpenedStatus(bool status);
-
-	void ClearUnsavedFrameInfo();
-
-	
-
-public:
 	void SetFrameInfo(const FrameInfo& frameInfo);
-//	bool OnNameSaved();
-
-	virtual std::vector<cv::Rect> GetUnsavedBox() override;
-	virtual std::vector<std::string> GetUnsavedName() override;
-
+	void ClearUnsavedFrameInfo();
 //////////////////////////////////////////////////////  实现  ////////////////////////////////////////////////
-
-// Refresh
-private:
-//	void Resize();
-//	void SetROI();
-//	void DrawFrameInfo();
-//	void PrepareImage();
-	void RefreshSlider();
-
-
 private:
 	CVideoMarkerPresenter* m_pPresenter;
 	CNameInputDialog* m_pNameDlg;
-//	Transformer m_Trans;
-
 private:
 	bool m_bStatus;
 	bool m_bTextStatus;
-
+private:
+ 	int m_nTotalFrameCount;
+	FrameInfo m_FrameInfo;
+	std::vector<cv::Rect> m_HighLight;
 private:
 	CString m_cstrTextFileName;
-
-
-// 绘制图像信息相关成员
-private:
-// 	int m_nOutputFrameWidth;
-// 	int m_nOutputFrameHeight;
- 	int m_nTotalFrameCount;
-// 	cv::Mat m_matRawFrame;
-// 	cv::Mat m_matBackGround;
-// 	cv::Mat m_matROI;
-
-	FrameInfo m_FrameInfo;
-
-	std::vector<cv::Rect> m_HighLight;
-
-private:
 	CString m_cstrVideoFileName;
-//	std::vector<std::string> m_AddPersonName;
-//	bool m_bFirstFrame;
-	
-//	std::vector<IDrawable*> m_drawables;
-
 
 // 控件
 private:
@@ -130,7 +72,6 @@ private:
 	int m_nCurrentFrameIndex;
 	CListBox m_ListBox;
 	CPictureBox* m_pPictureBox;
-
 
 // 状态管理
 // 在SetState(const std::string& state)中更新
@@ -140,16 +81,11 @@ private:
 	CStateBase* m_pState;
 	std::unordered_map<std::string, CStateBase*> m_States;
 
-
-
 private:
 	void SetState(const std::string& state);
 	void ShowFrameInfoInListBox();
-//	std::wstring ConvertFromFrameInfo(const FaceInfo& faceInfo);
-//	cv::Point ConvertFromCPoint(const CPoint& point);
-
 	void ClearHighLight();
-	std::vector<std::string> Split(const std::string& str, const std::string& delim);
+
 
 //////////////////////////////////////////////////////  实现  ////////////////////////////////////////////////
 
@@ -184,7 +120,5 @@ public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnBnClickedButton4();
 	afx_msg void OnLbnDblclkList1();
-
-
 
 };
