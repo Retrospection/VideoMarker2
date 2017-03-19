@@ -13,9 +13,8 @@ IMPLEMENT_DYNAMIC(CNameInputDialog, CDialogEx)
 
 CNameInputDialog::CNameInputDialog(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CNameInputDialog::IDD, pParent)
-	, m_strPersonName(_T(""))
+	, m_strPersonName(L"")
 {
-
 }
 
 CNameInputDialog::~CNameInputDialog()
@@ -31,6 +30,5 @@ void CNameInputDialog::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CNameInputDialog, CDialogEx)
 END_MESSAGE_MAP()
-
 
 // CNameInputDialog 消息处理程序

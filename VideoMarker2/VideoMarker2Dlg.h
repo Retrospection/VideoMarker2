@@ -63,8 +63,8 @@ private:
 	FrameInfo m_FrameInfo;
 	std::vector<cv::Rect> m_HighLight;
 private:
-	CString m_cstrTextFileName;
-	CString m_cstrVideoFileName;
+	std::string m_strTextFileName;
+	std::string m_strVideoFileName;
 
 // ¿Ø¼þ
 private:
@@ -121,4 +121,6 @@ public:
 	afx_msg void OnBnClickedButton4();
 	afx_msg void OnLbnDblclkList1();
 
+	afx_msg void OnBnClickedButtonRevoke();
+	afx_msg void OnBnClickedButtonRedo();
 };

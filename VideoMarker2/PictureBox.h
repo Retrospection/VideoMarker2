@@ -27,12 +27,14 @@ public:
 	void SetHighLight(const std::vector<cv::Rect>& highLight);
 	std::vector<cv::Rect> GetUnsavedBoxesInRaw();
 	std::vector<std::string> GetUnsavedNames()const;
-//	std::vector<cv::Rect> GetUnsavedBoxesInRoi();
 
 	void ClearUnsavedBoxes();
 	void ClearUnsavedNames();
 
+	void Undo();
+	void Redo();
 
+	void SetIllegal(const FaceInfo& info, size_t index);
 
 
 private:
@@ -45,10 +47,18 @@ private:
 	CStateBase* m_pState;
 
 	cv::Point m_ActivePoints[2];
-	std::vector<cv::Rect> m_boxes;
 	std::vector<cv::Rect> m_HighLights;
 	FrameInfo m_FrameInfo;
 	std::vector<std::string> m_UnsavedNames;
+	std::vector<cv::Rect> m_UnsavedBoxes;
+
+
+	std::vector<FaceInfo> m_IllegalFaceInfo;
+	std::vector<size_t> m_IllegalIndex;
+
+
+	size_t m_nEndIndexOfUnsavedDrawables;
+
 	bool m_bDrawing;
 	cv::Mat m_image;
 

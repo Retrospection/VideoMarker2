@@ -117,11 +117,6 @@ void CVideoMarkerPresenter::AddMark()
 
 void CVideoMarkerPresenter::SaveMark()
 {
-// 	if (m_pDlg->m_pPictureBox->m_boxes.empty())
-// 	{
-// 		return;
-// 	}
-
 	std::vector<cv::Rect> unsavedBox = m_pDlg->GetUnsavedBox();
 	std::vector<std::string> unsavedName = m_pDlg->GetUnsavedName();
 	assert(unsavedName.size() == unsavedBox.size());
@@ -129,19 +124,41 @@ void CVideoMarkerPresenter::SaveMark()
 	{
 		return;
 	}
+
 	FrameInfo newFrameInfo;
-	newFrameInfo.facesInfo.resize(unsavedName.size());
-	std::transform(unsavedBox.begin(), unsavedBox.end(), unsavedName.begin(), newFrameInfo.facesInfo.begin(), [](const cv::Rect& rc, const std::string& name)->FaceInfo { return{ name, rc }; });
+//	newFrameInfo.facesInfo.resize(unsavedName.size());
+//	std::transform(unsavedBox.begin(), unsavedBox.end(), unsavedName.begin(), newFrameInfo.facesInfo.begin(), [&](const cv::Rect& rc, const std::string& name)->FaceInfo { ValidateFaceInfo({ name, rc }) ? return{ name, rc } : m_pDlg->m_pPictureBox->m_IllegalFaceInfo.push_back({ name, rc }), return{}; });
+
+	for (size_t i = 0; i < unsavedBox.size(); ++i)
+	{
+		if (IsValidateFaceInfo({unsavedName[i],unsavedBox[i]}))
+		{
+			newFrameInfo.facesInfo.push_back({ unsavedName[i], unsavedBox[i] });
+		}
+		else
+		{
+			m_pDlg->m_pPictureBox->SetIllegal({ unsavedName[i], unsavedBox[i] }, i);
+		}
+
+	}
+
 
 	assert(m_pVideoPlayer->m_nCurrentFrameIndex >= 0);
 	size_t frameIndex = static_cast<size_t>(m_pVideoPlayer->m_nCurrentFrameIndex);
 	m_pTextMgr->AddFaceInfo(frameIndex, newFrameInfo);
 	m_pDlg->ClearUnsavedFrameInfo();
-//	m_pDlg->m_AddPersonName.clear();
-//	m_pDlg->m_pPictureBox->m_boxes.clear();
 	FrameInfo frameInfo;
 	bool result = m_pTextMgr->GetFrameInfoByPos(frameInfo, frameIndex);
 	assert(result);
 	m_pDlg->SetFrameInfo(frameInfo);
 	m_pDlg->Refresh();
+}
+
+bool CVideoMarkerPresenter::IsValidateFaceInfo(const FaceInfo& faceInfo)
+{
+	if (faceInfo.box.width < 40 || faceInfo.box.height < 40)
+	{
+		return false;
+	}
+	return true;
 }

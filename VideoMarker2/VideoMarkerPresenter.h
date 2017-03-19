@@ -33,6 +33,8 @@ public:
 
 
 
+private:
+	bool IsValidateFaceInfo(const FaceInfo& faceInfo);
 
 private:
 	CVideoPlayer* m_pVideoPlayer;

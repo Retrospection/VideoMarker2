@@ -29,28 +29,23 @@ const cv::Scalar ColorUnsaved = Red;
 const cv::Scalar ColorSaved = Red;
 const cv::Scalar ColorHighLight = Green;
 
-CPictureBox::CPictureBox(CStateBase* pState) :CStatic(), m_Trans(Transformer::Default())
+CPictureBox::CPictureBox(CStateBase* pState) :CStatic(), m_Trans(Transformer::Default()), m_nEndIndexOfUnsavedDrawables(0)
 {
 	m_pState = pState;
 	m_bDrawing = false;
-
 	m_ActivePoints[0] = INIT_POINT;
 	m_ActivePoints[1] = INIT_POINT;
 }
 
 CPictureBox::~CPictureBox()
 {
-// 	for (auto& item:m_drawables)
-// 	{
-// 		delete item;
-// 	}
+
 }
 
 BEGIN_MESSAGE_MAP(CPictureBox, CStatic)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_MOUSEMOVE()
-//	ON_WM_PAINT()
 END_MESSAGE_MAP()
 
 // CPictureBox 消息处理程序
@@ -80,7 +75,6 @@ bool CPictureBox::GetActiveBox(cv::Rect& activeBox) const
 
 void CPictureBox::SetImage(const cv::Mat& image)
 {
-//	m_pTrans = &((CVideoMarker2Dlg*)GetParent())->m_Trans;
 
 	if (m_image.empty())
 	{
@@ -88,7 +82,6 @@ void CPictureBox::SetImage(const cv::Mat& image)
 		this->GetWindowRect(&rc);
 		m_image = cv::Mat(rc.Height(), rc.Width(), CV_8UC3);
 	}
-//	assert(m_image.size() == image.size());
 	if (m_image.size() != image.size())
 	{
 		m_Trans = Transformer::Make(m_image.size(), image.size());
@@ -100,18 +93,12 @@ void CPictureBox::SetImage(const cv::Mat& image)
 std::vector<cv::Rect> CPictureBox::GetUnsavedBoxesInRaw()
 {
 	std::vector<cv::Rect> ret;
-	for (const auto& rect : m_boxes)
+	for (const auto& rect : m_UnsavedBoxes)
 	{
 		ret.push_back(m_Trans.Trans(rect,Transformer::Coordinate::Roi, Transformer::Coordinate::Raw));
 	}
 	return std::move(ret);
 }
-
-// std::vector<cv::Rect> CPictureBox::GetUnsavedBoxesInRoi()
-// {
-// 	return m_boxes;
-// }
-
 
 
 void CPictureBox::OnLButtonUp(UINT nFlags, CPoint point)
@@ -123,32 +110,20 @@ void CPictureBox::OnLButtonUp(UINT nFlags, CPoint point)
 
 	m_bDrawing = false;
 
-	// 此处保证了位于 m_boxes 中的所有盒子所处的坐标系为 roi 坐标系
-// 	cv::Rect activeBox;
-// 	if (GetActiveBox(activeBox) && ((CVideoMarker2Dlg*)GetParent())->OnNameSaved())
-// 	{
-// 		m_boxes.push_back(activeBox);
-// 	}
-
-
 	CNameInputDialog dlg;
 	cv::Rect activeBox;
 	if (dlg.DoModal() == IDOK && GetActiveBox(activeBox))
 	{
-		m_boxes.push_back(activeBox);
+		m_UnsavedBoxes.push_back(activeBox);
 		m_UnsavedNames.push_back(CStringHelper::ConvertCStringToString(dlg.m_strPersonName));
+		++m_nEndIndexOfUnsavedDrawables;
 	}
-
 
 	Invalidate(FALSE);
 	m_ActivePoints[0] = INIT_POINT;
 	m_ActivePoints[1] = INIT_POINT;
 	CStatic::OnLButtonUp(nFlags, point);
 }
-
-
-
-
 
 void CPictureBox::OnMouseMove(UINT nFlags, CPoint point)
 {
@@ -157,7 +132,6 @@ void CPictureBox::OnMouseMove(UINT nFlags, CPoint point)
 		return;
 	}
 	m_ActivePoints[1] = { point.x, point.y };
-//	((CVideoMarker2Dlg*)GetParent())->PrepareImage();
 	Invalidate(FALSE);
 	CStatic::OnMouseMove(nFlags, point);
 }
@@ -187,8 +161,6 @@ void CPictureBox::DrawItem(LPDRAWITEMSTRUCT /*lpDrawItemStruct*/)
 	}
 	cv::Mat preparedImage = m_image.clone();
 	DrawFrameInfo(preparedImage(m_Trans.GetRoiRect()));
-
-
 	CDC* pDC = GetDC();
 	HDC hDC = pDC->GetSafeHdc();
 	CRect rect;
@@ -201,12 +173,6 @@ void CPictureBox::DrawItem(LPDRAWITEMSTRUCT /*lpDrawItemStruct*/)
 
 void CPictureBox::DrawFrameInfo(cv::Mat& img)
 {
-
-//	m_FrameInfo = ((CVideoMarker2Dlg*)GetParent())->m_FrameInfo;
-
-//	m_HighLights = { ((CVideoMarker2Dlg*)GetParent())->m_HighLight };
-
-
 	for (const auto& faceInfo : m_FrameInfo.facesInfo)
 	{
 		cv::Rect rc = m_Trans.Trans(faceInfo.box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi);
@@ -214,35 +180,24 @@ void CPictureBox::DrawFrameInfo(cv::Mat& img)
 		m_drawables.push_back(new DText(faceInfo.strPersonName, { rc.x, rc.y }, ColorSaved));
 	}
 
-
-
-// 	for (auto& box : m_boxes)
+// 	assert(m_UnsavedBoxes.size() == m_UnsavedNames.size());
+// 	for (size_t i = 0; i < m_UnsavedBoxes.size();++i)
 // 	{
-// 		m_drawables.push_back(new DBox(box, ColorUnsaved));
-// 	}
-// 
-// 	for (const auto& unsavedName : m_UnsavedNames)
-// 	{
-
-// 		m_drawables.push_back()
+// 		m_drawables.push_back(new DBox(m_UnsavedBoxes[i], ColorUnsaved));
+// 		m_drawables.push_back(new DText(m_UnsavedNames[i], { m_UnsavedBoxes[i].x, m_UnsavedBoxes[i].y }, ColorSaved));
 // 	}
 
-	assert(m_boxes.size() == m_UnsavedNames.size());
-	for (size_t i = 0; i < m_boxes.size();++i)
+	for (size_t i = 0; i < m_nEndIndexOfUnsavedDrawables; ++i)
 	{
-		m_drawables.push_back(new DBox(m_boxes[i], ColorUnsaved));
-		m_drawables.push_back(new DText(m_UnsavedNames[i], { m_boxes[i].x, m_boxes[i].y }, ColorSaved));
+		m_drawables.push_back(new DBox(m_UnsavedBoxes[i], ColorUnsaved));
+		m_drawables.push_back(new DText(m_UnsavedNames[i], { m_UnsavedBoxes[i].x, m_UnsavedBoxes[i].y }, ColorSaved));
 	}
 
-
-	// active box
 	cv::Rect rc;
 	if (GetActiveBox(rc))
 	{
 		m_drawables.push_back(new DBox(rc, ColorUnsaved));
 	}
-
-
 
 	for (auto& highlight:m_HighLights)
 	{
@@ -272,7 +227,7 @@ void CPictureBox::SetFrameInfo(const FrameInfo& frameInfo)
 
 void CPictureBox::ClearUnsavedBoxes()
 {
-	m_boxes.clear();
+	m_UnsavedBoxes.clear();
 }
 
 std::vector<std::string> CPictureBox::GetUnsavedNames() const
@@ -283,6 +238,27 @@ std::vector<std::string> CPictureBox::GetUnsavedNames() const
 void CPictureBox::ClearUnsavedNames()
 {
 	m_UnsavedNames.clear();
+}
+
+void CPictureBox::Undo()
+{
+	if (m_nEndIndexOfUnsavedDrawables == 0)
+	{
+		return;
+	}
+	--m_nEndIndexOfUnsavedDrawables;
+	Invalidate(FALSE);
+}
+
+void CPictureBox::Redo()
+{
+	assert(m_UnsavedNames.size() == m_UnsavedBoxes.size());
+	if (m_nEndIndexOfUnsavedDrawables == m_UnsavedBoxes.size())
+	{
+		return;
+	}
+	++m_nEndIndexOfUnsavedDrawables;
+	Invalidate(FALSE);
 }
 
 

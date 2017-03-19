@@ -55,6 +55,8 @@ BEGIN_MESSAGE_MAP(CVideoMarker2Dlg, CDialogEx)
 	ON_WM_TIMER()
 	ON_BN_CLICKED(IDC_BUTTON4, &CVideoMarker2Dlg::OnBnClickedButton4)
 	ON_LBN_DBLCLK(IDC_LIST1, &CVideoMarker2Dlg::OnLbnDblclkList1)
+	ON_BN_CLICKED(IDC_BUTTON_REVOKE, &CVideoMarker2Dlg::OnBnClickedButtonRevoke)
+	ON_BN_CLICKED(IDC_BUTTON_REDO, &CVideoMarker2Dlg::OnBnClickedButtonRedo)
 END_MESSAGE_MAP()
 
 // CVideoMarker2Dlg 消息处理程序
@@ -142,7 +144,12 @@ void CVideoMarker2Dlg::Refresh()
 
 std::string CVideoMarker2Dlg::GetFileName() const 
 {
-	return CStringHelper::ConvertCStringToString(m_cstrVideoFileName);
+	return m_strVideoFileName;
+}
+
+std::string CVideoMarker2Dlg::GetTextFileName() const
+{
+	return m_strTextFileName;
 }
 
 void CVideoMarker2Dlg::SetFileOpenedStatus(bool status)
@@ -180,10 +187,7 @@ void CVideoMarker2Dlg::RefreshSlider()
 	pSlidCtrl->SetRange(0, m_nTotalFrameCount == 0 ? 0 : m_nTotalFrameCount - 1);
 }
 
-std::string CVideoMarker2Dlg::GetTextFileName() const
-{
-	return CStringHelper::ConvertCStringToString(m_cstrTextFileName);
-}
+
 
 void CVideoMarker2Dlg::SetFrameInfo(const FrameInfo& frameInfo)
 {
@@ -216,7 +220,7 @@ void CVideoMarker2Dlg::OnBnClickedOpenFileButton()
 		return;
 	}
 
-	m_cstrVideoFileName = fileDlg.GetPathName();
+	m_strVideoFileName = CStringHelper::ConvertCStringToString(fileDlg.GetPathName());
 
 	m_pState->Open();
 }
@@ -249,7 +253,7 @@ void CVideoMarker2Dlg::OnBnClickedOpenTextFile()
 		return;
 	}
 
-	m_cstrTextFileName = fileDlg.GetPathName();
+	m_strTextFileName = CStringHelper::ConvertCStringToString(fileDlg.GetPathName());
 	m_pState->OpenTextFile();
 }
 
@@ -325,6 +329,16 @@ void CVideoMarker2Dlg::OnLbnDblclkList1()
 
 }
 
+void CVideoMarker2Dlg::OnBnClickedButtonRevoke()
+{
+	m_pPictureBox->Undo();
+}
+
+void CVideoMarker2Dlg::OnBnClickedButtonRedo()
+{
+	m_pPictureBox->Redo();
+}
+
 std::vector<cv::Rect> CVideoMarker2Dlg::GetUnsavedBox()
 {
 	return m_pPictureBox->GetUnsavedBoxesInRaw();
@@ -346,3 +360,9 @@ void CVideoMarker2Dlg::ClearUnsavedFrameInfo()
 	m_pPictureBox->ClearUnsavedNames();
 	m_pPictureBox->ClearUnsavedBoxes();
 }
+
+
+
+
+
+
