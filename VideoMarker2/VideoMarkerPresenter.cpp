@@ -138,11 +138,9 @@ void CVideoMarkerPresenter::SaveMark()
 		else
 		{
 			m_pDlg->m_pPictureBox->SetIllegal({ unsavedName[i], unsavedBox[i] }, i);
+			m_pDlg->m_pPictureBox->DecreaseEndIndex();
 		}
-
 	}
-
-
 	assert(m_pVideoPlayer->m_nCurrentFrameIndex >= 0);
 	size_t frameIndex = static_cast<size_t>(m_pVideoPlayer->m_nCurrentFrameIndex);
 	m_pTextMgr->AddFaceInfo(frameIndex, newFrameInfo);
@@ -156,7 +154,7 @@ void CVideoMarkerPresenter::SaveMark()
 
 bool CVideoMarkerPresenter::IsValidateFaceInfo(const FaceInfo& faceInfo)
 {
-	if (faceInfo.box.width < 40 || faceInfo.box.height < 40)
+	if (faceInfo.box.width < 100 || faceInfo.box.height < 100)
 	{
 		return false;
 	}

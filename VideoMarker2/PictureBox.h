@@ -36,6 +36,8 @@ public:
 
 	void SetIllegal(const FaceInfo& info, size_t index);
 
+	void DecreaseEndIndex();
+
 
 private:
 	void DrawFrameInfo(cv::Mat& img);

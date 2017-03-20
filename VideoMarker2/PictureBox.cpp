@@ -24,10 +24,14 @@ const cv::Point INIT_POINT = { -1, -1 };
 const cv::Scalar Green{ 0, 255, 0 };
 const cv::Scalar Red{ 0, 0, 255 };
 const cv::Scalar Black{ 0, 0, 0 };
+const cv::Scalar Blue{ 255, 0, 0 };
 
 const cv::Scalar ColorUnsaved = Red;
 const cv::Scalar ColorSaved = Red;
 const cv::Scalar ColorHighLight = Green;
+const cv::Scalar ColorIllegal = Blue;
+
+
 
 CPictureBox::CPictureBox(CStateBase* pState) :CStatic(), m_Trans(Transformer::Default()), m_nEndIndexOfUnsavedDrawables(0)
 {
@@ -199,6 +203,11 @@ void CPictureBox::DrawFrameInfo(cv::Mat& img)
 		m_drawables.push_back(new DBox(rc, ColorUnsaved));
 	}
 
+	for (auto& illegal: m_IllegalFaceInfo)
+	{
+		m_drawables.push_back(new DBox(m_Trans.Trans(illegal.box,Transformer::Coordinate::Raw,Transformer::Coordinate::Roi), ColorIllegal));
+	}
+
 	for (auto& highlight:m_HighLights)
 	{
 		m_drawables.push_back(new DBox(m_Trans.Trans(highlight,Transformer::Coordinate::Raw, Transformer::Coordinate::Roi), ColorHighLight));
@@ -259,6 +268,18 @@ void CPictureBox::Redo()
 	}
 	++m_nEndIndexOfUnsavedDrawables;
 	Invalidate(FALSE);
+}
+
+void CPictureBox::SetIllegal(const FaceInfo& info, size_t index)
+{
+	m_IllegalFaceInfo.push_back(info);
+	m_IllegalIndex.push_back(index);
+}
+
+void CPictureBox::DecreaseEndIndex()
+{
+	assert(m_nEndIndexOfUnsavedDrawables > 0);
+	--m_nEndIndexOfUnsavedDrawables;
 }
 
 
