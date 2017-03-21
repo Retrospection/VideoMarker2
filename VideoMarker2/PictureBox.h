@@ -42,6 +42,9 @@ public:
 private:
 	void DrawFrameInfo(cv::Mat& img);
 	bool GetActiveBox(cv::Rect& activeBox) const;
+	//bool GetActiveBox2(RRect& rr) const;
+
+	void SaveFaceInfo(const FaceInfo& faceInfo);
 
 
 	Transformer m_Trans;
@@ -65,6 +68,9 @@ private:
 	cv::Mat m_image;
 
 	std::vector<IDrawable*> m_drawables;
+
+	static const wchar_t* m_AlertMessage[4];
+	static const size_t NUMBER_OF_VALIDATOR_TYPES = sizeof(m_AlertMessage) / sizeof(m_AlertMessage[0]);
 
 protected:
 	DECLARE_MESSAGE_MAP()

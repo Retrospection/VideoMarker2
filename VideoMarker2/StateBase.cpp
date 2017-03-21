@@ -121,4 +121,15 @@ void CStateBase::SaveMark()
 
 }
 
+void CStateBase::OpenProject()
+{
+	wchar_t* alertMessage[] = { L"", L"Load Project File Failed!", L"open video failed!", L"open text failed!" };
+	size_t result = GetPresenter()->OpenProject();
+	if (result != 0)
+	{
+		_pDlg->MessageBox(alertMessage[result]);
+	}
+	SetState(STOP);
+}
+
 

@@ -13,5 +13,6 @@ public:
 // 只允许打开文件
 	virtual void Open() override;
 	
+
 };
 

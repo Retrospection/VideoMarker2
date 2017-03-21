@@ -3,16 +3,45 @@
 
 #include <string>
 #include <codecvt>
+#include <fstream>
 
 #include "NameInputDialog.h"
 
+#include "constant.h"
 
+
+
+
+bool IsOverlapping(const cv::Rect& rc1, const cv::Rect& rc2)
+{
+	double intersection = (double)(rc1 & rc2).area();
+	double per1 = intersection / rc1.area();
+	double per2 = intersection / rc2.area();
+	return per1 > 0.5 || per2 > 0.5;
+}
 
 CVideoMarkerPresenter::CVideoMarkerPresenter(CVideoMarker2Dlg* pDlg)
 	:m_pDlg(pDlg)
 {
 	this->m_pVideoPlayer = new CVideoPlayer();
 	this->m_pTextMgr = new CTextFileManager();
+
+	m_validator[0] =std::make_pair(BOX_SMALL_ERROR, [](const FaceInfo& info, const FrameInfo&)
+	{
+		return (info.box.width >= 100 && info.box.height >= 100);
+	});
+
+	m_validator[1] = std::make_pair(NAME_EXIST_ERROR, [](const FaceInfo& info, const FrameInfo& existed)
+	{
+		return std::none_of(existed.facesInfo.begin(), existed.facesInfo.end(), [&](const FaceInfo& faceInfo){ return info.strPersonName == faceInfo.strPersonName; });
+	});
+	m_validator[2] = std::make_pair(IOU_ERROR, [](const FaceInfo& info, const FrameInfo& existed)
+	{
+		return std::none_of(existed.facesInfo.begin(), existed.facesInfo.end(), [&](const FaceInfo& faceInfo){ return IsOverlapping(info.box, faceInfo.box); });
+	});
+
+	m_validator2[0] = std::make_pair(NAME_EXIST_ERROR, std::bind(&CVideoMarkerPresenter::CheckNameExist, this, std::placeholders::_1));
+	m_validator2[1] = std::make_pair(IOU_ERROR, std::bind(&CVideoMarkerPresenter::CheckOverlapping, this, std::placeholders::_1));
 }
 
 
@@ -25,6 +54,19 @@ CVideoMarkerPresenter::~CVideoMarkerPresenter()
 void CVideoMarkerPresenter::Open()
 {
 	std::string strFileName = m_pDlg->GetFileName();
+// 	m_pDlg->SetFileOpenedStatus(m_pVideoPlayer->Open(strFileName));
+// 	cv::Mat frame;
+// 	m_pVideoPlayer->GetNextFrame(frame);
+// 	m_pDlg->SetRawFrame(frame);
+// 	m_pDlg->SetTotalFrameCount(m_pVideoPlayer->m_nTotalFrames);
+// 	m_pDlg->SetCurrentFrameIndex(0);
+// 	m_pDlg->Refresh();
+	Open(strFileName); 
+}
+
+bool CVideoMarkerPresenter::Open(const std::string& strVideoFileName)
+{
+	std::string strFileName = strVideoFileName;
 	m_pDlg->SetFileOpenedStatus(m_pVideoPlayer->Open(strFileName));
 	cv::Mat frame;
 	m_pVideoPlayer->GetNextFrame(frame);
@@ -32,20 +74,28 @@ void CVideoMarkerPresenter::Open()
 	m_pDlg->SetTotalFrameCount(m_pVideoPlayer->m_nTotalFrames);
 	m_pDlg->SetCurrentFrameIndex(0);
 	m_pDlg->Refresh();
+	return true;
 }
-
+#include <iostream>
 void CVideoMarkerPresenter::Play()
 {
 	assert(m_pVideoPlayer->IsOpened());
+
 	cv::Mat frame;
 	m_pVideoPlayer->GetNextFrame(frame);
 	FrameInfo frameInfo;
 	m_pTextMgr->GetFrameInfoByPos(frameInfo, m_pVideoPlayer->m_nCurrentFrameIndex);
+	std::cout << "总帧数为:" << m_pVideoPlayer->m_nTotalFrames << "当前帧号：" << m_pVideoPlayer->m_nCurrentFrameIndex << std::endl;
 	m_pDlg->SetRawFrame(frame);
 	m_pDlg->SetTotalFrameCount(m_pVideoPlayer->m_nTotalFrames);
 	m_pDlg->SetCurrentFrameIndex(m_pVideoPlayer->m_nCurrentFrameIndex);
 	m_pDlg->SetFrameInfo(frameInfo);
 	m_pDlg->Refresh();
+	if (m_pVideoPlayer->m_nCurrentFrameIndex + 1 >= m_pVideoPlayer->m_nTotalFrames)
+	{
+		m_pDlg->OnBnClickedStopButton();
+		return;
+	}
 }
 
 
@@ -78,6 +128,7 @@ void CVideoMarkerPresenter::SeekTo(int nPos)
 	m_pVideoPlayer->GetNextFrame(rawFrame);
 	FrameInfo frameInfo;
 	m_pTextMgr->GetFrameInfoByPos(frameInfo, m_pVideoPlayer->m_nCurrentFrameIndex);
+	std::cout << "总帧数为:" << m_pVideoPlayer->m_nTotalFrames << "当前帧号：" << m_pVideoPlayer->m_nCurrentFrameIndex << std::endl;
 	m_pDlg->SetCurrentFrameIndex(nPos);
 	m_pDlg->SetRawFrame(rawFrame);
 	m_pDlg->SetFrameInfo(frameInfo);
@@ -99,9 +150,20 @@ void CVideoMarkerPresenter::OpenTextFile()
 	std::string strFileName = m_pDlg->GetTextFileName();
 	m_pDlg->SetTextFileOpenedStatus(m_pTextMgr->Open(strFileName));
 	FrameInfo frameInfo;
-	m_pTextMgr->GetFrameInfoByPos(frameInfo,m_pVideoPlayer->m_nCurrentFrameIndex);
+	m_pTextMgr->GetFrameInfoByPos(frameInfo, m_pVideoPlayer->m_nCurrentFrameIndex);
 	m_pDlg->SetFrameInfo(frameInfo);
 	m_pDlg->Refresh();
+}
+
+bool CVideoMarkerPresenter::OpenTextFile(const std::string& strTextFileName)
+{
+	std::string strFileName = strTextFileName;
+	m_pDlg->SetTextFileOpenedStatus(m_pTextMgr->Open(strFileName));
+	FrameInfo frameInfo;
+	m_pTextMgr->GetFrameInfoByPos(frameInfo, m_pVideoPlayer->m_nCurrentFrameIndex);
+	m_pDlg->SetFrameInfo(frameInfo);
+	m_pDlg->Refresh();
+	return true;
 }
 
 void CVideoMarkerPresenter::SaveTextFile()
@@ -131,15 +193,15 @@ void CVideoMarkerPresenter::SaveMark()
 
 	for (size_t i = 0; i < unsavedBox.size(); ++i)
 	{
-		if (IsValidateFaceInfo({unsavedName[i],unsavedBox[i]}))
-		{
+		//if (IsValidateFaceInfo({unsavedName[i],unsavedBox[i]}))
+		//{
 			newFrameInfo.facesInfo.push_back({ unsavedName[i], unsavedBox[i] });
-		}
-		else
-		{
-			m_pDlg->m_pPictureBox->SetIllegal({ unsavedName[i], unsavedBox[i] }, i);
-			m_pDlg->m_pPictureBox->DecreaseEndIndex();
-		}
+		//}
+		//else
+		//{
+		//	m_pDlg->m_pPictureBox->SetIllegal({ unsavedName[i], unsavedBox[i] }, i);
+		//	m_pDlg->m_pPictureBox->DecreaseEndIndex();
+		//}
 	}
 	assert(m_pVideoPlayer->m_nCurrentFrameIndex >= 0);
 	size_t frameIndex = static_cast<size_t>(m_pVideoPlayer->m_nCurrentFrameIndex);
@@ -152,11 +214,102 @@ void CVideoMarkerPresenter::SaveMark()
 	m_pDlg->Refresh();
 }
 
-bool CVideoMarkerPresenter::IsValidateFaceInfo(const FaceInfo& faceInfo)
+unsigned int CVideoMarkerPresenter::ValidateFaceInfo(const FaceInfo& info)
 {
-	if (faceInfo.box.width < 100 || faceInfo.box.height < 100)
+	FrameInfo frameInfo;
+	int currentFrameIndex = m_pDlg->GetCurrentFrameIndex();
+	bool result = m_pTextMgr->GetFrameInfoByPos(frameInfo, currentFrameIndex);
+	assert(result);
+	auto pos = std::find_if_not(std::begin(m_validator), std::end(m_validator), [&](const std::pair<int, std::function<bool(const FaceInfo&, const FrameInfo&)>>& p){ return p.second(info, frameInfo); });
+	return (pos == std::end(m_validator)) ? VALID : pos->first;
+}
+
+#include <set>
+unsigned int CVideoMarkerPresenter::ValidateFacesInfo(const std::vector<FaceInfo>& facesInfo)
+{
+	unsigned int ret = CheckStage1(facesInfo);
+	if (ret != VALID)
 	{
-		return false;
+		return ret;
 	}
+
+	return CheckStage2(facesInfo);
+
+}
+
+bool CVideoMarkerPresenter::CheckNameExist(const std::vector<FaceInfo>& facesInfo)
+{
+	std::set<std::string> personNames;
+	for (auto& faceinfo : facesInfo)
+	{
+		if (!personNames.insert(faceinfo.strPersonName).second)
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+unsigned int CVideoMarkerPresenter::CheckStage1(const std::vector<FaceInfo>& facesInfo)
+{
+	for (auto& faceinfo: facesInfo)
+	{
+		unsigned int result = ValidateFaceInfo(faceinfo);
+		if (result != VALID)
+		{
+			return result;
+		}
+	}
+	return VALID;
+}
+
+unsigned int CVideoMarkerPresenter::CheckStage2(const std::vector<FaceInfo>& facesInfo)
+{
+	auto pos = std::find_if_not(std::begin(m_validator2), std::end(m_validator2), [&](const std::pair<unsigned int, std::function<bool(const std::vector<FaceInfo>&)>>& p){ return p.second(facesInfo); });
+	return (pos == std::end(m_validator2)) ? VALID : pos->first;
+}
+
+bool CVideoMarkerPresenter::CheckOverlapping(const std::vector<FaceInfo>& facesInfo)
+{
+	for (size_t i = 0; i < facesInfo.size(); ++i)
+	{
+		for (size_t j = i + 1; j < facesInfo.size(); ++j)
+		{
+			if (IsOverlapping(facesInfo[i].box, facesInfo[j].box))
+			{
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+#include <iostream>
+
+int CVideoMarkerPresenter::OpenProject()
+{
+	std::string strProjectFileName = m_pDlg->GetProjectFileName();
+	std::cout << strProjectFileName << std::endl;
+	ProjectSetting setting;
+	if (!LoadProject(setting, strProjectFileName))
+	{
+		return LOAD_PROJECT_ERROR;
+	}
+	if (!Open(setting.m_strVideoFileName))
+	{
+		return OPEN_VIDEO_ERROR;
+	}
+	if (!OpenTextFile(setting.m_strTextFileName))
+	{
+		return OPEN_TEXTFILE_ERROR;
+	}
+	return SUCCESS;
+}
+
+bool CVideoMarkerPresenter::LoadProject(ProjectSetting& ret, const std::string& strProjectFileName)
+{
+	std::ifstream ifs(strProjectFileName);
+	std::getline(ifs, ret.m_strVideoFileName);
+	std::getline(ifs, ret.m_strTextFileName);
 	return true;
 }

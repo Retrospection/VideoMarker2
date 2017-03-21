@@ -73,7 +73,7 @@ bool CVideoPlayer::SeekTo(int nPos)
 		return false;
 	}
 	m_VideoCapture.set(CV_CAP_PROP_POS_FRAMES,nPos);
-	m_nCurrentFrameIndex = nPos;
+	m_nCurrentFrameIndex = nPos - 1;
 	return true;
 }
 

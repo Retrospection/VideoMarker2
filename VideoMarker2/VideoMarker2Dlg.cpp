@@ -11,9 +11,12 @@
 #define new DEBUG_NEW
 #endif
 
+#include <conio.h>
 #include <string>
 #include <codecvt>
 #include <cassert>
+
+#include <iostream>
 
 
 #include "StateFactory.h"
@@ -57,6 +60,7 @@ BEGIN_MESSAGE_MAP(CVideoMarker2Dlg, CDialogEx)
 	ON_LBN_DBLCLK(IDC_LIST1, &CVideoMarker2Dlg::OnLbnDblclkList1)
 	ON_BN_CLICKED(IDC_BUTTON_REVOKE, &CVideoMarker2Dlg::OnBnClickedButtonRevoke)
 	ON_BN_CLICKED(IDC_BUTTON_REDO, &CVideoMarker2Dlg::OnBnClickedButtonRedo)
+	ON_BN_CLICKED(IDC_BUTTON_PROJECT, &CVideoMarker2Dlg::OnBnClickedButtonProject)
 END_MESSAGE_MAP()
 
 // CVideoMarker2Dlg 消息处理程序
@@ -67,6 +71,15 @@ BOOL CVideoMarker2Dlg::OnInitDialog()
 
 	SetIcon(m_hIcon, TRUE);			// 设置大图标
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
+
+
+	// 打开控制台
+	BOOL result = AllocConsole();
+	assert(result);
+	freopen("CONIN$", "r+t", stdin); // 重定向 STDIN
+	freopen("CONOUT$", "w+t", stdout); // 重定向STDOUT
+
+
 
 	// 滑条初始化
 	m_Slider.SetRange(1, 100);
@@ -89,6 +102,8 @@ void CVideoMarker2Dlg::OnDestroy()
 		delete p.second;
 	}
 	m_States.clear();
+
+	FreeConsole();
 
 }
 
@@ -149,6 +164,7 @@ std::string CVideoMarker2Dlg::GetFileName() const
 
 std::string CVideoMarker2Dlg::GetTextFileName() const
 {
+	std::cout << m_strTextFileName << std::endl;
 	return m_strTextFileName;
 }
 
@@ -225,7 +241,6 @@ void CVideoMarker2Dlg::OnBnClickedOpenFileButton()
 	m_pState->Open();
 }
 
-const int PLAY_TIMER = 1;
 
 void CVideoMarker2Dlg::OnBnClickedPlayVideoButton()
 {
@@ -234,12 +249,18 @@ void CVideoMarker2Dlg::OnBnClickedPlayVideoButton()
 
 void CVideoMarker2Dlg::OnBnClickedBackOneFrame()
 {
+	m_pPictureBox->ClearUnsavedBoxes();
+	m_pPictureBox->ClearUnsavedNames();
+	m_pState->Pause();
 	m_pState->BackOneFrame(m_nCurrentFrameIndex);
 
 }
 
 void CVideoMarker2Dlg::OnBnClickedForwardOneFrame()
 {
+	m_pPictureBox->ClearUnsavedBoxes();
+	m_pPictureBox->ClearUnsavedNames();
+	m_pState->Pause();
 	m_pState->ForwardOneFrame(m_nCurrentFrameIndex);
 }
 
@@ -290,6 +311,11 @@ void CVideoMarker2Dlg::OnBnClickedAddMark()
 void CVideoMarker2Dlg::OnTimer(UINT_PTR nIDEvent)
 {
 	// TODO:  在此添加消息处理程序代码和/或调用默认值
+	if (m_nCurrentFrameIndex+1 >= m_nTotalFrameCount)
+	{
+		CDialogEx::OnTimer(nIDEvent);
+		return;
+	}
 	if (nIDEvent == PLAY_TIMER)
 	{
 		m_pState->Play();   // 
@@ -361,8 +387,33 @@ void CVideoMarker2Dlg::ClearUnsavedFrameInfo()
 	m_pPictureBox->ClearUnsavedBoxes();
 }
 
+unsigned int CVideoMarker2Dlg::ValidateFaceInfo(const FaceInfo& info)
+{
+	std::vector<FaceInfo> allUnsavedFaceInfo;
+	std::vector<std::string> unsavedNames = m_pPictureBox->GetUnsavedNames();
+	std::vector<cv::Rect> unsavedBoxes = m_pPictureBox->GetUnsavedBoxesInRaw();
+	allUnsavedFaceInfo.resize(GetUnsavedName().size());
+	std::transform(unsavedBoxes.begin(), unsavedBoxes.end(), unsavedNames.begin(), allUnsavedFaceInfo.begin(), [](const cv::Rect& box, const std::string& strPersonName )->FaceInfo{ return{ strPersonName, box }; });
+	allUnsavedFaceInfo.push_back(info);
+	return m_pPresenter->ValidateFacesInfo(allUnsavedFaceInfo);
+}
+
+int CVideoMarker2Dlg::GetCurrentFrameIndex() const
+{
+	return m_nCurrentFrameIndex;
+}
 
 
 
+void CVideoMarker2Dlg::OnBnClickedButtonProject()
+{
+	// TODO:  在此添加控件通知处理程序代码
+	m_strProjectFileName = "D:\\data\\data\\Actor\\project.txt";
+	m_pState->OpenProject();
 
+}
 
+std::string CVideoMarker2Dlg::GetProjectFileName() const
+{
+	return m_strProjectFileName;
+}

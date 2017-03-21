@@ -36,6 +36,8 @@ public:
 	virtual void OnLButtonUp(int nFlags, cv::Point point);
 	virtual void SaveMark();
 
+	virtual void OpenProject();
+
 
 protected:
 	void SetState(const std::string& state);

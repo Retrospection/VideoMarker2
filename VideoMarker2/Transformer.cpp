@@ -26,7 +26,7 @@ Transformer Transformer::Make(cv::Size target, cv::Size source)
 	int x = 0;
 	int y = 0;
 	double ratio = 0.0;
-	if ((source.width / source.height) > (target.width / target.height))
+	if (((double)source.width / source.height) > ((double)target.width / target.height))
 	{
 		width = target.width;
 		ratio = ((double)source.width) / target.width;
@@ -39,7 +39,7 @@ Transformer Transformer::Make(cv::Size target, cv::Size source)
 		height = target.height;
 		ratio = ((double)source.height) / target.height;
 		width = source.width / ratio;
-		y = 0;
+ 		y = 0;
 		x = ((target.width / 2) - (width / 2));
 	}
 	return Transformer({ x, y, width, height }, ratio);

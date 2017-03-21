@@ -25,6 +25,9 @@ class CVideoMarkerPresenter;
 class CStateBase;
 class CPictureBox;
 
+const int PLAY_TIMER = 1;
+
+
 #include <vector>
 
 // CVideoMarker2Dlg 对话框
@@ -41,8 +44,11 @@ public:
 public:
 	std::string GetFileName() const;
 	std::string GetTextFileName()const;
+	std::string GetProjectFileName() const;
 	virtual std::vector<cv::Rect> GetUnsavedBox() override;
 	virtual std::vector<std::string> GetUnsavedName() override;
+	int GetCurrentFrameIndex() const;
+
 public:
 	void SetTextFileOpenedStatus(bool status);
 	void SetRawFrame(const cv::Mat& frame);
@@ -51,6 +57,10 @@ public:
 	void SetFileOpenedStatus(bool status);
 	void SetFrameInfo(const FrameInfo& frameInfo);
 	void ClearUnsavedFrameInfo();
+
+
+	unsigned int ValidateFaceInfo(const FaceInfo& info);
+
 //////////////////////////////////////////////////////  实现  ////////////////////////////////////////////////
 private:
 	CVideoMarkerPresenter* m_pPresenter;
@@ -65,6 +75,7 @@ private:
 private:
 	std::string m_strTextFileName;
 	std::string m_strVideoFileName;
+	std::string m_strProjectFileName;
 
 // 控件
 private:
@@ -123,4 +134,5 @@ public:
 
 	afx_msg void OnBnClickedButtonRevoke();
 	afx_msg void OnBnClickedButtonRedo();
+	afx_msg void OnBnClickedButtonProject();
 };

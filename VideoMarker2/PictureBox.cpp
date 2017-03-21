@@ -14,6 +14,35 @@
 
 //#include "Transformer.h"
 
+
+// ScopeGuard
+
+#include <functional>
+class ScopeGuard
+{
+public:
+	ScopeGuard(std::function<void()> f)
+		:m_function(f), m_bDismissed(false)
+	{
+	}
+	~ScopeGuard()
+	{
+		if (!m_bDismissed)
+		{
+			m_function();
+		}
+	}
+
+	void Dismiss()
+	{
+		m_bDismissed = true;
+	}
+
+private:
+	std::function<void()> m_function;
+	bool m_bDismissed;
+};
+
 // CPictureBox
 
 IMPLEMENT_DYNAMIC(CPictureBox, CStatic)
@@ -32,13 +61,18 @@ const cv::Scalar ColorHighLight = Green;
 const cv::Scalar ColorIllegal = Blue;
 
 
+const wchar_t* CPictureBox::m_AlertMessage[] = { L"", L"包围盒面积过小！", L"当前帧存在同名标注！", L"IOU过大！" };
 
-CPictureBox::CPictureBox(CStateBase* pState) :CStatic(), m_Trans(Transformer::Default()), m_nEndIndexOfUnsavedDrawables(0)
+
+CPictureBox::CPictureBox(CStateBase* pState) 
+	:CStatic(), m_Trans(Transformer::Default()), m_nEndIndexOfUnsavedDrawables(0)
+
 {
 	m_pState = pState;
 	m_bDrawing = false;
 	m_ActivePoints[0] = INIT_POINT;
 	m_ActivePoints[1] = INIT_POINT;
+	
 }
 
 CPictureBox::~CPictureBox()
@@ -105,28 +139,31 @@ std::vector<cv::Rect> CPictureBox::GetUnsavedBoxesInRaw()
 }
 
 
+
 void CPictureBox::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	if (!m_bDrawing)
 	{
 		return;
-	} 
-
+	}
+	m_ActivePoints[1] = {point.x, point.y};
 	m_bDrawing = false;
-
 	CNameInputDialog dlg;
 	cv::Rect activeBox;
+
+
 	if (dlg.DoModal() == IDOK && GetActiveBox(activeBox))
 	{
-		m_UnsavedBoxes.push_back(activeBox);
-		m_UnsavedNames.push_back(CStringHelper::ConvertCStringToString(dlg.m_strPersonName));
-		++m_nEndIndexOfUnsavedDrawables;
+		std::string strPersonName = CStringHelper::ConvertCStringToString(dlg.m_strPersonName);
+		SaveFaceInfo({ strPersonName, m_Trans.Trans(activeBox,Transformer::Coordinate::Roi, Transformer::Coordinate::Raw )});
 	}
+
 
 	Invalidate(FALSE);
 	m_ActivePoints[0] = INIT_POINT;
 	m_ActivePoints[1] = INIT_POINT;
 	CStatic::OnLButtonUp(nFlags, point);
+
 }
 
 void CPictureBox::OnMouseMove(UINT nFlags, CPoint point)
@@ -135,6 +172,19 @@ void CPictureBox::OnMouseMove(UINT nFlags, CPoint point)
 	{
 		return;
 	}
+
+	cv::Rect RoiRect = m_Trans.GetRoiRect();
+
+	if ((point.x > (RoiRect.x + RoiRect.width)) || (point.y >RoiRect.height))
+	{
+		m_bDrawing = false;
+		m_ActivePoints[0] = INIT_POINT;
+		m_ActivePoints[1] = INIT_POINT;
+		Invalidate(FALSE);
+		CStatic::OnMouseMove(nFlags, point);
+		return;
+	}
+
 	m_ActivePoints[1] = { point.x, point.y };
 	Invalidate(FALSE);
 	CStatic::OnMouseMove(nFlags, point);
@@ -237,6 +287,7 @@ void CPictureBox::SetFrameInfo(const FrameInfo& frameInfo)
 void CPictureBox::ClearUnsavedBoxes()
 {
 	m_UnsavedBoxes.clear();
+	m_nEndIndexOfUnsavedDrawables = 0;
 }
 
 std::vector<std::string> CPictureBox::GetUnsavedNames() const
@@ -247,6 +298,7 @@ std::vector<std::string> CPictureBox::GetUnsavedNames() const
 void CPictureBox::ClearUnsavedNames()
 {
 	m_UnsavedNames.clear();
+	m_nEndIndexOfUnsavedDrawables = 0;
 }
 
 void CPictureBox::Undo()
@@ -281,5 +333,31 @@ void CPictureBox::DecreaseEndIndex()
 	assert(m_nEndIndexOfUnsavedDrawables > 0);
 	--m_nEndIndexOfUnsavedDrawables;
 }
+
+void CPictureBox::SaveFaceInfo(const FaceInfo& faceInfo)
+{
+	unsigned int validateResult = ((CVideoMarker2Dlg*)GetParent())->ValidateFaceInfo(faceInfo);
+	assert(validateResult < NUMBER_OF_VALIDATOR_TYPES);
+	if (validateResult != 0)
+	{
+		MessageBox(m_AlertMessage[validateResult]);
+		return;
+	}
+
+	if (m_nEndIndexOfUnsavedDrawables != m_UnsavedBoxes.size())
+	{
+		m_UnsavedBoxes.resize(m_nEndIndexOfUnsavedDrawables);
+		m_UnsavedNames.resize(m_nEndIndexOfUnsavedDrawables);
+	}
+	m_UnsavedBoxes.push_back(m_Trans.Trans(faceInfo.box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi));
+	m_UnsavedNames.push_back(faceInfo.strPersonName);
+	++m_nEndIndexOfUnsavedDrawables;
+
+}
+
+// bool CPictureBox::GetActiveBox2(RRect& rr) const
+// {
+// 	return true;
+// }
 
 
