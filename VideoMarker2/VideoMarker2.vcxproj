@@ -57,6 +57,7 @@
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <BrowseInformation>true</BrowseInformation>
+      <PreprocessToFile>false</PreprocessToFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -123,6 +124,10 @@
     <ClInclude Include="PictureBox.h" />
     <ClInclude Include="PlayState.h" />
     <ClInclude Include="RectHelper.h" />
+    <ClInclude Include="S1.h" />
+    <ClInclude Include="S12.h" />
+    <ClInclude Include="S5.h" />
+    <ClInclude Include="S8.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="StateBase.h" />
     <ClInclude Include="StateFactory.h" />
@@ -146,6 +151,10 @@
     <ClCompile Include="PauseState.cpp" />
     <ClCompile Include="PictureBox.cpp" />
     <ClCompile Include="PlayState.cpp" />
+    <ClCompile Include="S1.cpp" />
+    <ClCompile Include="S12.cpp" />
+    <ClCompile Include="S5.cpp" />
+    <ClCompile Include="S8.cpp" />
     <ClCompile Include="StateBase.cpp" />
     <ClCompile Include="StateFactory.cpp" />
     <ClCompile Include="StopState.cpp" />

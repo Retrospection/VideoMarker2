@@ -17,6 +17,7 @@
 #include <cassert>
 
 #include <iostream>
+#include <fstream>
 
 
 #include "StateFactory.h"
@@ -26,7 +27,7 @@
 // CVideoMarker2Dlg 对话框
 
 CVideoMarker2Dlg::CVideoMarker2Dlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(CVideoMarker2Dlg::IDD, pParent)
+	: CDialogEx(CVideoMarker2Dlg::IDD, pParent), m_bUIConfigLoaded(false)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	m_pPictureBox = new CPictureBox(m_pState);
@@ -46,14 +47,14 @@ BEGIN_MESSAGE_MAP(CVideoMarker2Dlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BUTTON3, &CVideoMarker2Dlg::OnBnClickedOpenFileButton)
-	ON_BN_CLICKED(IDC_BUTTON1, &CVideoMarker2Dlg::OnBnClickedPlayVideoButton)
+	ON_BN_CLICKED(IDC_BUTTON_PLAY, &CVideoMarker2Dlg::OnBnClickedPlayVideoButton)
 	ON_WM_HSCROLL()
 	ON_WM_DESTROY()
 	ON_BN_CLICKED(IDC_BUTTON7, &CVideoMarker2Dlg::OnBnClickedBackOneFrame)
 	ON_BN_CLICKED(IDC_BUTTON8, &CVideoMarker2Dlg::OnBnClickedForwardOneFrame)
 	ON_BN_CLICKED(IDC_BUTTON5, &CVideoMarker2Dlg::OnBnClickedOpenTextFile)
 	ON_BN_CLICKED(IDC_BUTTON6, &CVideoMarker2Dlg::OnBnClickedStopButton)
-	ON_BN_CLICKED(IDC_BUTTON2, &CVideoMarker2Dlg::OnBnClickedPauseButton)
+	ON_BN_CLICKED(IDC_BUTTON_PAUSE, &CVideoMarker2Dlg::OnBnClickedPauseButton)
 	ON_BN_CLICKED(IDC_BUTTON9, &CVideoMarker2Dlg::OnBnClickedAddMark)
 	ON_WM_TIMER()
 	ON_BN_CLICKED(IDC_BUTTON4, &CVideoMarker2Dlg::OnBnClickedButton4)
@@ -85,7 +86,11 @@ BOOL CVideoMarker2Dlg::OnInitDialog()
 	m_Slider.SetRange(1, 100);
 	m_Slider.SetTicFreq(20);
 
+	LoadUIConfig();
+
 	SetState(INIT);
+	SetRawFrame(cv::Mat(1, 1, CV_8UC3, cv::Scalar(0, 0, 0)));
+
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -102,7 +107,7 @@ void CVideoMarker2Dlg::OnDestroy()
 		delete p.second;
 	}
 	m_States.clear();
-
+	m_bUIConfigLoaded = false;
 	FreeConsole();
 
 }
@@ -149,7 +154,7 @@ void CVideoMarker2Dlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar
 void CVideoMarker2Dlg::Refresh()
 {
 	RefreshSlider();
-	m_pState->RefreshButton();
+//	m_pState->RefreshButton();
 // 	GetDlgItem(IDC_BUTTON7)->EnableWindow((m_nCurrentFrameIndex > 0) ? TRUE : FALSE);
 // 	GetDlgItem(IDC_BUTTON8)->EnableWindow((m_nCurrentFrameIndex < m_nTotalFrameCount) ? TRUE : FALSE);
 	ShowFrameInfoInListBox();
@@ -175,7 +180,7 @@ void CVideoMarker2Dlg::SetFileOpenedStatus(bool status)
 
 void CVideoMarker2Dlg::SetRawFrame(const cv::Mat& frame)
 {
-	assert(m_bStatus);
+//	assert(m_bStatus);
 	m_pPictureBox->SetImage(frame);
 }
 
@@ -219,12 +224,23 @@ void CVideoMarker2Dlg::SetState(const std::string& state)
 		m_pState = iter->second;
 		m_pPictureBox->SetState(m_pState);
 		Refresh();
+		m_pState->RefreshButton();
+
 		return;
 	}
-	m_pState = CStateFactory::GetInstance().Create(state, this);
+
+	UIConfig config;
+
+
+	bool bResult = GetUIConfig(config, state);
+	assert(bResult);
+
+	m_pState = CStateFactory::GetInstance().Create(state, this,config);
 	m_States.insert(std::make_pair(state, m_pState));
 	m_pPictureBox->SetState(m_pState);
 	Refresh();
+	m_pState->RefreshButton();
+
 }
 
 void CVideoMarker2Dlg::OnBnClickedOpenFileButton()
@@ -293,19 +309,18 @@ void CVideoMarker2Dlg::OnBnClickedPauseButton()
 void CVideoMarker2Dlg::OnBnClickedAddMark()
 {
 	CString str;
-	GetDlgItemText(IDC_BUTTON9, str);
+	GetDlgItemText(IDC_BUTTON_ADDMARK, str);
 	if (str == L"完成编辑")
 	{
 		m_pState->SaveMark();
-		SetState(PAUSE);
-		SetDlgItemText(IDC_BUTTON9, L"添加标注");
+		SetDlgItemText(IDC_BUTTON_ADDMARK, L"添加标注");
 	}
 	else
 	{
-		SetState(EDIT_MARK);
+		m_pState->AddMark();
 	}
 	Refresh();
-
+	
 }
 
 void CVideoMarker2Dlg::OnTimer(UINT_PTR nIDEvent)
@@ -408,7 +423,16 @@ int CVideoMarker2Dlg::GetCurrentFrameIndex() const
 void CVideoMarker2Dlg::OnBnClickedButtonProject()
 {
 	// TODO:  在此添加控件通知处理程序代码
-	m_strProjectFileName = "D:\\data\\data\\Actor\\project.txt";
+
+	CFileDialog fileDlg(TRUE, L"*.txt", NULL, OFN_FILEMUSTEXIST | OFN_READONLY | OFN_PATHMUSTEXIST,
+		L"文本文件|*.txt||", NULL);
+	fileDlg.m_ofn.lpstrTitle = L"选择要编辑的视频文件";
+	if (fileDlg.DoModal() != IDOK)
+	{
+		return;
+	}
+
+	m_strProjectFileName = CStringHelper::ConvertCStringToString(fileDlg.GetPathName());
 	m_pState->OpenProject();
 
 }
@@ -416,4 +440,61 @@ void CVideoMarker2Dlg::OnBnClickedButtonProject()
 std::string CVideoMarker2Dlg::GetProjectFileName() const
 {
 	return m_strProjectFileName;
+}
+
+bool  CVideoMarker2Dlg::GetUIConfig(UIConfig& config, const std::string& state)
+{
+
+	
+	auto iter = m_UIConfigs.find(state);
+	if (iter == m_UIConfigs.end())
+	{
+		return false;
+	}
+	config = iter->second;
+	return true;
+}
+
+void CVideoMarker2Dlg::LoadUIConfig()
+{
+// 	UIConfig config;
+// 	config.disnables.push_back("OpenProject");
+// 	config.disnables.push_back("AddMark");
+// 	
+	if (m_bUIConfigLoaded)
+	{
+		return;
+	}
+
+	std::vector<std::string> lines = GetLines("D:\\WorkSpace\\VideoMarker2\\UIConfig.txt");
+
+	size_t numberOfLine = lines.size();
+	assert(numberOfLine % 3 == 0 && numberOfLine != 0);
+
+	for (size_t i = 0; i < numberOfLine; i += 3)
+	{
+		auto iter = m_UIConfigs.find(lines[i]);
+		assert(iter == m_UIConfigs.end());
+		std::vector<std::string> enables = CStringHelper::Split(lines[i + 1], " ");
+		std::vector<std::string> disables = CStringHelper::Split(lines[i + 2], " ");
+		m_UIConfigs.insert(std::make_pair(lines[i], UIConfig{enables,disables}));
+	}
+
+	m_bUIConfigLoaded = true;
+	
+}
+
+std::vector<std::string> CVideoMarker2Dlg::GetLines(const std::string& filename)
+{
+	std::ifstream ifs(filename);
+
+	assert(ifs.is_open());
+
+	std::vector<std::string> ret;
+	std::string line;
+	while (std::getline(ifs,line))
+	{
+		ret.push_back(line);
+	}
+	return ret;
 }

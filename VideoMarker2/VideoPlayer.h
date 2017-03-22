@@ -17,6 +17,7 @@ public:
 public:
 	void Init();
 	bool Open(const std::string& strFileName);
+	void Close();
 	bool GetNextFrame(cv::Mat& frame);
 	bool SeekTo(int nPos);
 	bool IsOpened()const;

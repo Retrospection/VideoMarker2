@@ -137,3 +137,13 @@ void CTextFileManager::SaveToTextFile()
 	ofs << m_FrameInfos[m_FrameInfos.size() - 1].toString();
 	ofs.close();
 }
+
+bool CTextFileManager::IsOpened() const
+{
+	return !m_strTextFileName.empty();
+}
+
+void CTextFileManager::Close()
+{
+	// TODO
+}

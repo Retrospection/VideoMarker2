@@ -4,7 +4,7 @@
 #include "StateBase.h"
 #include "Transformer.h"
 
-
+#include "FrameInfo.h"
 class CStateBase;
 
 class IDrawable;

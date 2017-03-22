@@ -2,7 +2,7 @@
 #include "InitState.h"
 
 
-CInitState::CInitState(CVideoMarker2Dlg* pDlg) :CStateBase(pDlg)
+CInitState::CInitState(CVideoMarker2Dlg* pDlg, const UIConfig& config) :CStateBase(pDlg, config)
 {
 }
 
@@ -13,23 +13,52 @@ CInitState::~CInitState()
 
 void CInitState::RefreshButton()
 {
-// 	GetDlgItem(IDC_BUTTON3)->EnableWindow(TRUE);   // 启用打开按钮
-// 	GetDlgItem(IDC_BUTTON1)->EnableWindow(FALSE);  // 禁用播放按钮
-// 	GetDlgItem(IDC_BUTTON2)->EnableWindow(FALSE);  // 禁用暂停按钮
-// 	GetDlgItem(IDC_BUTTON6)->EnableWindow(FALSE);  // 禁用停止按钮
-// 	GetDlgItem(IDC_BUTTON9)->EnableWindow(FALSE);  // 禁用添加标注按钮
-// 	GetDlgItem(IDC_BUTTON5)->EnableWindow(FALSE);  // 禁用打开文本按钮
-// 	GetDlgItem(IDC_BUTTON4)->EnableWindow(FALSE);  // 禁用保存文本按钮
-// 	GetDlgItem(IDC_SLIDER1)->EnableWindow(FALSE);  // 禁用进度条
+// 	ENABLE_ITEM(IDC_BUTTON_OPENPROJECT, TRUE);
+// 	ENABLE_ITEM(IDC_BUTTON_ADDMARK, FALSE);
+// 	ENABLE_ITEM(IDC_BUTTON_UNDO, FALSE);
+// 	ENABLE_ITEM(IDC_BUTTON_REDO, FALSE);
+// 	ENABLE_ITEM(IDC_BUTTON_STEPBACK, FALSE);
+// 	ENABLE_ITEM(IDC_BUTTON_STEPFORWARD, FALSE);
+// 	ENABLE_ITEM(IDC_SLIDER1, FALSE);
+
+//	m_ui.Enable("OpenProject").Disable("StepForward");
+
+	m_ui.RefreshButton();
+
+// 	m_ui.Enable("OpenProject");
+// 
+// 	m_ui.Disable("AddMark")
+// 		.Disable("Undo")
+// 		.Disable("Redo")
+// 		.Disable("StepBackward")
+// 		.Disable("StepForward")
+// 		.Disable("Slider");
 }
 
-
-
-void CInitState::Open()
+void CInitState::AddMark()
 {
-	GetPresenter()->Open();
-	SetState(STOP);
 
 }
+
+void CInitState::SaveMark()
+{
+
+}
+
+void CInitState::Undo()
+{
+
+}
+
+void CInitState::Redo()
+{
+
+}
+
+
+
+
+
+
 
 

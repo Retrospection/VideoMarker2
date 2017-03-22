@@ -1,12 +1,66 @@
  
 #pragma once
 
-#include "VideoMarker2Dlg.h"
-#include "VideoMarkerPresenter.h"
+#include <opencv2/core/core.hpp>
+
+
+#include <string>
+#include <unordered_map>
 
 class CVideoMarkerPresenter;
 
 class CVideoMarker2Dlg;
+
+
+#define ENABLE_ITEM(ID) \
+	GetDlgItem(ID)->EnableWindow(TRUE)
+
+#define  DISABLE_ITEM(ID) \
+	GetDlgItem(ID)->EnableWindow(FALSE)
+
+#define ENABLE_BUTTON(ID) \
+	ENABLE_ITEM(IDC_BUTTON_##ID)
+
+#define DISABLE_BUTTON(ID) \
+	DISABLE_ITEM(IDC_BUTTON_##ID)
+
+#define ENABLE_SLIDER(ID) \
+	ENABLE_ITEM(IDC_SLIDER_##ID)
+
+#define DISABLE_SLIDER(ID) \
+	DISABLE_ITEM(IDC_SLIDER_##ID)
+
+
+
+struct UIConfig
+{
+	std::vector<std::string> enables;
+	std::vector<std::string> disnables;
+};
+
+
+class CUI
+{
+public:
+	CUI();
+	CUI(CVideoMarker2Dlg* pDlg,  const UIConfig& config);
+	~CUI();
+
+
+	void RefreshButton();
+
+	CUI& Enable(const std::string& strItemName);
+	bool FindID(int& id, const std::string& strItemName);
+	CUI& Disable(const std::string& strItemName);
+
+private:
+	CUI& Enable(const std::string& strItemName, bool bEnable);
+
+private:
+	CVideoMarker2Dlg* m_pDlg;
+	std::unordered_map<std::string, int> m_IDByName;
+	UIConfig m_Config;
+};
 
 
 
@@ -14,12 +68,12 @@ class CStateBase
 {
 public:
 	CStateBase(CVideoMarker2Dlg* pDlg);
+	CStateBase(CVideoMarker2Dlg* pDlg, const UIConfig& config);
 
 	virtual ~CStateBase();
 
 	virtual void RefreshButton();
 
-//	virtual void Init();
 
 	virtual void OpenProject();
 	virtual void AddMark();
@@ -33,7 +87,8 @@ public:
 	virtual void ForwardOneFrame(int nCurrentFrameIndex);
 	virtual void BackOneFrame(int nCurrentFrameIndex);
 
-
+	virtual void Undo();
+	virtual void Redo();
 
 
 	virtual void Open();
@@ -42,7 +97,6 @@ public:
 	virtual void Pause();
 
 	virtual void OpenTextFile();
-	virtual void SaveTextFile();
 
 
 	
@@ -56,6 +110,7 @@ protected:
 
 protected:
 	CVideoMarker2Dlg* _pDlg;
+	CUI m_ui;
 	
 
 };

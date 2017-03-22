@@ -6,6 +6,10 @@
 #include "PauseState.h"
 #include "EditMarkState.h"
 #include "VideoMarker2Dlg.h"
+#include "S1.h"
+#include "S5.h"
+#include "S12.h"
+#include "S8.h"
 
 CStateFactory::CStateFactory()
 {
@@ -22,8 +26,9 @@ CStateFactory& CStateFactory::GetInstance()
 	return instance;
 }
 
-CStateBase* CStateFactory::Create(const std::string& state, CVideoMarker2Dlg* pDlg)
+CStateBase* CStateFactory::Create(const std::string& state, CVideoMarker2Dlg* pDlg, const UIConfig& config)
 {
+
 	if (state == PLAY)
 	{
 		return new CPlayState(pDlg);
@@ -34,7 +39,7 @@ CStateBase* CStateFactory::Create(const std::string& state, CVideoMarker2Dlg* pD
 	}
 	else if (state == INIT)
 	{
-		return new CInitState(pDlg);
+		return new CInitState(pDlg, config);
 	}
 	else if (state == PAUSE)
 	{
@@ -47,6 +52,22 @@ CStateBase* CStateFactory::Create(const std::string& state, CVideoMarker2Dlg* pD
 	else if (state == EDIT_MARK)
 	{
 		return new CEditMarkState(pDlg);
+	}
+	else if (state == S1)
+	{
+		return new CS1(pDlg);
+	}
+	else if (state == S5)
+	{
+		return new CS5(pDlg);
+	}
+	else if (state == S12)
+	{
+		return new CS12(pDlg);
+	}
+	else if (state == S8)
+	{
+		return new CS12(pDlg);
 	}
 	return nullptr;
 }

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "StopState.h"
 
-
+#include "VideoMarkerPresenter.h"
 CStopState::CStopState(CVideoMarker2Dlg* pDlg) :CStateBase(pDlg)
 {
 }
@@ -33,12 +33,12 @@ void CStopState::RefreshButton()
 void CStopState::Open()
 {
 	GetPresenter()->Open();
-	SetState(STOP);
+	//SetState(STOP);
 }
 
 void CStopState::OpenTextFile()
 {
 	GetPresenter()->OpenTextFile();
-	SetState(STOP);
+	//SetState(STOP);
 }
 

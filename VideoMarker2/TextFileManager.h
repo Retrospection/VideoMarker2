@@ -12,11 +12,14 @@ public:
 	~CTextFileManager();
 
 	bool Open(const std::string& strFileName);
+	void Close();
 	bool GetFrameInfoByPos(FrameInfo& frameInfo, size_t nPos);
 	void AddFaceInfo(int nPos, const std::string& strPersonName, const cv::Point& p1, const cv::Point& p2);
 	void AddFaceInfo(int nPos, const std::string& strPersonName, const cv::Rect boxes);
 	void AddFaceInfo(size_t nPos, const FrameInfo& newFrameInfo);
 	void SaveToTextFile(); 
+
+	bool IsOpened()const;
 
 private:
 	// This function take an ifstream, parse it line by line.

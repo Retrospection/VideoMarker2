@@ -49,6 +49,7 @@ public:
 	virtual std::vector<std::string> GetUnsavedName() override;
 	int GetCurrentFrameIndex() const;
 
+
 public:
 	void SetTextFileOpenedStatus(bool status);
 	void SetRawFrame(const cv::Mat& frame);
@@ -92,11 +93,19 @@ private:
 	CStateBase* m_pState;
 	std::unordered_map<std::string, CStateBase*> m_States;
 
+	std::unordered_map<std::string, UIConfig> m_UIConfigs;
+
+	bool m_bUIConfigLoaded;
+
 private:
 	void SetState(const std::string& state);
 	void ShowFrameInfoInListBox();
 	void ClearHighLight();
 
+	bool GetUIConfig(UIConfig& config, const std::string& state);
+	void LoadUIConfig();
+
+	std::vector<std::string> GetLines(const std::string& filename);
 
 //////////////////////////////////////////////////////  й╣ож  ////////////////////////////////////////////////
 

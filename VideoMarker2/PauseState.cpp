@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "PauseState.h"
 
+#include "state.h"
+
+#include "VideoMarkerPresenter.h"
 
 CPauseState::CPauseState(CVideoMarker2Dlg* pDlg)
 	:CStateBase(pDlg)

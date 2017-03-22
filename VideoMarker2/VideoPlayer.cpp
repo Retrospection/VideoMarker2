@@ -82,6 +82,11 @@ bool CVideoPlayer::IsOpened() const
 	return m_VideoCapture.isOpened();
 }
 
+void CVideoPlayer::Close()
+{
+
+}
+
 
 
 

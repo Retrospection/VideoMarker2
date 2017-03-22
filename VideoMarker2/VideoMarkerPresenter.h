@@ -2,7 +2,7 @@
 
 #include "VideoMarker2.h"
 #include "VideoPlayer.h"
-#include "VideoMarker2Dlg.h"
+//#include "VideoMarker2Dlg.h"
 #include "TextFileManager.h"
 #include "FrameInfo.h"
 
@@ -25,6 +25,7 @@ public:
 
 public:
 	void Open();
+	void Close();
 	void Play();
 	void Stop();
 	void Pause();

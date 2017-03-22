@@ -153,6 +153,18 @@
     <ClInclude Include="constant.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="S1.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="S5.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="S12.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="S8.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -208,6 +220,18 @@
     </ClCompile>
     <ClCompile Include="Transformer.cpp">
       <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="S1.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="S5.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="S12.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="S8.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -10,6 +10,6 @@ private:
 
 public:
 	static CStateFactory& GetInstance();
-	CStateBase* Create(const std::string& state, CVideoMarker2Dlg* pDlg);
+	CStateBase* Create(const std::string& state, CVideoMarker2Dlg* pDlg, const UIConfig& config);
 };
 

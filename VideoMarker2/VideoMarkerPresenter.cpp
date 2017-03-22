@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "VideoMarkerPresenter.h"
-
+#include "VideoMarker2Dlg.h"
 #include <string>
 #include <codecvt>
 #include <fstream>
@@ -64,10 +64,37 @@ void CVideoMarkerPresenter::Open()
 	Open(strFileName); 
 }
 
+
+void CVideoMarkerPresenter::Close()
+{
+	if (!m_pVideoPlayer->IsOpened())
+	{
+		return;
+	}
+	m_pVideoPlayer->Close();
+	m_pDlg->SetFileOpenedStatus(false);
+	cv::Mat blackframe(1, 1, CV_8UC3, cv::Scalar(0, 0, 0));
+	m_pDlg->SetRawFrame(blackframe);
+	m_pDlg->SetCurrentFrameIndex(0);
+	m_pDlg->SetTotalFrameCount(0);
+
+	m_pDlg->SetTextFileOpenedStatus(false);
+	m_pDlg->SetFrameInfo({});
+
+
+	m_pDlg->Refresh();
+}
+
+
 bool CVideoMarkerPresenter::Open(const std::string& strVideoFileName)
 {
 	std::string strFileName = strVideoFileName;
-	m_pDlg->SetFileOpenedStatus(m_pVideoPlayer->Open(strFileName));
+	bool bResult = m_pVideoPlayer->Open(strFileName);
+	if (!bResult)
+	{
+		return false;
+	}
+	m_pDlg->SetFileOpenedStatus(bResult);
 	cv::Mat frame;
 	m_pVideoPlayer->GetNextFrame(frame);
 	m_pDlg->SetRawFrame(frame);
@@ -76,6 +103,7 @@ bool CVideoMarkerPresenter::Open(const std::string& strVideoFileName)
 	m_pDlg->Refresh();
 	return true;
 }
+
 #include <iostream>
 void CVideoMarkerPresenter::Play()
 {
@@ -158,7 +186,12 @@ void CVideoMarkerPresenter::OpenTextFile()
 bool CVideoMarkerPresenter::OpenTextFile(const std::string& strTextFileName)
 {
 	std::string strFileName = strTextFileName;
-	m_pDlg->SetTextFileOpenedStatus(m_pTextMgr->Open(strFileName));
+	bool bResult = m_pTextMgr->Open(strFileName);
+	if (!bResult)
+	{
+		return false;
+	}
+	m_pDlg->SetTextFileOpenedStatus(bResult);
 	FrameInfo frameInfo;
 	m_pTextMgr->GetFrameInfoByPos(frameInfo, m_pVideoPlayer->m_nCurrentFrameIndex);
 	m_pDlg->SetFrameInfo(frameInfo);

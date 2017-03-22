@@ -5,13 +5,21 @@
 class CInitState :public CStateBase
 {
 public:
-	CInitState(CVideoMarker2Dlg* pDlg);
+	CInitState(CVideoMarker2Dlg* pDlg, const UIConfig& config);
 	~CInitState();
 
 	virtual void RefreshButton() override;
-	
-// 只允许打开文件
-	virtual void Open() override;
+
+	virtual void AddMark() override;
+
+	virtual void SaveMark() override;
+
+	virtual void Undo() override;
+
+	virtual void Redo() override;
+
+
+
 	
 
 };

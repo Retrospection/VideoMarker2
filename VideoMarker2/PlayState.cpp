@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "PlayState.h"
 
+#include "State.h"
+
+#include "VideoMarkerPresenter.h"
 
 CPlayState::CPlayState(CVideoMarker2Dlg* pDlg) :CStateBase(pDlg)
 {
