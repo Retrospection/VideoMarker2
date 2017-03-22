@@ -119,7 +119,6 @@
     <ClInclude Include="InitState.h" />
     <ClInclude Include="IVideoMarker2.h" />
     <ClInclude Include="NameInputDialog.h" />
-    <ClInclude Include="OpenTextFileState.h" />
     <ClInclude Include="PauseState.h" />
     <ClInclude Include="PictureBox.h" />
     <ClInclude Include="PlayState.h" />
@@ -144,7 +143,6 @@
     <ClCompile Include="EditMarkState.cpp" />
     <ClCompile Include="InitState.cpp" />
     <ClCompile Include="NameInputDialog.cpp" />
-    <ClCompile Include="OpenTextFileState.cpp" />
     <ClCompile Include="PauseState.cpp" />
     <ClCompile Include="PictureBox.cpp" />
     <ClCompile Include="PlayState.cpp" />

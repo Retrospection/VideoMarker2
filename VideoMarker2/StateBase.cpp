@@ -12,46 +12,50 @@ CStateBase::~CStateBase()
 {
 }
 
-void CStateBase::Play()
-{
-	GetPresenter()->Play();
-	SetState(PLAY);
-}
 
-void CStateBase::Stop()
-{
-}
-
-
-
-void CStateBase::SetState(const std::string& state)
-{
-	_pDlg->SetState(state);
-	_pDlg->ClearHighLight();
-}
-
-void CStateBase::Init()
-{
-
-}
+/////////////////////////
+////     public     /////
+/////////////////////////
 
 void CStateBase::RefreshButton()
 {
 
 }
 
-CWnd* CStateBase::GetDlgItem(int nID)
+
+void CStateBase::OpenProject()
 {
-	return _pDlg->GetDlgItem(nID);
+	wchar_t* alertMessage[] = { L"", L"Load Project File Failed!", L"open video failed!", L"open text failed!" };
+	size_t result = GetPresenter()->OpenProject();
+	if (result != 0)
+	{
+		_pDlg->MessageBox(alertMessage[result]);
+	}
+	SetState(STOP);
+}
+
+void CStateBase::AddMark()
+{
+
+}
+
+void CStateBase::SaveMark()
+{
+
 }
 
 
-void CStateBase::Open()
+void CStateBase::OnLButtonDown(int nFlags, cv::Point point)
 {
 
 }
 
-void CStateBase::Pause()
+void CStateBase::OnMouseMove(int nFlags, cv::Point point)
+{
+
+}
+
+void CStateBase::OnLButtonUp(int nFlags, cv::Point point)
 {
 
 }
@@ -76,24 +80,56 @@ void CStateBase::BackOneFrame(int nCurrentFrameIndex)
 	_pDlg->ClearHighLight();
 }
 
-CVideoMarkerPresenter* CStateBase::GetPresenter()
+
+void CStateBase::Open()
 {
-	return _pDlg->m_pPresenter;
+
 }
+
+
+void CStateBase::Play()
+{
+	GetPresenter()->Play();
+	SetState(PLAY);
+}
+
+void CStateBase::Stop()
+{
+}
+
+
+void CStateBase::Pause()
+{
+
+}
+
+
+
 
 void CStateBase::OpenTextFile()
 {
 	GetPresenter()->OpenTextFile();
 }
 
-void CStateBase::AddMark()
-{
 
-}
 
 void CStateBase::SaveTextFile()
 {
 
+}
+
+
+
+
+void CStateBase::SetState(const std::string& state)
+{
+	_pDlg->SetState(state);
+	_pDlg->ClearHighLight();
+}
+
+CWnd* CStateBase::GetDlgItem(int nID)
+{
+	return _pDlg->GetDlgItem(nID);
 }
 
 bool CStateBase::IsTextFileOpened() const
@@ -101,35 +137,21 @@ bool CStateBase::IsTextFileOpened() const
 	return _pDlg->m_bTextStatus;
 }
 
-void CStateBase::OnLButtonDown(int nFlags, cv::Point point)
+CVideoMarkerPresenter* CStateBase::GetPresenter()
 {
-
+	return _pDlg->m_pPresenter;
 }
 
-void CStateBase::OnMouseMove(int nFlags, cv::Point point)
-{
 
-}
 
-void CStateBase::OnLButtonUp(int nFlags, cv::Point point)
-{
 
-}
 
-void CStateBase::SaveMark()
-{
 
-}
 
-void CStateBase::OpenProject()
-{
-	wchar_t* alertMessage[] = { L"", L"Load Project File Failed!", L"open video failed!", L"open text failed!" };
-	size_t result = GetPresenter()->OpenProject();
-	if (result != 0)
-	{
-		_pDlg->MessageBox(alertMessage[result]);
-	}
-	SetState(STOP);
-}
+
+
+
+
+
 
 

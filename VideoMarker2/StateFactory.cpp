@@ -4,7 +4,6 @@
 #include "StopState.h"
 #include "PlayState.h"
 #include "PauseState.h"
-#include "OpenTextFileState.h"
 #include "EditMarkState.h"
 #include "VideoMarker2Dlg.h"
 

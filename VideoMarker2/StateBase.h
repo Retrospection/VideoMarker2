@@ -19,35 +19,39 @@ public:
 
 	virtual void RefreshButton();
 
-	virtual void Init();
+//	virtual void Init();
+
+	virtual void OpenProject();
+	virtual void AddMark();
+	virtual void SaveMark();
+
+	virtual void OnLButtonDown(int nFlags, cv::Point point);
+	virtual void OnMouseMove(int nFlags, cv::Point point);
+	virtual void OnLButtonUp(int nFlags, cv::Point point);
+
+	virtual void SeekTo(int nPos);
+	virtual void ForwardOneFrame(int nCurrentFrameIndex);
+	virtual void BackOneFrame(int nCurrentFrameIndex);
+
+
+
 
 	virtual void Open();
 	virtual void Play();
 	virtual void Stop();
 	virtual void Pause();
-	virtual void SeekTo(int nPos);
-	virtual void ForwardOneFrame(int nCurrentFrameIndex);
-	virtual void BackOneFrame(int nCurrentFrameIndex);
+
 	virtual void OpenTextFile();
 	virtual void SaveTextFile();
-	virtual void AddMark();
-	virtual void OnLButtonDown(int nFlags, cv::Point point);
-	virtual void OnMouseMove(int nFlags, cv::Point point);
-	virtual void OnLButtonUp(int nFlags, cv::Point point);
-	virtual void SaveMark();
 
-	virtual void OpenProject();
+
+	
 
 
 protected:
 	void SetState(const std::string& state);
 	CWnd* GetDlgItem(int nID);
 	bool IsTextFileOpened() const;
-
-
-
-protected:
-//	CVideoMarkerPresenter* m_pPresenter;
 	CVideoMarkerPresenter* GetPresenter();
 
 protected:

@@ -49,9 +49,6 @@
     <Filter Include="State\PauseState">
       <UniqueIdentifier>{6a84476e-03f3-4e5c-a1e2-6294958a57e1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="State\OpenTextFileState">
-      <UniqueIdentifier>{e5214608-7257-4706-bffb-868b76533464}</UniqueIdentifier>
-    </Filter>
     <Filter Include="State\StateHeader">
       <UniqueIdentifier>{3714edd3-4929-4ac8-8d0a-59d56cb4aa76}</UniqueIdentifier>
     </Filter>
@@ -116,9 +113,6 @@
     </ClInclude>
     <ClInclude Include="PauseState.h">
       <Filter>State\PauseState</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenTextFileState.h">
-      <Filter>State\OpenTextFileState</Filter>
     </ClInclude>
     <ClInclude Include="State.h">
       <Filter>State\StateHeader</Filter>
@@ -199,9 +193,6 @@
     </ClCompile>
     <ClCompile Include="PauseState.cpp">
       <Filter>State\PauseState</Filter>
-    </ClCompile>
-    <ClCompile Include="OpenTextFileState.cpp">
-      <Filter>State\OpenTextFileState</Filter>
     </ClCompile>
     <ClCompile Include="StopState.cpp">
       <Filter>State\StopState</Filter>

@@ -150,8 +150,8 @@ void CVideoMarker2Dlg::Refresh()
 {
 	RefreshSlider();
 	m_pState->RefreshButton();
-	GetDlgItem(IDC_BUTTON7)->EnableWindow((m_nCurrentFrameIndex > 0) ? TRUE : FALSE);
-	GetDlgItem(IDC_BUTTON8)->EnableWindow((m_nCurrentFrameIndex < m_nTotalFrameCount) ? TRUE : FALSE);
+// 	GetDlgItem(IDC_BUTTON7)->EnableWindow((m_nCurrentFrameIndex > 0) ? TRUE : FALSE);
+// 	GetDlgItem(IDC_BUTTON8)->EnableWindow((m_nCurrentFrameIndex < m_nTotalFrameCount) ? TRUE : FALSE);
 	ShowFrameInfoInListBox();
 	Invalidate(FALSE);   // FIX IT
 	
