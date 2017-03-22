@@ -5,12 +5,21 @@
 #include "Transformer.h"
 
 #include "FrameInfo.h"
+
+class CS5;
+
+class CS12;
+
 class CStateBase;
 
 class IDrawable;
 
 class CPictureBox : public CStatic
 {
+
+	friend CS5;
+	friend CS12;
+
 	DECLARE_DYNAMIC(CPictureBox)
 
 public:

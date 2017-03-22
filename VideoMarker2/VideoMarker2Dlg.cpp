@@ -61,7 +61,7 @@ BEGIN_MESSAGE_MAP(CVideoMarker2Dlg, CDialogEx)
 	ON_LBN_DBLCLK(IDC_LIST1, &CVideoMarker2Dlg::OnLbnDblclkList1)
 	ON_BN_CLICKED(IDC_BUTTON_REVOKE, &CVideoMarker2Dlg::OnBnClickedButtonRevoke)
 	ON_BN_CLICKED(IDC_BUTTON_REDO, &CVideoMarker2Dlg::OnBnClickedButtonRedo)
-	ON_BN_CLICKED(IDC_BUTTON_PROJECT, &CVideoMarker2Dlg::OnBnClickedButtonProject)
+	ON_BN_CLICKED(IDC_BUTTON_OPENPROJECT, &CVideoMarker2Dlg::OnBnClickedButtonProject)
 END_MESSAGE_MAP()
 
 // CVideoMarker2Dlg 消息处理程序
@@ -426,12 +426,11 @@ void CVideoMarker2Dlg::OnBnClickedButtonProject()
 
 	CFileDialog fileDlg(TRUE, L"*.txt", NULL, OFN_FILEMUSTEXIST | OFN_READONLY | OFN_PATHMUSTEXIST,
 		L"文本文件|*.txt||", NULL);
-	fileDlg.m_ofn.lpstrTitle = L"选择要编辑的视频文件";
+	fileDlg.m_ofn.lpstrTitle = L"请选择工程文件";
 	if (fileDlg.DoModal() != IDOK)
 	{
 		return;
 	}
-
 	m_strProjectFileName = CStringHelper::ConvertCStringToString(fileDlg.GetPathName());
 	m_pState->OpenProject();
 

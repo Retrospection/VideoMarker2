@@ -45,29 +45,25 @@ CStateBase* CStateFactory::Create(const std::string& state, CVideoMarker2Dlg* pD
 	{
 		return new CPauseState(pDlg);
 	}
-// 	else if (state == OPEN_TEXT_FILE)
-// 	{
-// 		return new COpenTextFileState(pDlg);
-// 	}
 	else if (state == EDIT_MARK)
 	{
 		return new CEditMarkState(pDlg);
 	}
 	else if (state == S1)
 	{
-		return new CS1(pDlg);
+		return new CS1(pDlg,config);
 	}
 	else if (state == S5)
 	{
-		return new CS5(pDlg);
+		return new CS5(pDlg, config);
 	}
 	else if (state == S12)
 	{
-		return new CS12(pDlg);
+		return new CS12(pDlg, config);
 	}
 	else if (state == S8)
 	{
-		return new CS12(pDlg);
+		return new CS8(pDlg, config);
 	}
 	return nullptr;
 }

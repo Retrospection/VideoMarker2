@@ -1,3 +1,15 @@
 init
 OpenProject 
 AddMark Undo Redo StepBackward StepForward Slider
+S1
+OpenProject AddMark StepBackward StepForward Slider
+Undo Redo
+S5
+AddMark Undo Redo
+OpenProject StepForward StepBackward Slider
+S12
+
+AddMark Undo Redo OpenProject StepForward StepBackward Slider
+S8
+AddMark Undo Redo
+OpenProject StepForward StepBackward Slider

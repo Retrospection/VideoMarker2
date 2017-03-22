@@ -5,7 +5,7 @@
 class CS1 : public CStateBase
 {
 public:
-	CS1(CVideoMarker2Dlg* pDlg);
+	CS1(CVideoMarker2Dlg* pDlg, const UIConfig& config);
 	virtual ~CS1();
 
 	virtual void RefreshButton() override;

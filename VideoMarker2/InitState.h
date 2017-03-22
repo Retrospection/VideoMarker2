@@ -18,9 +18,5 @@ public:
 
 	virtual void Redo() override;
 
-
-
-	
-
 };
 
