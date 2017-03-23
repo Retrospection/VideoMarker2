@@ -497,3 +497,8 @@ std::vector<std::string> CVideoMarker2Dlg::GetLines(const std::string& filename)
 	}
 	return ret;
 }
+
+bool CVideoMarker2Dlg::CanDraw()
+{
+	return m_pState->CanDraw();
+}

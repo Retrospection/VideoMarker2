@@ -14,7 +14,10 @@ public:
 
 	virtual void AddMark() override;
 
-	virtual void OnLButtonDown(int nFlags, cv::Point point) override;
+	virtual bool CanDraw() const override;
+
+
+//	virtual void OnLButtonDown(int nFlags, cv::Point point) override;
 
 
 

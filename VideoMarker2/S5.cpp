@@ -27,8 +27,9 @@ void CS5::AddMark()
 
 }
 
-void CS5::OnLButtonDown(int nFlags, cv::Point point)
+bool CS5::CanDraw() const
 {
-	//_pDlg
-	SetState(S12);
+	return true;
 }
+
+

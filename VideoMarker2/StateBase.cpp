@@ -160,6 +160,11 @@ void CStateBase::Redo()
 
 }
 
+bool CStateBase::CanDraw() const
+{
+	return false;
+}
+
 
 
 

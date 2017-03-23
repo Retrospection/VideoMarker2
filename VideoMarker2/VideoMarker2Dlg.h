@@ -59,6 +59,8 @@ public:
 	void SetFrameInfo(const FrameInfo& frameInfo);
 	void ClearUnsavedFrameInfo();
 
+	bool CanDraw();
+
 
 	unsigned int ValidateFaceInfo(const FaceInfo& info);
 

@@ -143,25 +143,29 @@ std::vector<cv::Rect> CPictureBox::GetUnsavedBoxesInRaw()
 
 void CPictureBox::OnLButtonUp(UINT nFlags, CPoint point)
 {
-// 	if (!m_bDrawing)
-// 	{
-// 		return;
-// 	}
-// 	m_ActivePoints[1] = {point.x, point.y};
-// 	m_bDrawing = false;
-// 	CNameInputDialog dlg;
-// 	cv::Rect activeBox;
-// 
-// 
-// 	if (dlg.DoModal() == IDOK && GetActiveBox(activeBox))
-// 	{
-// 		std::string strPersonName = CStringHelper::ConvertCStringToString(dlg.m_strPersonName);
-// 		SaveFaceInfo({ strPersonName, m_Trans.Trans(activeBox,Transformer::Coordinate::Roi, Transformer::Coordinate::Raw )});
-// 	}
-// 
-// 	Invalidate(FALSE);
-// 	m_ActivePoints[0] = INIT_POINT;
-// 	m_ActivePoints[1] = INIT_POINT;
+	if (!((CVideoMarker2Dlg*)GetParent())->CanDraw())
+	{
+		return;
+	}
+	if (!m_bDrawing)
+	{
+		return;
+	}
+	m_ActivePoints[1] = {point.x, point.y};
+	m_bDrawing = false;
+	CNameInputDialog dlg;
+	cv::Rect activeBox;
+
+
+	if (dlg.DoModal() == IDOK && GetActiveBox(activeBox))
+	{
+		std::string strPersonName = CStringHelper::ConvertCStringToString(dlg.m_strPersonName);
+		SaveFaceInfo({ strPersonName, m_Trans.Trans(activeBox,Transformer::Coordinate::Roi, Transformer::Coordinate::Raw )});
+	}
+
+	Invalidate(FALSE);
+	m_ActivePoints[0] = INIT_POINT;
+	m_ActivePoints[1] = INIT_POINT;
 
 	
 
@@ -172,35 +176,42 @@ void CPictureBox::OnLButtonUp(UINT nFlags, CPoint point)
 
 void CPictureBox::OnMouseMove(UINT nFlags, CPoint point)
 {
-// 	if (!m_bDrawing)
-// 	{
-// 		return;
-// 	}
-// 
-// 	cv::Rect RoiRect = m_Trans.GetRoiRect();
-// 
-// 	if ((point.x > (RoiRect.x + RoiRect.width)) || (point.y >RoiRect.height))
-// 	{
-// 		m_bDrawing = false;
-// 		m_ActivePoints[0] = INIT_POINT;
-// 		m_ActivePoints[1] = INIT_POINT;
-// 		Invalidate(FALSE);
-// 		CStatic::OnMouseMove(nFlags, point);
-// 		return;
-// 	}
-// 
-// 	m_ActivePoints[1] = { point.x, point.y };
-// 	Invalidate(FALSE);
+	if (!((CVideoMarker2Dlg*)GetParent())->CanDraw())
+	{
+		return;
+	}
+	if (!m_bDrawing)
+	{
+		return;
+	}
+
+	cv::Rect RoiRect = m_Trans.GetRoiRect();
+
+	if ((point.x > (RoiRect.x + RoiRect.width)) || (point.y >RoiRect.height))
+	{
+		m_bDrawing = false;
+		m_ActivePoints[0] = INIT_POINT;
+		m_ActivePoints[1] = INIT_POINT;
+		Invalidate(FALSE);
+		CStatic::OnMouseMove(nFlags, point);
+		return;
+	}
+
+	m_ActivePoints[1] = { point.x, point.y };
+	Invalidate(FALSE);
 	CStatic::OnMouseMove(nFlags, point);
 }
 
 void CPictureBox::OnLButtonDown(UINT nFlags, CPoint point)
 {
-// 	m_bDrawing = true;
-// 	m_ActivePoints[0] = { point.x, point.y };
-// 	Invalidate(FALSE);
+	if (!((CVideoMarker2Dlg*)GetParent())->CanDraw())
+	{
+		return;
+	}
+	m_bDrawing = true;
+	m_ActivePoints[0] = { point.x, point.y };
+	Invalidate(FALSE);
 
-	m_pState->OnLButtonDown(nFlags, { point.x, point.y });
 	CStatic::OnLButtonDown(nFlags, point);
 }
 

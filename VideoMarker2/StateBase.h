@@ -12,25 +12,6 @@ class CVideoMarkerPresenter;
 class CVideoMarker2Dlg;
 
 
-#define ENABLE_ITEM(ID) \
-	GetDlgItem(ID)->EnableWindow(TRUE)
-
-#define  DISABLE_ITEM(ID) \
-	GetDlgItem(ID)->EnableWindow(FALSE)
-
-#define ENABLE_BUTTON(ID) \
-	ENABLE_ITEM(IDC_BUTTON_##ID)
-
-#define DISABLE_BUTTON(ID) \
-	DISABLE_ITEM(IDC_BUTTON_##ID)
-
-#define ENABLE_SLIDER(ID) \
-	ENABLE_ITEM(IDC_SLIDER_##ID)
-
-#define DISABLE_SLIDER(ID) \
-	DISABLE_ITEM(IDC_SLIDER_##ID)
-
-
 
 struct UIConfig
 {
@@ -97,6 +78,8 @@ public:
 	virtual void Pause();
 
 	virtual void OpenTextFile();
+
+	virtual bool CanDraw() const;
 
 
 	
