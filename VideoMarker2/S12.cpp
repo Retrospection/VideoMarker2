@@ -15,7 +15,7 @@ CS12::~CS12()
 
 void CS12::OnLButtonUp(int nFlags, cv::Point point)
 {
-	SetState(S8);
+//	SetState(S8);
 }
 
 void CS12::RefreshButton()

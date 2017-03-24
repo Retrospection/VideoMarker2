@@ -19,5 +19,5 @@ void CS8::RefreshButton()
 
 void CS8::OnLButtonDown(int nFlags, cv::Point point)
 {
-	SetState(S12);
+//	SetState(S12);
 }

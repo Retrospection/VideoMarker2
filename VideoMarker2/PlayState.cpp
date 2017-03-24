@@ -32,13 +32,13 @@ void CPlayState::RefreshButton()
 void CPlayState::Pause()
 {
 	GetPresenter()->Pause();
-	SetState(PAUSE);
+//	SetState(PAUSE);
 }
 
 void CPlayState::Stop()
 {
 	GetPresenter()->Stop();
-	SetState(STOP);
+//	SetState(STOP);
 }
 
 

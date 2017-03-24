@@ -7,11 +7,8 @@
 #include "FrameInfo.h"
 
 class CS5;
-
 class CS12;
-
 class CStateBase;
-
 class IDrawable;
 
 class CPictureBox : public CStatic
@@ -28,6 +25,8 @@ public:
 
 	void SetState(CStateBase* pState);
 
+	void SetDrawable(bool drawable);
+
 
 
 public:
@@ -35,7 +34,7 @@ public:
 	void SetFrameInfo(const FrameInfo& frameInfo);
 	void SetHighLight(const std::vector<cv::Rect>& highLight);
 	std::vector<cv::Rect> GetUnsavedBoxesInRaw();
-	std::vector<std::string> GetUnsavedNames()const;
+	std::vector<std::string> GetUnsavedNames() const;
 
 	void ClearUnsavedBoxes();
 	void ClearUnsavedNames();
@@ -47,14 +46,15 @@ public:
 
 	void DecreaseEndIndex();
 
+	FrameInfo GetDeleteFrameInfo() const;
 
 private:
 	void DrawFrameInfo(cv::Mat& img);
 	bool GetActiveBox(cv::Rect& activeBox) const;
-	//bool GetActiveBox2(RRect& rr) const;
 
 	void SaveFaceInfo(const FaceInfo& faceInfo);
 
+	void CalculateDeleteFrameInfo();
 
 	Transformer m_Trans;
 	
@@ -66,6 +66,7 @@ private:
 	std::vector<std::string> m_UnsavedNames;
 	std::vector<cv::Rect> m_UnsavedBoxes;
 
+	FrameInfo m_DeleteFrameInfo;
 
 	std::vector<FaceInfo> m_IllegalFaceInfo;
 	std::vector<size_t> m_IllegalIndex;
@@ -73,6 +74,7 @@ private:
 
 	size_t m_nEndIndexOfUnsavedDrawables;
 
+	bool m_bDrawable;
 	bool m_bDrawing;
 	cv::Mat m_image;
 
@@ -80,6 +82,7 @@ private:
 
 	static const wchar_t* m_AlertMessage[4];
 	static const size_t NUMBER_OF_VALIDATOR_TYPES = sizeof(m_AlertMessage) / sizeof(m_AlertMessage[0]);
+
 
 protected:
 	DECLARE_MESSAGE_MAP()

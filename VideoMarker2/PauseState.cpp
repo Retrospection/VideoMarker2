@@ -17,7 +17,7 @@ CPauseState::~CPauseState()
 
 void CPauseState::RefreshButton()
 {
-// 
+
 // 	GetDlgItem(IDC_BUTTON3)->EnableWindow(FALSE);										     // 禁用打开按钮
 // 	GetDlgItem(IDC_BUTTON1)->EnableWindow(TRUE);											 // 启用播放按钮
 // 	GetDlgItem(IDC_BUTTON2)->EnableWindow(FALSE);											 // 禁用暂停按钮
@@ -31,13 +31,13 @@ void CPauseState::RefreshButton()
 void CPauseState::Play()
 {
 	GetPresenter()->Play();
-	SetState(PLAY);
+//	SetState(PLAY);
 }
 
 void CPauseState::Stop()
 {
 	GetPresenter()->Stop();
-	SetState(STOP);
+//	SetState(STOP);
 }
 
 

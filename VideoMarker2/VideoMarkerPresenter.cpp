@@ -21,7 +21,7 @@ bool IsOverlapping(const cv::Rect& rc1, const cv::Rect& rc2)
 }
 
 CVideoMarkerPresenter::CVideoMarkerPresenter(CVideoMarker2Dlg* pDlg)
-	:m_pDlg(pDlg)
+	:m_pDlg(pDlg), m_pView(pDlg)
 {
 	this->m_pVideoPlayer = new CVideoPlayer();
 	this->m_pTextMgr = new CTextFileManager();
@@ -51,17 +51,10 @@ CVideoMarkerPresenter::~CVideoMarkerPresenter()
 	delete m_pVideoPlayer;
 }
 
-void CVideoMarkerPresenter::Open()
+void CVideoMarkerPresenter::OpenVideo()
 {
 	std::string strFileName = m_pDlg->GetFileName();
-// 	m_pDlg->SetFileOpenedStatus(m_pVideoPlayer->Open(strFileName));
-// 	cv::Mat frame;
-// 	m_pVideoPlayer->GetNextFrame(frame);
-// 	m_pDlg->SetRawFrame(frame);
-// 	m_pDlg->SetTotalFrameCount(m_pVideoPlayer->m_nTotalFrames);
-// 	m_pDlg->SetCurrentFrameIndex(0);
-// 	m_pDlg->Refresh();
-	Open(strFileName); 
+	OpenVideo(strFileName); 
 }
 
 
@@ -86,10 +79,9 @@ void CVideoMarkerPresenter::Close()
 }
 
 
-bool CVideoMarkerPresenter::Open(const std::string& strVideoFileName)
+bool CVideoMarkerPresenter::OpenVideo(const std::string& strVideoFileName)
 {
-	std::string strFileName = strVideoFileName;
-	bool bResult = m_pVideoPlayer->Open(strFileName);
+	bool bResult = m_pVideoPlayer->Open(strVideoFileName);
 	if (!bResult)
 	{
 		return false;
@@ -328,7 +320,7 @@ int CVideoMarkerPresenter::OpenProject()
 	{
 		return LOAD_PROJECT_ERROR;
 	}
-	if (!Open(setting.m_strVideoFileName))
+	if (!OpenVideo(setting.m_strVideoFileName))
 	{
 		return OPEN_VIDEO_ERROR;
 	}
@@ -345,4 +337,18 @@ bool CVideoMarkerPresenter::LoadProject(ProjectSetting& ret, const std::string& 
 	std::getline(ifs, ret.m_strVideoFileName);
 	std::getline(ifs, ret.m_strTextFileName);
 	return true;
+}
+
+void CVideoMarkerPresenter::Delete()
+{
+	FrameInfo info = m_pView->GetDeleteFrameInfo();
+	std::cout << "presenter's deleteframeinfo is " << info.toString() << std::endl;
+	m_pView->ClearDeleteFrameInfo();
+	size_t frameIndex = m_pView->GetCurrentFrameIndex();
+	m_pTextMgr->DeleteFrameInfo(frameIndex, info);
+	FrameInfo newInfo;
+	bool result = m_pTextMgr->GetFrameInfoByPos(newInfo, frameIndex);
+	assert(result);
+	m_pView->SetFrameInfo(newInfo);
+	m_pView->Refresh();
 }

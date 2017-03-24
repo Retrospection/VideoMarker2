@@ -11,6 +11,8 @@ class CVideoMarkerPresenter;
 
 class CVideoMarker2Dlg;
 
+class CPictureBox;
+
 
 
 struct UIConfig
@@ -82,6 +84,9 @@ public:
 	virtual bool CanDraw() const;
 
 
+	virtual void OnPictureBoxLBtnDown();
+	virtual void OnPictureBoxLBtnUp();
+
 	
 
 
@@ -90,6 +95,9 @@ protected:
 	CWnd* GetDlgItem(int nID);
 	bool IsTextFileOpened() const;
 	CVideoMarkerPresenter* GetPresenter();
+	CPictureBox* GetPictureBox() const;
+
+
 
 protected:
 	CVideoMarker2Dlg* _pDlg;

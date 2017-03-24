@@ -19,6 +19,8 @@ public:
 
 //	virtual void OnLButtonDown(int nFlags, cv::Point point) override;
 
+	virtual void OnPictureBoxLBtnDown() override;
+
 
 
 };

@@ -19,6 +19,8 @@ public:
 	void AddFaceInfo(size_t nPos, const FrameInfo& newFrameInfo);
 	void SaveToTextFile(); 
 
+	void DeleteFrameInfo(size_t nPos, const FrameInfo& newFrameInfo);
+
 	bool IsOpened()const;
 
 private:

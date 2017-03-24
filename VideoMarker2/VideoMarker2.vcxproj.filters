@@ -61,6 +61,12 @@
     <Filter Include="Drawable">
       <UniqueIdentifier>{3e236ee6-15a8-44fc-b056-e74f72a6c0f7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="State\S1">
+      <UniqueIdentifier>{05d49263-9c8e-4d61-aab5-a51b0e1702cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="State\S5">
+      <UniqueIdentifier>{6f20a05c-d203-414a-9234-d198ab24cbda}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -153,14 +159,14 @@
     <ClInclude Include="constant.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="S1.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="S5.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="S12.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="S1.h">
+      <Filter>State\S1</Filter>
+    </ClInclude>
+    <ClInclude Include="S5.h">
+      <Filter>State\S5</Filter>
     </ClInclude>
     <ClInclude Include="S8.h">
       <Filter>头文件</Filter>
@@ -221,17 +227,17 @@
     <ClCompile Include="Transformer.cpp">
       <Filter>Util</Filter>
     </ClCompile>
-    <ClCompile Include="S1.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="S5.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="S12.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="S8.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="S1.cpp">
+      <Filter>State\S1</Filter>
+    </ClCompile>
+    <ClCompile Include="S5.cpp">
+      <Filter>State\S5</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

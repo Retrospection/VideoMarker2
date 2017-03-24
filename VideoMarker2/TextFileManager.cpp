@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <codecvt>
+#include <iostream>
 
 
 CTextFileManager::CTextFileManager()
@@ -146,4 +147,10 @@ bool CTextFileManager::IsOpened() const
 void CTextFileManager::Close()
 {
 	// TODO
+}
+
+void CTextFileManager::DeleteFrameInfo(size_t nPos, const FrameInfo& newFrameInfo)
+{
+//	FrameInfo info = newFrameInfo;
+	std::cout << "model will delete frameinfo  " << newFrameInfo.toString() << " at " << nPos << std::endl;
 }

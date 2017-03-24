@@ -1,5 +1,5 @@
 // PictureBox.cpp : ÊµÏÖÎÄ¼þ
-//
+
 
 #include "stdafx.h"
 #include "VideoMarker2.h"
@@ -7,7 +7,7 @@
 #include "NameInputDialog.h"
 
 #include "CvvImage.h"
-#include "DBox.h"
+#include "DBox.h" 
 #include "DText.h"
 
 #include "StringHelper.h"
@@ -15,6 +15,7 @@
 #include "VideoMarker2Dlg.h"
 //#include "Transformer.h"
 
+#include <iostream>
 
 // ScopeGuard
 
@@ -51,10 +52,10 @@ IMPLEMENT_DYNAMIC(CPictureBox, CStatic)
 
 const cv::Point INIT_POINT = { -1, -1 };
 
-const cv::Scalar Green{ 0, 255, 0 };
-const cv::Scalar Red{ 0, 0, 255 };
-const cv::Scalar Black{ 0, 0, 0 };
-const cv::Scalar Blue{ 255, 0, 0 };
+const cv::Scalar Green { 0, 255, 0 };
+const cv::Scalar Red { 0, 0, 255 };
+const cv::Scalar Black { 0, 0, 0 };
+const cv::Scalar Blue { 255, 0, 0 };
 
 const cv::Scalar ColorUnsaved = Red;
 const cv::Scalar ColorSaved = Red;
@@ -66,7 +67,7 @@ const wchar_t* CPictureBox::m_AlertMessage[] = { L"", L"°üÎ§ºÐÃæ»ý¹ýÐ¡£¡", L"µ±Ç
 
 
 CPictureBox::CPictureBox(CStateBase* pState) 
-	:CStatic(), m_Trans(Transformer::Default()), m_nEndIndexOfUnsavedDrawables(0)
+	:CStatic(), m_Trans(Transformer::Default()), m_nEndIndexOfUnsavedDrawables(0), m_bDrawable(false)
 
 {
 	m_pState = pState;
@@ -94,8 +95,6 @@ void CPictureBox::SetState(CStateBase* pState)
 	m_pState = pState; 
 }
 
-
-
 bool CPictureBox::GetActiveBox(cv::Rect& activeBox) const
 {
 	if (m_ActivePoints[0] == INIT_POINT || m_ActivePoints[1] == INIT_POINT)
@@ -110,7 +109,6 @@ bool CPictureBox::GetActiveBox(cv::Rect& activeBox) const
 	activeBox = cv::Rect(m_Trans.Trans({ m_ActivePoints[0], m_ActivePoints[1] }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Roi));
 	return true;
 }
-
 
 void CPictureBox::SetImage(const cv::Mat& image)
 {
@@ -139,27 +137,32 @@ std::vector<cv::Rect> CPictureBox::GetUnsavedBoxesInRaw()
 	return std::move(ret);
 }
 
-
-
 void CPictureBox::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	if (!((CVideoMarker2Dlg*)GetParent())->CanDraw())
+
+
+
+	if (!m_bDrawable)
 	{
 		return;
 	}
+	((CVideoMarker2Dlg*)GetParent())->OnPictureBoxLBtnUp();
 	if (!m_bDrawing)
 	{
 		return;
 	}
 	m_ActivePoints[1] = {point.x, point.y};
 	m_bDrawing = false;
-	CNameInputDialog dlg;
+
+
+//	CNameInputDialog dlg;
+
+
+
 	cv::Rect activeBox;
-
-
-	if (dlg.DoModal() == IDOK && GetActiveBox(activeBox))
+	std::string strPersonName;
+	if (/*dlg.DoModal() == IDOK*/((CVideoMarker2Dlg*)GetParent())->GetUnsavedName2(strPersonName) && GetActiveBox(activeBox))
 	{
-		std::string strPersonName = CStringHelper::ConvertCStringToString(dlg.m_strPersonName);
 		SaveFaceInfo({ strPersonName, m_Trans.Trans(activeBox,Transformer::Coordinate::Roi, Transformer::Coordinate::Raw )});
 	}
 
@@ -167,9 +170,6 @@ void CPictureBox::OnLButtonUp(UINT nFlags, CPoint point)
 	m_ActivePoints[0] = INIT_POINT;
 	m_ActivePoints[1] = INIT_POINT;
 
-	
-
-	m_pState->OnLButtonUp(nFlags, { point.x, point.y });
 	CStatic::OnLButtonUp(nFlags, point);
 
 }
@@ -204,17 +204,25 @@ void CPictureBox::OnMouseMove(UINT nFlags, CPoint point)
 
 void CPictureBox::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	if (!((CVideoMarker2Dlg*)GetParent())->CanDraw())
+	if (!m_bDrawable)
 	{
 		return;
 	}
-	m_bDrawing = true;
-	m_ActivePoints[0] = { point.x, point.y };
-	Invalidate(FALSE);
-
-	CStatic::OnLButtonDown(nFlags, point);
+	((CVideoMarker2Dlg*)GetParent())->OnPictureBoxLBtnDown();
+	if (m_bDrawing)
+	{
+		m_ActivePoints[1] = { point.x, point.y };
+		Invalidate(FALSE); 
+		CStatic::OnLButtonDown(nFlags, point);
+	}
+	else
+	{
+		m_bDrawing = true;
+		m_ActivePoints[0] = { point.x, point.y };
+		Invalidate(FALSE);
+		CStatic::OnLButtonDown(nFlags, point);
+	}
 }
-
 
 void CPictureBox::PreSubclassWindow()
 {
@@ -222,7 +230,6 @@ void CPictureBox::PreSubclassWindow()
 	SetWindowLong(GetSafeHwnd(), GWL_STYLE, dwStyle | SS_OWNERDRAW);
 	CStatic::PreSubclassWindow();
 }
-
 
 void CPictureBox::DrawItem(LPDRAWITEMSTRUCT /*lpDrawItemStruct*/)
 {
@@ -364,6 +371,7 @@ void CPictureBox::SaveFaceInfo(const FaceInfo& faceInfo)
 	if (m_nEndIndexOfUnsavedDrawables != m_UnsavedBoxes.size())
 	{
 		m_UnsavedBoxes.resize(m_nEndIndexOfUnsavedDrawables);
+
 		m_UnsavedNames.resize(m_nEndIndexOfUnsavedDrawables);
 	}
 	m_UnsavedBoxes.push_back(m_Trans.Trans(faceInfo.box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi));
@@ -372,9 +380,22 @@ void CPictureBox::SaveFaceInfo(const FaceInfo& faceInfo)
 
 }
 
-// bool CPictureBox::GetActiveBox2(RRect& rr) const
-// {
-// 	return true;
-// }
+void CPictureBox::SetDrawable(bool drawable)
+{
+	m_bDrawable = drawable;
+	std::cout << "drawable? " << m_bDrawable << std::endl;
+}
+
+FrameInfo CPictureBox::GetDeleteFrameInfo() const
+{
+	std::cout << "picturebox's deleteframeinfo is " << m_DeleteFrameInfo.toString() << std::endl;
+	return m_DeleteFrameInfo;
+}
+
+void CPictureBox::CalculateDeleteFrameInfo()
+{
+	m_DeleteFrameInfo.facesInfo.push_back("aaa", GetActiveBox());
+}
+
 
 

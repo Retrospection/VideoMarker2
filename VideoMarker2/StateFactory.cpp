@@ -29,26 +29,26 @@ CStateFactory& CStateFactory::GetInstance()
 CStateBase* CStateFactory::Create(const std::string& state, CVideoMarker2Dlg* pDlg, const UIConfig& config)
 {
 
-	if (state == PLAY)
-	{
-		return new CPlayState(pDlg);
-	}
-	else if (state == STOP)
-	{
-		return  new CStopState(pDlg);
-	}
-	else if (state == INIT)
+// 	if (state == PLAY)
+// 	{
+// 		return new CPlayState(pDlg);
+// 	}
+// 	else if (state == STOP)
+// 	{
+// 		return  new CStopState(pDlg);
+// 	}
+/*	else */if (state == INIT)
 	{
 		return new CInitState(pDlg, config);
 	}
-	else if (state == PAUSE)
-	{
-		return new CPauseState(pDlg);
-	}
-	else if (state == EDIT_MARK)
-	{
-		return new CEditMarkState(pDlg);
-	}
+// 	else if (state == PAUSE)
+// 	{
+// 		return new CPauseState(pDlg);
+// 	}
+// 	else if (state == EDIT_MARK)
+// 	{
+// 		return new CEditMarkState(pDlg);
+// 	}
 	else if (state == S1)
 	{
 		return new CS1(pDlg,config);
@@ -57,13 +57,13 @@ CStateBase* CStateFactory::Create(const std::string& state, CVideoMarker2Dlg* pD
 	{
 		return new CS5(pDlg, config);
 	}
-	else if (state == S12)
-	{
-		return new CS12(pDlg, config);
-	}
-	else if (state == S8)
-	{
-		return new CS8(pDlg, config);
-	}
+// 	else if (state == S12)
+// 	{
+// 		return new CS12(pDlg, config);
+// 	}
+// 	else if (state == S8)
+// 	{
+// 		return new CS8(pDlg, config);
+// 	}
 	return nullptr;
 }

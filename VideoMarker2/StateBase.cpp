@@ -1,3 +1,7 @@
+m_pPictureBox
+m_pPictureBox
+m_pPictureBox
+m_pPictureBox
 #include "stdafx.h"
 #include "StateBase.h"
 #include "State.h"
@@ -101,8 +105,7 @@ void CStateBase::Open()
 
 void CStateBase::Play()
 {
-	GetPresenter()->Play();
-	SetState(PLAY);
+
 }
 
 void CStateBase::Stop()
@@ -120,7 +123,7 @@ void CStateBase::Pause()
 
 void CStateBase::OpenTextFile()
 {
-	GetPresenter()->OpenTextFile();
+
 }
 
 
@@ -128,9 +131,6 @@ void CStateBase::OpenTextFile()
 void CStateBase::SetState(const std::string& state)
 {
 	std::cout << "set state " << state << std::endl;
-
-
-
 	_pDlg->SetState(state);
 	_pDlg->ClearHighLight();
 }
@@ -163,6 +163,21 @@ void CStateBase::Redo()
 bool CStateBase::CanDraw() const
 {
 	return false;
+}
+
+CPictureBox* CStateBase::GetPictureBox() const
+{
+	return _pDlg->m_pPictureBox;
+}
+
+void CStateBase::OnPictureBoxLBtnDown()
+{
+	_pDlg->GetDlgItem(IDC_BUTTON_ADDMARK)->EnableWindow(TRUE);
+}
+
+void CStateBase::OnPictureBoxLBtnUp()
+{
+	_pDlg->GetDlgItem(IDC_BUTTON_ADDMARK)->EnableWindow(TRUE);
 }
 
 
@@ -213,8 +228,6 @@ CUI::CUI(CVideoMarker2Dlg* pDlg, const UIConfig& config) :m_pDlg(pDlg), m_Config
 	m_IDByName.insert(std::make_pair("Slider", IDC_SLIDER_1));
 	m_IDByName.insert(std::make_pair("Undo", IDC_BUTTON_UNDO));
 	m_IDByName.insert(std::make_pair("Redo", IDC_BUTTON_REDO));
-
-
 }
 
 CUI::CUI()
@@ -234,16 +247,6 @@ CUI& CUI::Disable(const std::string& strItemName)
 
 void CUI::RefreshButton()
 {
-// 	Enable("OpenProject");
-// 
-// 	Disable("AddMark")
-// 		.Disable("Undo")
-// 		.Disable("Redo")
-// 		.Disable("StepBackward")
-// 		.Disable("StepForward")
-// 		.Disable("Slider");
-// 		
-
 	for (auto& enable: m_Config.enables)
 	{
 		Enable(enable);

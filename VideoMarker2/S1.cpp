@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "S1.h"
 
+#include "VideoMarker2Dlg.h"
 
 CS1::CS1(CVideoMarker2Dlg* pDlg, const UIConfig& config) :CStateBase(pDlg,config)
 {
@@ -21,6 +22,7 @@ void CS1::RefreshButton()
 	//GetDlgItem(IDC_BUTTON_STEPFORWARD)->EnableWindow(TRUE);
 	//GetDlgItem(IDC_SLIDER1)->EnableWindow(TRUE);
 	m_ui.RefreshButton();
+	GetPictureBox()->SetDrawable(false);
 }
 
 void CS1::SaveMark()

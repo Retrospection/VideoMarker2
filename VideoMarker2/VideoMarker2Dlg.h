@@ -10,6 +10,8 @@
 #include <features2d/features2d.hpp>
 
 #include <unordered_map>
+#include <vector>
+
 
 #include "afxcmn.h"
 #include "afxwin.h"
@@ -28,7 +30,6 @@ class CPictureBox;
 const int PLAY_TIMER = 1;
 
 
-#include <vector>
 
 // CVideoMarker2Dlg ¶Ô»°¿ò
 class CVideoMarker2Dlg : public CDialogEx, public IVideoMarker2
@@ -39,16 +40,24 @@ public:
 	friend class CPictureBox;
 
 public:
-	void Refresh();
+	virtual void Refresh() override;
 	void RefreshSlider();
+
 public:
 	std::string GetFileName() const;
 	std::string GetTextFileName()const;
 	std::string GetProjectFileName() const;
 	virtual std::vector<cv::Rect> GetUnsavedBox() override;
 	virtual std::vector<std::string> GetUnsavedName() override;
-	int GetCurrentFrameIndex() const;
+	virtual int GetCurrentFrameIndex() const override;
+	virtual void ClearDeleteFrameInfo() override;
 
+	bool GetUnsavedName2(std::string& unsavedName);
+
+	void OnPictureBoxLBtnDown();
+	void OnPictureBoxLBtnUp();
+
+	virtual FrameInfo GetDeleteFrameInfo() override;
 
 public:
 	void SetTextFileOpenedStatus(bool status);
@@ -56,11 +65,10 @@ public:
 	void SetTotalFrameCount(int nTotalFrameCount);
 	void SetCurrentFrameIndex(int nCurrentFrameIndex);
 	void SetFileOpenedStatus(bool status);
-	void SetFrameInfo(const FrameInfo& frameInfo);
+	virtual void SetFrameInfo(const FrameInfo& frameInfo) override;
 	void ClearUnsavedFrameInfo();
 
 	bool CanDraw();
-
 
 	unsigned int ValidateFaceInfo(const FaceInfo& info);
 
@@ -68,13 +76,16 @@ public:
 private:
 	CVideoMarkerPresenter* m_pPresenter;
 	CNameInputDialog* m_pNameDlg;
+
 private:
 	bool m_bStatus;
 	bool m_bTextStatus;
+
 private:
  	int m_nTotalFrameCount;
 	FrameInfo m_FrameInfo;
 	std::vector<cv::Rect> m_HighLight;
+
 private:
 	std::string m_strTextFileName;
 	std::string m_strVideoFileName;
@@ -146,4 +157,5 @@ public:
 	afx_msg void OnBnClickedButtonRevoke();
 	afx_msg void OnBnClickedButtonRedo();
 	afx_msg void OnBnClickedButtonProject();
+	afx_msg void OnBnClickedButtonDeletemark();
 };

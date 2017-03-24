@@ -55,13 +55,14 @@ BEGIN_MESSAGE_MAP(CVideoMarker2Dlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON5, &CVideoMarker2Dlg::OnBnClickedOpenTextFile)
 	ON_BN_CLICKED(IDC_BUTTON6, &CVideoMarker2Dlg::OnBnClickedStopButton)
 	ON_BN_CLICKED(IDC_BUTTON_PAUSE, &CVideoMarker2Dlg::OnBnClickedPauseButton)
-	ON_BN_CLICKED(IDC_BUTTON9, &CVideoMarker2Dlg::OnBnClickedAddMark)
+	ON_BN_CLICKED(IDC_BUTTON_ADDMARK, &CVideoMarker2Dlg::OnBnClickedAddMark)
 	ON_WM_TIMER()
 	ON_BN_CLICKED(IDC_BUTTON4, &CVideoMarker2Dlg::OnBnClickedButton4)
 	ON_LBN_DBLCLK(IDC_LIST1, &CVideoMarker2Dlg::OnLbnDblclkList1)
-	ON_BN_CLICKED(IDC_BUTTON_REVOKE, &CVideoMarker2Dlg::OnBnClickedButtonRevoke)
+	ON_BN_CLICKED(IDC_BUTTON_UNDO, &CVideoMarker2Dlg::OnBnClickedButtonRevoke)
 	ON_BN_CLICKED(IDC_BUTTON_REDO, &CVideoMarker2Dlg::OnBnClickedButtonRedo)
 	ON_BN_CLICKED(IDC_BUTTON_OPENPROJECT, &CVideoMarker2Dlg::OnBnClickedButtonProject)
+	ON_BN_CLICKED(IDC_BUTTON_DELETEMARK, &CVideoMarker2Dlg::OnBnClickedButtonDeletemark)
 END_MESSAGE_MAP()
 
 // CVideoMarker2Dlg 消息处理程序
@@ -194,6 +195,10 @@ void CVideoMarker2Dlg::SetCurrentFrameIndex(int nCurrentFrameIndex)
 {
 	assert(nCurrentFrameIndex >= 0 && nCurrentFrameIndex < m_nTotalFrameCount);
 	m_nCurrentFrameIndex = nCurrentFrameIndex;
+	std::cout << "CurrentFrameIndex:" << m_nCurrentFrameIndex << std::endl;
+	GetDlgItem(IDC_BUTTON_STEPBACK)->EnableWindow(m_nCurrentFrameIndex != 0 ? TRUE : FALSE);
+	GetDlgItem(IDC_BUTTON_STEPFORWARD)->EnableWindow(m_nCurrentFrameIndex != m_nTotalFrameCount - 1 ? TRUE : FALSE);
+	
 }
 
 void CVideoMarker2Dlg::SetTextFileOpenedStatus(bool status)
@@ -230,11 +235,8 @@ void CVideoMarker2Dlg::SetState(const std::string& state)
 	}
 
 	UIConfig config;
-
-
 	bool bResult = GetUIConfig(config, state);
 	assert(bResult);
-
 	m_pState = CStateFactory::GetInstance().Create(state, this,config);
 	m_States.insert(std::make_pair(state, m_pState));
 	m_pPictureBox->SetState(m_pState);
@@ -289,7 +291,6 @@ void CVideoMarker2Dlg::OnBnClickedOpenTextFile()
 	{
 		return;
 	}
-
 	m_strTextFileName = CStringHelper::ConvertCStringToString(fileDlg.GetPathName());
 	m_pState->OpenTextFile();
 }
@@ -408,7 +409,9 @@ unsigned int CVideoMarker2Dlg::ValidateFaceInfo(const FaceInfo& info)
 	std::vector<std::string> unsavedNames = m_pPictureBox->GetUnsavedNames();
 	std::vector<cv::Rect> unsavedBoxes = m_pPictureBox->GetUnsavedBoxesInRaw();
 	allUnsavedFaceInfo.resize(GetUnsavedName().size());
-	std::transform(unsavedBoxes.begin(), unsavedBoxes.end(), unsavedNames.begin(), allUnsavedFaceInfo.begin(), [](const cv::Rect& box, const std::string& strPersonName )->FaceInfo{ return{ strPersonName, box }; });
+	std::transform(unsavedBoxes.begin(), unsavedBoxes.end(), unsavedNames.begin(), allUnsavedFaceInfo.begin(),
+		[](const cv::Rect& box, const std::string& strPersonName )->FaceInfo{ return{ strPersonName, box }; });
+
 	allUnsavedFaceInfo.push_back(info);
 	return m_pPresenter->ValidateFacesInfo(allUnsavedFaceInfo);
 }
@@ -501,4 +504,42 @@ std::vector<std::string> CVideoMarker2Dlg::GetLines(const std::string& filename)
 bool CVideoMarker2Dlg::CanDraw()
 {
 	return m_pState->CanDraw();
+}
+
+bool CVideoMarker2Dlg::GetUnsavedName2(std::string& unsavedName)
+{
+	if (m_pNameDlg->DoModal() == IDCANCEL)
+	{
+		return false;
+	}
+	unsavedName = CStringHelper::ConvertCStringToString(m_pNameDlg->m_strPersonName);
+	return true;
+}
+
+void CVideoMarker2Dlg::OnPictureBoxLBtnDown()
+{
+	m_pState->OnPictureBoxLBtnDown();
+}
+
+void CVideoMarker2Dlg::OnPictureBoxLBtnUp()
+{
+	m_pState->OnPictureBoxLBtnUp();
+}
+
+FrameInfo CVideoMarker2Dlg::GetDeleteFrameInfo()
+{
+	FrameInfo info = m_pPictureBox->GetDeleteFrameInfo();
+	std::cout << "view's deleteframeinfo is " << info.toString() << std::endl;
+	return info;
+}
+
+void CVideoMarker2Dlg::ClearDeleteFrameInfo()
+{
+
+}
+
+
+void CVideoMarker2Dlg::OnBnClickedButtonDeletemark()
+{
+	m_pPresenter->Delete();
 }
