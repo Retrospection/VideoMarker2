@@ -543,9 +543,9 @@ void CVideoMarker2Dlg::OnBnClickedButtonDeletemark()
 	{
 		SetState(S1);
 		m_pPictureBox->CalculateDeleteFrameInfoIndex();
-
 		m_pPictureBox->DeleteUnsavedFaceInfo();
 		m_pPresenter->Delete();
+		m_pPictureBox->ClearToBeDeleted();
 		SetDlgItemText(IDC_BUTTON_DELETEMARK, L"É¾³ý±ê×¢");
 	}
 	else

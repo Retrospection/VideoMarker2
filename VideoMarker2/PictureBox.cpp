@@ -165,11 +165,8 @@ void CPictureBox::OnLButtonUp(UINT nFlags, CPoint point)
 	}
 	case  DELETE_MAKR_TYPE:
 	{
-// 		std::vector<size_t> DeleteIndexes;
-// 		CalculateDeleteFrameInfoIndex(DeleteIndexes);
-// 		CacheDeleteFrameInfo(DeleteIndexes);
-
 		CacheDeleteArea();
+		HighLightDeleteFaceInfo();
 		break;
 	}
 	default:
@@ -287,9 +284,9 @@ void CPictureBox::DrawFrameInfo(cv::Mat& img)
 		m_drawables.push_back(new DBox(rc, ColorUnsaved));
 	}
 
-	for (auto& illegal: m_IllegalFaceInfo)
+	for (auto& deleted: m_ToBeDeleteFaceInfo)
 	{
-		m_drawables.push_back(new DBox(m_Trans.Trans(illegal.box,Transformer::Coordinate::Raw,Transformer::Coordinate::Roi), ColorIllegal));
+		m_drawables.push_back(new DBox(m_Trans.Trans(deleted.box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi), ColorIllegal));
 	}
 
 	for (auto& highlight:m_HighLights)
@@ -358,8 +355,8 @@ void CPictureBox::Redo()
 
 void CPictureBox::SetIllegal(const FaceInfo& info, size_t index)
 {
-	m_IllegalFaceInfo.push_back(info);
-	m_IllegalIndex.push_back(index);
+// 	m_IllegalFaceInfo.push_back(info);
+// 	m_IllegalIndex.push_back(index);
 }
 
 void CPictureBox::DecreaseEndIndex()
@@ -403,6 +400,8 @@ std::vector<size_t> CPictureBox::GetDeleteFrameInfo() const
 
 void CPictureBox::CalculateDeleteFrameInfoIndex()
 {
+	m_DeleteFaceInfoIndexes.clear();
+	m_DeleteUnsavedFaceInfoIndexes.clear();
 	for (size_t i = 0; i < m_FrameInfo.facesInfo.size(); ++i)
 	{
 		if ((m_DeleteArea & m_FrameInfo.facesInfo[i].box).area() > 0)
@@ -427,6 +426,7 @@ void CPictureBox::CacheDeleteFrameInfo(const std::vector<size_t>& deletedFaceInf
 void CPictureBox::ClearDeleteFrameInfo()
 {
 	m_DeleteFaceInfoIndexes.clear();
+	m_DeleteUnsavedFaceInfoIndexes.clear();
 }
 
 void CPictureBox::SetEditType(size_t nEditType)
@@ -437,6 +437,7 @@ void CPictureBox::SetEditType(size_t nEditType)
 void CPictureBox::CacheDeleteArea()
 {
 	m_DeleteArea = cv::Rect(m_Trans.Trans({ m_ActivePoints[0], m_ActivePoints[1] }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw));
+	std::cout << "Delete Area:" << m_DeleteArea << std::endl;
 }
 
 void CPictureBox::DeleteUnsavedFaceInfo()
@@ -454,9 +455,32 @@ void CPictureBox::DeleteUnsavedFaceInfo()
 // 	m_UnsavedBoxes = newUnsavedBoxes;
 // 	m_UnsavedNames = newUnsavedNames;
 
-	std::remove_if(m_UnsavedBoxes.begin(),m_UnsavedBoxes.end(),[])
+	std::sort(m_DeleteUnsavedFaceInfoIndexes.begin(), m_DeleteUnsavedFaceInfoIndexes.end(), std::greater<size_t>());
+	for (auto index:m_DeleteUnsavedFaceInfoIndexes)
+	{
+		m_UnsavedBoxes.erase(m_UnsavedBoxes.begin() + index);
+		m_UnsavedNames.erase(m_UnsavedNames.begin() + index);
+		DecreaseEndIndex();
+	}
 
+}
 
+void CPictureBox::HighLightDeleteFaceInfo()
+{
+	CalculateDeleteFrameInfoIndex();
+	for (auto index : m_DeleteFaceInfoIndexes)
+	{
+		m_ToBeDeleteFaceInfo.push_back(m_FrameInfo.facesInfo[index]);
+	}
+	for (auto index : m_DeleteUnsavedFaceInfoIndexes)
+	{
+		m_ToBeDeleteFaceInfo.push_back({ m_UnsavedNames[index], m_UnsavedBoxes[index] });
+	}
+}
+
+void CPictureBox::ClearToBeDeleted()
+{
+	m_ToBeDeleteFaceInfo.clear();
 }
 
 

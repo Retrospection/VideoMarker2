@@ -58,6 +58,7 @@ private:
 	bool GetActiveBox(cv::Rect& activeBox) const;
 
 	void CacheUnsaveFaceInfo(const FaceInfo& faceInfo);
+	void HighLightDeleteFaceInfo();
 
 public:
 	void CalculateDeleteFrameInfoIndex();
@@ -65,6 +66,7 @@ public:
 	void CacheDeleteFrameInfo(const std::vector<size_t>& deletedFaceInfoIndex);
 
 	void DeleteUnsavedFaceInfo();
+	void ClearToBeDeleted();
 
 private:
 	void CacheDeleteArea();
@@ -83,8 +85,9 @@ private:
 	std::vector<size_t> m_DeleteFaceInfoIndexes;
 	std::vector<size_t> m_DeleteUnsavedFaceInfoIndexes;
 
-	std::vector<FaceInfo> m_IllegalFaceInfo;
+	std::vector<FaceInfo> m_ToBeDeleteFaceInfo;
 	std::vector<size_t> m_IllegalIndex;
+
 
 
 	cv::Rect m_DeleteArea;
