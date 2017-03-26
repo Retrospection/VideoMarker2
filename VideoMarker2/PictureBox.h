@@ -46,15 +46,19 @@ public:
 
 	void DecreaseEndIndex();
 
-	FrameInfo GetDeleteFrameInfo() const;
+	std::vector<int> GetDeleteFrameInfo() const;
+	void ClearDeleteFrameInfo();
 
 private:
 	void DrawFrameInfo(cv::Mat& img);
 	bool GetActiveBox(cv::Rect& activeBox) const;
 
-	void SaveFaceInfo(const FaceInfo& faceInfo);
+	void CacheUnsaveFaceInfo(const FaceInfo& faceInfo);
 
-	void CalculateDeleteFrameInfo();
+	void CalculateDeleteFrameInfoIndex(std::vector<int>& indexes);
+
+	void CacheDeleteFrameInfo(const std::vector<int>& deletedFaceInfoIndex);
+	
 
 	Transformer m_Trans;
 	
@@ -66,7 +70,7 @@ private:
 	std::vector<std::string> m_UnsavedNames;
 	std::vector<cv::Rect> m_UnsavedBoxes;
 
-	FrameInfo m_DeleteFrameInfo;
+	std::vector<int> m_DeleteFaceInfoIndexes;
 
 	std::vector<FaceInfo> m_IllegalFaceInfo;
 	std::vector<size_t> m_IllegalIndex;

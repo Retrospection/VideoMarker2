@@ -10,8 +10,6 @@
 #include "constant.h"
 
 
-
-
 bool IsOverlapping(const cv::Rect& rc1, const cv::Rect& rc2)
 {
 	double intersection = (double)(rc1 & rc2).area();
@@ -341,11 +339,11 @@ bool CVideoMarkerPresenter::LoadProject(ProjectSetting& ret, const std::string& 
 
 void CVideoMarkerPresenter::Delete()
 {
-	FrameInfo info = m_pView->GetDeleteFrameInfo();
-	std::cout << "presenter's deleteframeinfo is " << info.toString() << std::endl;
+	std::vector<int> indexes = m_pView->GetDeleteFrameInfo();
+//	std::cout << "presenter's deleteframeinfo is " << info.toString() << std::endl;
 	m_pView->ClearDeleteFrameInfo();
 	size_t frameIndex = m_pView->GetCurrentFrameIndex();
-	m_pTextMgr->DeleteFrameInfo(frameIndex, info);
+	m_pTextMgr->DeleteFrameInfo(frameIndex, indexes);
 	FrameInfo newInfo;
 	bool result = m_pTextMgr->GetFrameInfoByPos(newInfo, frameIndex);
 	assert(result);

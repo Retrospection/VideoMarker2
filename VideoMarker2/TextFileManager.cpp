@@ -149,8 +149,17 @@ void CTextFileManager::Close()
 	// TODO
 }
 
-void CTextFileManager::DeleteFrameInfo(size_t nPos, const FrameInfo& newFrameInfo)
+
+void CTextFileManager::DeleteFrameInfo(size_t nPos, const std::vector<int>& deleteIndexes)
 {
-//	FrameInfo info = newFrameInfo;
-	std::cout << "model will delete frameinfo  " << newFrameInfo.toString() << " at " << nPos << std::endl;
+	FrameInfo newFrameInfo;
+	for (size_t i = 0; i < m_FrameInfos[nPos].facesInfo.size(); ++i)
+	{
+		if (std::none_of(deleteIndexes.begin(), deleteIndexes.end(), [&](int index){return index == i; }))
+		{
+			newFrameInfo.facesInfo.push_back(m_FrameInfos[nPos].facesInfo[i]);
+		}
+	}
+	m_FrameInfos[nPos] = newFrameInfo;
 }
+

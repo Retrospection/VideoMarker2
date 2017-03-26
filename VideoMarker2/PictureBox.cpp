@@ -163,8 +163,14 @@ void CPictureBox::OnLButtonUp(UINT nFlags, CPoint point)
 	std::string strPersonName;
 	if (/*dlg.DoModal() == IDOK*/((CVideoMarker2Dlg*)GetParent())->GetUnsavedName2(strPersonName) && GetActiveBox(activeBox))
 	{
-		SaveFaceInfo({ strPersonName, m_Trans.Trans(activeBox,Transformer::Coordinate::Roi, Transformer::Coordinate::Raw )});
+		CacheUnsaveFaceInfo({ strPersonName, m_Trans.Trans(activeBox,Transformer::Coordinate::Roi, Transformer::Coordinate::Raw )});
 	}
+
+
+	std::vector<int> DeleteIndexes;
+	CalculateDeleteFrameInfoIndex(DeleteIndexes);
+	CacheDeleteFrameInfo(DeleteIndexes);
+
 
 	Invalidate(FALSE);
 	m_ActivePoints[0] = INIT_POINT;
@@ -358,7 +364,7 @@ void CPictureBox::DecreaseEndIndex()
 	--m_nEndIndexOfUnsavedDrawables;
 }
 
-void CPictureBox::SaveFaceInfo(const FaceInfo& faceInfo)
+void CPictureBox::CacheUnsaveFaceInfo(const FaceInfo& faceInfo)
 {
 	unsigned int validateResult = ((CVideoMarker2Dlg*)GetParent())->ValidateFaceInfo(faceInfo);
 	assert(validateResult < NUMBER_OF_VALIDATOR_TYPES);
@@ -386,15 +392,32 @@ void CPictureBox::SetDrawable(bool drawable)
 	std::cout << "drawable? " << m_bDrawable << std::endl;
 }
 
-FrameInfo CPictureBox::GetDeleteFrameInfo() const
+std::vector<int> CPictureBox::GetDeleteFrameInfo() const
 {
-	std::cout << "picturebox's deleteframeinfo is " << m_DeleteFrameInfo.toString() << std::endl;
-	return m_DeleteFrameInfo;
+	return std::move(m_DeleteFaceInfoIndexes);
 }
 
-void CPictureBox::CalculateDeleteFrameInfo()
+void CPictureBox::CalculateDeleteFrameInfoIndex(std::vector<int>& indexes)
 {
-	m_DeleteFrameInfo.facesInfo.push_back("aaa", GetActiveBox());
+	cv::Rect deleteArea = m_Trans.Trans({ m_ActivePoints[0], m_ActivePoints[1] }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw);
+	for (size_t i = 0; i < m_FrameInfo.facesInfo.size(); ++i)
+	{
+		if ((deleteArea & m_FrameInfo.facesInfo[i].box).area() > 0)
+		{
+			indexes.push_back(i);
+		}
+	}
+	
+}
+
+void CPictureBox::CacheDeleteFrameInfo(const std::vector<int>& deletedFaceInfoIndex)
+{
+	m_DeleteFaceInfoIndexes = deletedFaceInfoIndex;
+}
+
+void CPictureBox::ClearDeleteFrameInfo()
+{
+	m_DeleteFaceInfoIndexes.clear();
 }
 
 

@@ -459,10 +459,6 @@ bool  CVideoMarker2Dlg::GetUIConfig(UIConfig& config, const std::string& state)
 
 void CVideoMarker2Dlg::LoadUIConfig()
 {
-// 	UIConfig config;
-// 	config.disnables.push_back("OpenProject");
-// 	config.disnables.push_back("AddMark");
-// 	
 	if (m_bUIConfigLoaded)
 	{
 		return;
@@ -526,16 +522,15 @@ void CVideoMarker2Dlg::OnPictureBoxLBtnUp()
 	m_pState->OnPictureBoxLBtnUp();
 }
 
-FrameInfo CVideoMarker2Dlg::GetDeleteFrameInfo()
+std::vector<int> CVideoMarker2Dlg::GetDeleteFrameInfo()
 {
-	FrameInfo info = m_pPictureBox->GetDeleteFrameInfo();
-	std::cout << "view's deleteframeinfo is " << info.toString() << std::endl;
-	return info;
+	std::vector<int> indexes = m_pPictureBox->GetDeleteFrameInfo();
+	return indexes;
 }
 
 void CVideoMarker2Dlg::ClearDeleteFrameInfo()
 {
-
+	m_pPictureBox->ClearDeleteFrameInfo();
 }
 
 
