@@ -27,7 +27,7 @@ public:
 
 	void SetDrawable(bool drawable);
 
-
+	void SetEditType(size_t nEditType);
 
 public:
 	void SetImage(const cv::Mat& image);
@@ -46,8 +46,12 @@ public:
 
 	void DecreaseEndIndex();
 
-	std::vector<int> GetDeleteFrameInfo() const;
+	std::vector<size_t> GetDeleteFrameInfo() const;
 	void ClearDeleteFrameInfo();
+
+
+	static const size_t ADD_MARK_TYPE = 1;
+	static const size_t DELETE_MAKR_TYPE = 2;
 
 private:
 	void DrawFrameInfo(cv::Mat& img);
@@ -55,9 +59,15 @@ private:
 
 	void CacheUnsaveFaceInfo(const FaceInfo& faceInfo);
 
-	void CalculateDeleteFrameInfoIndex(std::vector<int>& indexes);
+public:
+	void CalculateDeleteFrameInfoIndex();
 
-	void CacheDeleteFrameInfo(const std::vector<int>& deletedFaceInfoIndex);
+	void CacheDeleteFrameInfo(const std::vector<size_t>& deletedFaceInfoIndex);
+
+	void DeleteUnsavedFaceInfo();
+
+private:
+	void CacheDeleteArea();
 	
 
 	Transformer m_Trans;
@@ -70,11 +80,14 @@ private:
 	std::vector<std::string> m_UnsavedNames;
 	std::vector<cv::Rect> m_UnsavedBoxes;
 
-	std::vector<int> m_DeleteFaceInfoIndexes;
+	std::vector<size_t> m_DeleteFaceInfoIndexes;
+	std::vector<size_t> m_DeleteUnsavedFaceInfoIndexes;
 
 	std::vector<FaceInfo> m_IllegalFaceInfo;
 	std::vector<size_t> m_IllegalIndex;
 
+
+	cv::Rect m_DeleteArea;
 
 	size_t m_nEndIndexOfUnsavedDrawables;
 
@@ -86,6 +99,10 @@ private:
 
 	static const wchar_t* m_AlertMessage[4];
 	static const size_t NUMBER_OF_VALIDATOR_TYPES = sizeof(m_AlertMessage) / sizeof(m_AlertMessage[0]);
+
+
+	size_t m_nEditType;
+
 
 
 protected:

@@ -150,7 +150,7 @@ void CTextFileManager::Close()
 }
 
 
-void CTextFileManager::DeleteFrameInfo(size_t nPos, const std::vector<int>& deleteIndexes)
+void CTextFileManager::DeleteFrameInfo(size_t nPos, const std::vector<size_t>& deleteIndexes)
 {
 	FrameInfo newFrameInfo;
 	for (size_t i = 0; i < m_FrameInfos[nPos].facesInfo.size(); ++i)

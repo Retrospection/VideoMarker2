@@ -19,7 +19,7 @@ public:
 	void AddFaceInfo(size_t nPos, const FrameInfo& newFrameInfo);
 	void SaveToTextFile(); 
 
-	void DeleteFrameInfo(size_t nPos, const std::vector<int>& deleteIndexes);
+	void DeleteFrameInfo(size_t nPos, const std::vector<size_t>& deleteIndexes);
 
 	bool IsOpened()const;
 

@@ -57,7 +57,7 @@ public:
 	void OnPictureBoxLBtnDown();
 	void OnPictureBoxLBtnUp();
 
-	virtual std::vector<int> GetDeleteFrameInfo() override;
+	virtual std::vector<size_t> GetDeleteFrameInfo() override;
 
 public:
 	void SetTextFileOpenedStatus(bool status);

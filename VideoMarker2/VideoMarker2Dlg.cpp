@@ -319,6 +319,7 @@ void CVideoMarker2Dlg::OnBnClickedAddMark()
 	else
 	{
 		m_pState->AddMark();
+		m_pPictureBox->SetEditType(CPictureBox::ADD_MARK_TYPE);
 	}
 	Refresh();
 	
@@ -522,9 +523,9 @@ void CVideoMarker2Dlg::OnPictureBoxLBtnUp()
 	m_pState->OnPictureBoxLBtnUp();
 }
 
-std::vector<int> CVideoMarker2Dlg::GetDeleteFrameInfo()
+std::vector<size_t> CVideoMarker2Dlg::GetDeleteFrameInfo()
 {
-	std::vector<int> indexes = m_pPictureBox->GetDeleteFrameInfo();
+	std::vector<size_t> indexes = m_pPictureBox->GetDeleteFrameInfo();
 	return indexes;
 }
 
@@ -536,5 +537,26 @@ void CVideoMarker2Dlg::ClearDeleteFrameInfo()
 
 void CVideoMarker2Dlg::OnBnClickedButtonDeletemark()
 {
-	m_pPresenter->Delete();
+	CString str;
+	GetDlgItemText(IDC_BUTTON_DELETEMARK, str);
+	if (str == L"确认删除")
+	{
+		SetState(S1);
+		m_pPictureBox->CalculateDeleteFrameInfoIndex();
+
+		m_pPictureBox->DeleteUnsavedFaceInfo();
+		m_pPresenter->Delete();
+		SetDlgItemText(IDC_BUTTON_DELETEMARK, L"删除标注");
+	}
+	else
+	{
+		SetState(S5);
+		m_pPictureBox->SetEditType(CPictureBox::DELETE_MAKR_TYPE);
+		SetDlgItemText(IDC_BUTTON_DELETEMARK, L"确认删除");
+	}
+	Refresh();
+
+
+
+	
 }
