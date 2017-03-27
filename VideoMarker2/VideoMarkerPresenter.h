@@ -39,6 +39,8 @@ public:
 
 	int OpenProject();
 
+	void UpdateFrameInfo();
+
 public:
 	int GetTotalFrameCount() const;
 

@@ -14,6 +14,7 @@ public:
 	bool Open(const std::string& strFileName);
 	void Close();
 	bool GetFrameInfoByPos(FrameInfo& frameInfo, size_t nPos);
+	std::vector<FrameInfo> GetFrameInfo();
 	void AddFaceInfo(int nPos, const std::string& strPersonName, const cv::Point& p1, const cv::Point& p2);
 	void AddFaceInfo(int nPos, const std::string& strPersonName, const cv::Rect boxes);
 	void AddFaceInfo(size_t nPos, const FrameInfo& newFrameInfo);
@@ -22,6 +23,8 @@ public:
 	void DeleteFrameInfo(size_t nPos, const std::vector<size_t>& deleteIndexes);
 
 	bool IsOpened()const;
+
+	void UpdateFrameInfo(int nPos, const FrameInfo& frameInfo);
 
 private:
 	// This function take an ifstream, parse it line by line.

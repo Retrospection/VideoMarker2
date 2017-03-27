@@ -167,6 +167,7 @@ void CVideoMarkerPresenter::OpenTextFile()
 {
 	std::string strFileName = m_pDlg->GetTextFileName();
 	m_pDlg->SetTextFileOpenedStatus(m_pTextMgr->Open(strFileName));
+
 	FrameInfo frameInfo;
 	m_pTextMgr->GetFrameInfoByPos(frameInfo, m_pVideoPlayer->m_nCurrentFrameIndex);
 	m_pDlg->SetFrameInfo(frameInfo);
@@ -349,4 +350,11 @@ void CVideoMarkerPresenter::Delete()
 	assert(result);
 	m_pView->SetFrameInfo(newInfo);
 	m_pView->Refresh();
+}
+
+void CVideoMarkerPresenter::UpdateFrameInfo()
+{
+	FrameInfo frameinfo = m_pDlg->GetFrameInfo();
+	std::cout << "从DLG获得的新 FrameInfo 为：" << frameinfo.toString() << std::endl;
+	m_pTextMgr->UpdateFrameInfo(m_pDlg->GetCurrentFrameIndex(), frameinfo);
 }

@@ -113,6 +113,7 @@
     <ClInclude Include="CvvImage.h" />
     <ClInclude Include="DataExchange.h" />
     <ClInclude Include="DBox.h" />
+    <ClInclude Include="DEditBox.h" />
     <ClInclude Include="DText.h" />
     <ClInclude Include="EditMarkState.h" />
     <ClInclude Include="FrameInfo.h" />

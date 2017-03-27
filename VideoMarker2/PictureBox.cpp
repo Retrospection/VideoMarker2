@@ -9,6 +9,7 @@
 #include "CvvImage.h"
 #include "DBox.h" 
 #include "DText.h"
+#include "DEditBox.h"
 
 #include "StringHelper.h"
 
@@ -194,6 +195,15 @@ void CPictureBox::OnMouseMove(UINT nFlags, CPoint point)
 
 	cv::Rect RoiRect = m_Trans.GetRoiRect();
 
+	if (m_ModifiedFaceInfo.empty())
+	{
+		m_ModifiedFaceInfo.push_back(&m_FrameInfo.facesInfo[0]);
+	}
+
+	m_ModifiedFaceInfo[0]->box.width += 3;
+	m_ModifiedFaceInfo[0]->box.height += 3;
+	CalculateEditPoints();
+
 	if ((point.x > (RoiRect.x + RoiRect.width)) || (point.y >RoiRect.height))
 	{
 		m_bDrawing = false;
@@ -225,6 +235,14 @@ void CPictureBox::OnLButtonDown(UINT nFlags, CPoint point)
 	else
 	{
 		m_bDrawing = true;
+
+
+		if (!SetEditPoint({ point.x, point.y }))
+		{
+			m_ModifiedFaceInfo.clear();
+			std::cout << "Editpointindex:" << m_nEditPointIndex << std::endl;
+		}
+
 		m_ActivePoints[0] = { point.x, point.y };
 		Invalidate(FALSE);
 		CStatic::OnLButtonDown(nFlags, point);
@@ -282,6 +300,11 @@ void CPictureBox::DrawFrameInfo(cv::Mat& img)
 	if (GetActiveBox(rc))
 	{
 		m_drawables.push_back(new DBox(rc, ColorUnsaved));
+	}
+
+	for (size_t i = 0; i < m_ModifiedFaceInfo.size(); ++i)
+	{
+		m_drawables.push_back(new DEditBox(m_Trans.Trans(m_ModifiedFaceInfo[i]->box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi), m_EditPoints[i], ColorIllegal));
 	}
 
 	for (auto& deleted: m_ToBeDeleteFaceInfo)
@@ -481,6 +504,22 @@ void CPictureBox::HighLightDeleteFaceInfo()
 void CPictureBox::ClearToBeDeleted()
 {
 	m_ToBeDeleteFaceInfo.clear();
+}
+
+std::vector<FaceInfo> CPictureBox::GetModifiedFacesInfo() const
+{
+	return{};
+}
+
+bool CPictureBox::SetEditPoint(const cv::Point& point)
+{
+	m_nEditPointIndex = 0;
+	std::cout << "Editpointindex:" << m_nEditPointIndex << std::endl;
+	return m_nEditPointIndex != -1;
+}
+
+void CPictureBox::CalculateEditPoints()
+{
 }
 
 

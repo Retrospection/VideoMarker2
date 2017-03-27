@@ -12,15 +12,11 @@ public:
 public:
 	virtual std::vector<cv::Rect> GetUnsavedBox() = 0;
 	virtual std::vector<std::string> GetUnsavedName() = 0;
-
 	virtual std::vector<size_t> GetDeleteFrameInfo() = 0;
+	virtual FrameInfo GetFrameInfo() const = 0;
 	virtual void ClearDeleteFrameInfo() = 0;
-
-
 	virtual int GetCurrentFrameIndex() const = 0;
-
 	virtual void SetFrameInfo(const FrameInfo& frameInfo) = 0;
-
 	virtual void Refresh() = 0;
 
 };

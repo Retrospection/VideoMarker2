@@ -51,6 +51,7 @@ public:
 	virtual std::vector<std::string> GetUnsavedName() override;
 	virtual int GetCurrentFrameIndex() const override;
 	virtual void ClearDeleteFrameInfo() override;
+	virtual FrameInfo GetFrameInfo() const override;
 
 	bool GetUnsavedName2(std::string& unsavedName);
 
@@ -72,6 +73,8 @@ public:
 
 	unsigned int ValidateFaceInfo(const FaceInfo& info);
 
+
+
 //////////////////////////////////////////////////////  й╣ож  ////////////////////////////////////////////////
 private:
 	CVideoMarkerPresenter* m_pPresenter;
@@ -85,6 +88,10 @@ private:
  	int m_nTotalFrameCount;
 	FrameInfo m_FrameInfo;
 	std::vector<cv::Rect> m_HighLight;
+
+
+private:
+	
 
 private:
 	std::string m_strTextFileName;
@@ -158,4 +165,5 @@ public:
 	afx_msg void OnBnClickedButtonRedo();
 	afx_msg void OnBnClickedButtonProject();
 	afx_msg void OnBnClickedButtonDeletemark();
+	afx_msg void OnBnClickedButtonSaveinfo();
 };

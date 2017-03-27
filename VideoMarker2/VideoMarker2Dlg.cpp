@@ -63,6 +63,7 @@ BEGIN_MESSAGE_MAP(CVideoMarker2Dlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_REDO, &CVideoMarker2Dlg::OnBnClickedButtonRedo)
 	ON_BN_CLICKED(IDC_BUTTON_OPENPROJECT, &CVideoMarker2Dlg::OnBnClickedButtonProject)
 	ON_BN_CLICKED(IDC_BUTTON_DELETEMARK, &CVideoMarker2Dlg::OnBnClickedButtonDeletemark)
+	ON_BN_CLICKED(IDC_BUTTON_SAVEINFO, &CVideoMarker2Dlg::OnBnClickedButtonSaveinfo)
 END_MESSAGE_MAP()
 
 // CVideoMarker2Dlg 消息处理程序
@@ -255,7 +256,6 @@ void CVideoMarker2Dlg::OnBnClickedOpenFileButton()
 	}
 
 	m_strVideoFileName = CStringHelper::ConvertCStringToString(fileDlg.GetPathName());
-
 	m_pState->Open();
 }
 
@@ -559,4 +559,16 @@ void CVideoMarker2Dlg::OnBnClickedButtonDeletemark()
 
 
 	
+}
+
+FrameInfo CVideoMarker2Dlg::GetFrameInfo() const
+{
+	FrameInfo ret;
+	return{ { { "abc", {10,10,50,50} } } };
+}
+
+
+void CVideoMarker2Dlg::OnBnClickedButtonSaveinfo()
+{
+	m_pPresenter->UpdateFrameInfo();
 }
