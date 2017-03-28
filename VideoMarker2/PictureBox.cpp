@@ -76,6 +76,8 @@ CPictureBox::CPictureBox(CStateBase* pState)
 	m_ActivePoints[0] = INIT_POINT;
 	m_ActivePoints[1] = INIT_POINT;
 	m_DeleteArea = {};
+	m_nEditPointIndex = -1;
+	m_nModifiedFaceInfoIndex = -1;
 }
 
 CPictureBox::~CPictureBox()
@@ -164,10 +166,23 @@ void CPictureBox::OnLButtonUp(UINT nFlags, CPoint point)
 		}
 		break;
 	}
-	case  DELETE_MAKR_TYPE:
+	case DELETE_MAKR_TYPE:
 	{
 		CacheDeleteArea();
 		HighLightDeleteFaceInfo();
+		break;
+	}
+	case CHANGE_MARK:
+	{
+		if (m_nEditPointIndex == -1)
+		{
+			// 鼠标点击区域位于 EditPoint 区域
+			PrepareEdit();
+		}
+		else
+		{
+			// 鼠标点击区域不在 EditPoint 区域
+		}
 		break;
 	}
 	default:
@@ -184,7 +199,7 @@ void CPictureBox::OnLButtonUp(UINT nFlags, CPoint point)
 
 void CPictureBox::OnMouseMove(UINT nFlags, CPoint point)
 {
-	if (!((CVideoMarker2Dlg*)GetParent())->CanDraw())
+	if (!m_bDrawable)
 	{
 		return;
 	}
@@ -195,23 +210,39 @@ void CPictureBox::OnMouseMove(UINT nFlags, CPoint point)
 
 	cv::Rect RoiRect = m_Trans.GetRoiRect();
 
-	if (m_ModifiedFaceInfo.empty())
+
+	if (m_nEditType == CHANGE_MARK)
 	{
-		m_ModifiedFaceInfo.push_back(&m_FrameInfo.facesInfo[0]);
+// 		if (m_ModifiedFaceInfo.empty())
+// 		{
+// 			m_ModifiedFaceInfo.push_back(&m_FrameInfo.facesInfo[0]);
+// 		}
+// 
+// 		m_ModifiedFaceInfo[0]->box.width += 3;
+// 		m_ModifiedFaceInfo[0]->box.height += 3; 		
+
+		if (m_nEditPointIndex != -1)
+		{
+			// 鼠标点击区域位于 EditPoint 区域
+			if (m_nEditPointIndex == 0)
+			{
+				m_ModifiedFaceInfo[0]->box.x = point.x;
+				m_ModifiedFaceInfo[0]->box.y = point.y;
+			}
+		}
 	}
-
-	m_ModifiedFaceInfo[0]->box.width += 3;
-	m_ModifiedFaceInfo[0]->box.height += 3;
-	CalculateEditPoints();
-
-	if ((point.x > (RoiRect.x + RoiRect.width)) || (point.y >RoiRect.height))
+	else
 	{
-		m_bDrawing = false;
-		m_ActivePoints[0] = INIT_POINT;
-		m_ActivePoints[1] = INIT_POINT;
-		Invalidate(FALSE);
-		CStatic::OnMouseMove(nFlags, point);
-		return;
+
+		if ((point.x > (RoiRect.x + RoiRect.width)) || (point.y > RoiRect.height))
+		{
+			m_bDrawing = false;
+			m_ActivePoints[0] = INIT_POINT;
+			m_ActivePoints[1] = INIT_POINT;
+			Invalidate(FALSE);
+			CStatic::OnMouseMove(nFlags, point);
+			return;
+		}
 	}
 
 	m_ActivePoints[1] = { point.x, point.y };
@@ -235,12 +266,17 @@ void CPictureBox::OnLButtonDown(UINT nFlags, CPoint point)
 	else
 	{
 		m_bDrawing = true;
-
-
 		if (!SetEditPoint({ point.x, point.y }))
 		{
+			// 鼠标点击区域不在 EditPoint 区域
 			m_ModifiedFaceInfo.clear();
-			std::cout << "Editpointindex:" << m_nEditPointIndex << std::endl;
+			m_EditPoints.clear();
+		}
+		else
+		{
+			// 鼠标点击区域位于 EditPoint 区域
+
+
 		}
 
 		m_ActivePoints[0] = { point.x, point.y };
@@ -296,15 +332,23 @@ void CPictureBox::DrawFrameInfo(cv::Mat& img)
 		m_drawables.push_back(new DText(m_UnsavedNames[i], { m_UnsavedBoxes[i].x, m_UnsavedBoxes[i].y }, ColorSaved));
 	}
 
-	cv::Rect rc;
-	if (GetActiveBox(rc))
+	if (m_nEditPointIndex == -1)
 	{
-		m_drawables.push_back(new DBox(rc, ColorUnsaved));
+		cv::Rect rc;
+		if (GetActiveBox(rc))
+		{
+			m_drawables.push_back(new DBox(rc, ColorUnsaved));
+		}
 	}
 
 	for (size_t i = 0; i < m_ModifiedFaceInfo.size(); ++i)
 	{
-		m_drawables.push_back(new DEditBox(m_Trans.Trans(m_ModifiedFaceInfo[i]->box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi), m_EditPoints[i], ColorIllegal));
+		std::vector<cv::Rect> roiEditPoints;
+		for (auto& rc : m_EditPoints[i])
+		{
+			roiEditPoints.push_back(m_Trans.Trans(rc, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi));
+		}
+		m_drawables.push_back(new DEditBox(m_Trans.Trans(m_ModifiedFaceInfo[i]->box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi), roiEditPoints, ColorIllegal));
 	}
 
 	for (auto& deleted: m_ToBeDeleteFaceInfo)
@@ -511,16 +555,70 @@ std::vector<FaceInfo> CPictureBox::GetModifiedFacesInfo() const
 	return{};
 }
 
+
+
+
+//////////////////////////////////////////////
+
 bool CPictureBox::SetEditPoint(const cv::Point& point)
 {
-	m_nEditPointIndex = 0;
-	std::cout << "Editpointindex:" << m_nEditPointIndex << std::endl;
+	for (size_t i = 0; i < m_EditPoints.size();++i)
+	{
+		auto iter = std::find_if(m_EditPoints[i].begin(), m_EditPoints[i].end(), [&](const cv::Rect& rc){ return m_Trans.Trans(rc, Transformer::Coordinate::Raw, Transformer::Coordinate::PictureBox).contains(point); });
+		if (iter == m_EditPoints[i].end())
+		{
+			continue;
+		}
+		m_nEditPointIndex = iter - m_EditPoints[i].begin();
+		m_nModifiedFaceInfoIndex = i;
+	}
+
+	std::cout << "Edit Point Index: " << m_nEditPointIndex << "Modified FaceInfo Index: " << m_nModifiedFaceInfoIndex << std::endl;
 	return m_nEditPointIndex != -1;
 }
 
-void CPictureBox::CalculateEditPoints()
+void CPictureBox::PrepareEdit()
 {
+	cv::Rect square = m_Trans.Trans({ m_ActivePoints[0], m_ActivePoints[1] }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw);
+	for (auto iter = m_FrameInfo.facesInfo.begin(); iter != m_FrameInfo.facesInfo.end(); ++iter)
+	{
+		if ((iter->box & square).area() > 0)
+		{
+			m_ModifiedFaceInfo.push_back(&(*iter));
+			CalculateEditPoints(iter->box);
+		}
+	}
+// 	for (size_t i = 0; i < m_UnsavedBoxes.size(); ++i)
+// 	{
+// 		if ((m_UnsavedBoxes[i] & square).area() > 0)
+// 		{
+// 			m_ModifiedFaceInfo.push_back()
+// 		}
+// 	}
+
 }
+
+void CPictureBox::CalculateEditPoints(const cv::Rect& rc)
+{
+	std::vector<cv::Rect> temp;
+	for (size_t i = 0; i < 3; ++i)
+	{
+		for (size_t j = 0; j < 3; ++j)
+		{
+			temp.push_back({ rc.tl() + cv::Point(i*(rc.width / 2), j*(rc.height / 2)) - cv::Point(20, 20), rc.tl() + cv::Point(i*(rc.width / 2), j*(rc.height / 2)) + cv::Point(20, 20) });
+			
+		}
+	}
+	temp.erase(temp.begin() + 4);
+	m_EditPoints.push_back(temp);
+}
+
+
+
+
+
+
+
 
 
 

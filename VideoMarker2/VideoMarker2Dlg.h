@@ -47,29 +47,29 @@ public:
 	std::string GetFileName() const;
 	std::string GetTextFileName()const;
 	std::string GetProjectFileName() const;
+
+public:
+	virtual int GetCurrentFrameIndex() const override;
 	virtual std::vector<cv::Rect> GetUnsavedBox() override;
 	virtual std::vector<std::string> GetUnsavedName() override;
-	virtual int GetCurrentFrameIndex() const override;
+	virtual std::vector<size_t> GetDeleteFrameInfo() override;
 	virtual void ClearDeleteFrameInfo() override;
 	virtual FrameInfo GetFrameInfo() const override;
 
 	bool GetUnsavedName2(std::string& unsavedName);
-
 	void OnPictureBoxLBtnDown();
 	void OnPictureBoxLBtnUp();
 
-	virtual std::vector<size_t> GetDeleteFrameInfo() override;
-
 public:
+	virtual void SetFrameInfo(const FrameInfo& frameInfo) override;
+
 	void SetTextFileOpenedStatus(bool status);
 	void SetRawFrame(const cv::Mat& frame);
 	void SetTotalFrameCount(int nTotalFrameCount);
 	void SetCurrentFrameIndex(int nCurrentFrameIndex);
 	void SetFileOpenedStatus(bool status);
-	virtual void SetFrameInfo(const FrameInfo& frameInfo) override;
 	void ClearUnsavedFrameInfo();
 
-	bool CanDraw();
 
 	unsigned int ValidateFaceInfo(const FaceInfo& info);
 
@@ -88,10 +88,6 @@ private:
  	int m_nTotalFrameCount;
 	FrameInfo m_FrameInfo;
 	std::vector<cv::Rect> m_HighLight;
-
-
-private:
-	
 
 private:
 	std::string m_strTextFileName;
@@ -112,19 +108,19 @@ private:
 private:
 	CStateBase* m_pState;
 	std::unordered_map<std::string, CStateBase*> m_States;
-
 	std::unordered_map<std::string, UIConfig> m_UIConfigs;
-
 	bool m_bUIConfigLoaded;
 
 private:
 	void SetState(const std::string& state);
+
+	// ListBox 相关
 	void ShowFrameInfoInListBox();
 	void ClearHighLight();
 
+	// UIConfig
 	bool GetUIConfig(UIConfig& config, const std::string& state);
 	void LoadUIConfig();
-
 	std::vector<std::string> GetLines(const std::string& filename);
 
 //////////////////////////////////////////////////////  实现  ////////////////////////////////////////////////
@@ -160,7 +156,6 @@ public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnBnClickedButton4();
 	afx_msg void OnLbnDblclkList1();
-
 	afx_msg void OnBnClickedButtonRevoke();
 	afx_msg void OnBnClickedButtonRedo();
 	afx_msg void OnBnClickedButtonProject();

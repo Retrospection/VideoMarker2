@@ -498,10 +498,10 @@ std::vector<std::string> CVideoMarker2Dlg::GetLines(const std::string& filename)
 	return ret;
 }
 
-bool CVideoMarker2Dlg::CanDraw()
-{
-	return m_pState->CanDraw();
-}
+// bool CVideoMarker2Dlg::CanDraw()
+// {
+// 	return m_pState->CanDraw();
+// }
 
 bool CVideoMarker2Dlg::GetUnsavedName2(std::string& unsavedName)
 {
@@ -564,11 +564,25 @@ void CVideoMarker2Dlg::OnBnClickedButtonDeletemark()
 FrameInfo CVideoMarker2Dlg::GetFrameInfo() const
 {
 	FrameInfo ret;
+
 	return{ { { "abc", {10,10,50,50} } } };
 }
 
 
 void CVideoMarker2Dlg::OnBnClickedButtonSaveinfo()
 {
-	m_pPresenter->UpdateFrameInfo();
+	
+	CString str;
+	GetDlgItemText(IDC_BUTTON_DELETEMARK, str);
+	if (str == L"保存信息")
+	{
+		SetState(S1);
+		m_pPresenter->UpdateFrameInfo();
+	}
+	else
+	{
+		SetState(S5);
+		m_pPictureBox->SetEditType(CPictureBox::CHANGE_MARK);
+		SetDlgItemText(IDC_BUTTON_EDITMARK, L"保存信息");
+	}
 }

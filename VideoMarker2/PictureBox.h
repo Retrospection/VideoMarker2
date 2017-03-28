@@ -54,6 +54,7 @@ public:
 
 	static const size_t ADD_MARK_TYPE = 1;
 	static const size_t DELETE_MAKR_TYPE = 2;
+	static const size_t CHANGE_MARK = 3;
 
 private:
 	void DrawFrameInfo(cv::Mat& img);
@@ -63,48 +64,47 @@ private:
 	void HighLightDeleteFaceInfo();
 
 
-	bool SetEditPoint(const cv::Point& point);
 
 
 public:
 	void CalculateDeleteFrameInfoIndex();
-
 	void CacheDeleteFrameInfo(const std::vector<size_t>& deletedFaceInfoIndex);
-
 	void DeleteUnsavedFaceInfo();
 	void ClearToBeDeleted();
 
 private:
 	void CacheDeleteArea();
 
-	void CalculateEditPoints();
-	
+private:
+	bool SetEditPoint(const cv::Point& point);
+	void PrepareEdit();
+	void CalculateEditPoints(const cv::Rect& rc);
 
+
+
+private:
 	Transformer m_Trans;
-	
 	CStateBase* m_pState;
 
+
+private:
 	cv::Point m_ActivePoints[2];
-	std::vector<cv::Rect> m_HighLights;
+
 
 	FrameInfo m_FrameInfo;
+	std::vector<cv::Rect> m_HighLights;
 	std::vector<std::string> m_UnsavedNames;
 	std::vector<cv::Rect> m_UnsavedBoxes;
-
 	std::vector<size_t> m_DeleteFaceInfoIndexes;
 	std::vector<size_t> m_DeleteUnsavedFaceInfoIndexes;
-
 	std::vector<FaceInfo> m_ToBeDeleteFaceInfo;
 	std::vector<size_t> m_IllegalIndex;
-
 	std::vector<FaceInfo*> m_ModifiedFaceInfo;
-
 	std::vector<std::vector<cv::Rect>> m_EditPoints;
-
 	cv::Rect m_DeleteArea;
 
 	int m_nEditPointIndex;
-
+	int m_nModifiedFaceInfoIndex;
 
 	size_t m_nEndIndexOfUnsavedDrawables;
 
@@ -119,7 +119,6 @@ private:
 
 
 	size_t m_nEditType;
-
 
 
 protected:
