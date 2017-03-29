@@ -3,32 +3,31 @@
 #include <vector>
 #include <opencv2/core/core.hpp>
 
+class RectEx;
 
 
 // EditBox 中存放的点所处的坐标系必须为 Raw 坐标系
 class CEditBox
 {
 public:
-	explicit CEditBox(cv::Rect* pRc);
+	explicit CEditBox(cv::Rect& rc);
 	~CEditBox();
 
-	bool SetEditPointIndex(const cv::Point& point);
+	int Hit(const cv::Point& point) const;
+	void UpdateLocation(int nType, const cv::Point& newPoint);
 
-	void Change(const cv::Point& newPoint);
-
-	cv::Rect* GetBox()const;
-	std::vector<cv::Rect> GetEditPoints() const;
-	int GetEditPointIndex()const;
+	const cv::Rect& GetBox() const;
+	const std::vector<cv::Rect>& GetEditRects() const;
 	
+private:
+	static cv::Rect GetEditMarkRect(const cv::Point& point);
 
 private:
-	void CalculateEditPoints();
-
-
+	void UpdateEditRects();
+	std::vector<cv::Point> CalculateEditPoints();
 
 private:
-	cv::Rect* m_pBox;
-	std::vector<cv::Rect> m_EditPoints;
-	int m_nEditPointIndex;
+	RectEx& m_Box;
+	std::vector<cv::Rect> m_EditRects;
 };
 

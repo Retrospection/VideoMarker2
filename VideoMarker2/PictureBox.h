@@ -11,6 +11,7 @@ class CS5;
 class CS12;
 class CStateBase;
 class IDrawable;
+class SelectItemManager;
 
 class CPictureBox : public CStatic
 {
@@ -80,11 +81,12 @@ private:
 	void CacheDeleteArea();
 
 private:
-	bool SetEditPoint(const cv::Point& point);
+	//bool SetEditPoint(const cv::Point& point);
+	// 求所有被选中的box
 	void PrepareEdit();
-	void CalculateEditPoints(const cv::Rect& rc);
+	//void CalculateEditPoints(const cv::Rect& rc);
 
-
+	//std::vector<CEditBox>& Getm_EditBoxes();
 
 private:
 	Transformer m_Trans;
@@ -110,7 +112,7 @@ private:
 	int m_nEditPointIndex;
 	int m_nModifiedFaceInfoIndex;
 
-	std::vector<CEditBox> m_EditBoxes;
+	//std::vector<CEditBox> m_EditBoxes;
 
 	size_t m_nEndIndexOfUnsavedDrawables;
 
@@ -126,6 +128,8 @@ private:
 
 	size_t m_nEditType;
 
+	//
+	SelectItemManager* m_pSelectItemManager;
 
 protected:
 	DECLARE_MESSAGE_MAP()

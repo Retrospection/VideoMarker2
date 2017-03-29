@@ -21,6 +21,21 @@
 // ScopeGuard
 
 #include <functional>
+
+
+
+const cv::Point INIT_POINT = { -1, -1 };
+
+const cv::Scalar Green{ 0, 255, 0 };
+const cv::Scalar Red{ 0, 0, 255 };
+const cv::Scalar Black{ 0, 0, 0 };
+const cv::Scalar Blue{ 255, 0, 0 };
+
+const cv::Scalar ColorUnsaved = Red;
+const cv::Scalar ColorSaved = Red;
+const cv::Scalar ColorHighLight = Green;
+const cv::Scalar ColorIllegal = Blue;
+
 class ScopeGuard
 {
 public:
@@ -46,22 +61,95 @@ private:
 	bool m_bDismissed;
 };
 
+
+class SelectItemManager
+{
+public:
+	SelectItemManager(){}
+
+public:
+	void Clear()
+	{
+		m_SelectedItems.clear();
+	}
+
+	void Select(cv::Rect& rc)
+	{
+		assert(m_SelectedItems.empty());
+		m_SelectedItems.emplace_back(rc);
+	}
+
+	void Select(std::vector<FaceInfo>& facesInfo, std::vector<cv::Rect>& m_UnsavedBoxes, const cv::Rect& square)
+	{
+		m_SelectedItems.clear();
+		for (auto iter = facesInfo.begin(); iter != facesInfo.end(); ++iter)
+		{
+			if ((iter->box & square).area() > 0)
+			{
+				m_SelectedItems.emplace_back(iter->box);
+			}
+		}
+		for (size_t i = 0; i < m_UnsavedBoxes.size(); ++i)
+		{
+			if ((m_UnsavedBoxes[i] & square).area() > 0)
+			{
+				m_SelectedItems.emplace_back(m_UnsavedBoxes[i]);
+			}
+		}
+	}
+
+	int SelectEditPoint(const cv::Point& point)
+	{
+		lastPos = point;
+		nEditType = -1;
+		for (const auto& box : m_SelectedItems)
+		{
+			if ((nEditType = box.Hit(point)) != -1)
+			{
+				break;
+			}
+		}
+
+		return nEditType;
+	}
+
+	void Move(const cv::Point& point)
+	{
+		cv::Point offset = point - lastPos;
+		for (auto& box : m_SelectedItems)
+		{
+			box.UpdateLocation(nEditType, offset);
+		}
+		lastPos = point;
+	}
+
+	std::vector<IDrawable*> GetIDrawable(const Transformer* pTrans) const
+	{
+		std::vector<IDrawable*> ret;
+		for (auto& item: m_SelectedItems)
+		{
+			std::vector<cv::Rect> roiRect;
+			for (auto& rc : item.GetEditRects())
+			{
+				roiRect.push_back(pTrans->Trans(rc, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi));
+			}
+			ret.push_back(new DEditBox(pTrans->Trans(item.GetBox(), Transformer::Coordinate::Raw, Transformer::Coordinate::Roi), roiRect, ColorIllegal));
+		}
+		return ret;
+	}
+
+private:
+	cv::Point lastPos;
+	int nEditType = -1;
+	std::vector<CEditBox> m_SelectedItems;
+};
+
 // CPictureBox
 
 IMPLEMENT_DYNAMIC(CPictureBox, CStatic)
 
 
-const cv::Point INIT_POINT = { -1, -1 };
 
-const cv::Scalar Green { 0, 255, 0 };
-const cv::Scalar Red { 0, 0, 255 };
-const cv::Scalar Black { 0, 0, 0 };
-const cv::Scalar Blue { 255, 0, 0 };
-
-const cv::Scalar ColorUnsaved = Red;
-const cv::Scalar ColorSaved = Red;
-const cv::Scalar ColorHighLight = Green;
-const cv::Scalar ColorIllegal = Blue;
 
 
 const wchar_t* CPictureBox::m_AlertMessage[] = { L"", L"包围盒面积过小！", L"当前帧存在同名标注！", L"IOU过大！" };
@@ -78,11 +166,13 @@ CPictureBox::CPictureBox(CStateBase* pState)
 	m_DeleteArea = {};
 	m_nEditPointIndex = -1;
 	m_nModifiedFaceInfoIndex = -1;
+
+	m_pSelectItemManager = new SelectItemManager();
 }
 
 CPictureBox::~CPictureBox()
 {
-
+	delete m_pSelectItemManager;
 }
 
 BEGIN_MESSAGE_MAP(CPictureBox, CStatic)
@@ -140,6 +230,7 @@ std::vector<cv::Rect> CPictureBox::GetUnsavedBoxesInRaw()
 	return std::move(ret);
 }
 
+
 void CPictureBox::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	if (!m_bDrawable)
@@ -163,6 +254,9 @@ void CPictureBox::OnLButtonUp(UINT nFlags, CPoint point)
 		if (((CVideoMarker2Dlg*)GetParent())->GetUnsavedName2(strPersonName) && GetActiveBox(activeBox))
 		{
 			CacheUnsaveFaceInfo({ strPersonName, m_Trans.Trans(activeBox, Transformer::Coordinate::Roi, Transformer::Coordinate::Raw) });
+			//m_nEditType = CHANGE_MARK;
+			//m_nModifiedFaceInfoIndex = 0;
+			//m_pSelectItemManager->Select(xxx);
 		}
 		break;
 	}
@@ -178,9 +272,6 @@ void CPictureBox::OnLButtonUp(UINT nFlags, CPoint point)
 		{
 			// 当前为选择模式
 			PrepareEdit();
-
-
-
 		}
 		else
 		{
@@ -224,9 +315,12 @@ void CPictureBox::OnMouseMove(UINT nFlags, CPoint point)
 // 		m_ModifiedFaceInfo[0]->box.width += 3;
 // 		m_ModifiedFaceInfo[0]->box.height += 3; 		
 
+		// 改变选中的box
+
 		if (m_nModifiedFaceInfoIndex != -1)
 		{
-			m_EditBoxes[m_nModifiedFaceInfoIndex].Change(m_Trans.Trans({ point.x, point.y,1,1 },Transformer::Coordinate::PictureBox,Transformer::Coordinate::Raw).tl());
+			cv::Point _point = m_Trans.Trans({ point.x, point.y, 1, 1 }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw).tl();
+			m_pSelectItemManager->Move(_point);
 		}
 	}
 	else
@@ -265,15 +359,9 @@ void CPictureBox::OnLButtonDown(UINT nFlags, CPoint point)
 	{
 		m_bDrawing = true;
 		
-		auto iter = std::find_if(m_EditBoxes.begin(), m_EditBoxes.end(), [&](CEditBox& box){return box.SetEditPointIndex({ m_Trans.Trans({ point.x, point.y, 1, 1 }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw).tl() }); });
-		if (iter != m_EditBoxes.end())
-		{
-			m_nModifiedFaceInfoIndex = iter - m_EditBoxes.begin();
-		}
-		else
-		{
-			m_nModifiedFaceInfoIndex = -1;
-		}
+		// 选中EditPoint
+		cv::Point _point{ m_Trans.Trans({ point.x, point.y, 1, 1 }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw).tl() };
+		m_nModifiedFaceInfoIndex = m_pSelectItemManager->SelectEditPoint(_point);
 		std::cout << "EditBoxes Index: " << m_nModifiedFaceInfoIndex << std::endl;
 	
 // 		if (!SetEditPoint({ point.x, point.y }))
@@ -351,15 +439,8 @@ void CPictureBox::DrawFrameInfo(cv::Mat& img)
 		}
 	}
 
-	for (size_t i = 0; i < m_EditBoxes.size(); ++i)
-	{
-		std::vector<cv::Rect> roiEditPoints;
-		for (auto& rc : m_EditBoxes[i].GetEditPoints())
-		{
-			roiEditPoints.push_back(m_Trans.Trans(rc, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi));
-		}
-		m_drawables.push_back(new DEditBox(m_Trans.Trans(*m_EditBoxes[i].GetBox(), Transformer::Coordinate::Raw, Transformer::Coordinate::Roi), roiEditPoints, ColorIllegal));
-	}
+	std::vector<IDrawable*> drawables = m_pSelectItemManager->GetIDrawable(&m_Trans);
+	m_drawables.insert(m_drawables.end(), drawables.begin(), drawables.end());
 
 	for (auto& deleted: m_ToBeDeleteFaceInfo)
 	{
@@ -566,27 +647,6 @@ std::vector<FaceInfo> CPictureBox::GetModifiedFacesInfo() const
 }
 
 
-
-
-//////////////////////////////////////////////
-
-bool CPictureBox::SetEditPoint(const cv::Point& point)
-{
-	for (size_t i = 0; i < m_EditPoints.size();++i)
-	{
-		auto iter = std::find_if(m_EditPoints[i].begin(), m_EditPoints[i].end(), [&](const cv::Rect& rc){ return m_Trans.Trans(rc, Transformer::Coordinate::Raw, Transformer::Coordinate::PictureBox).contains(point); });
-		if (iter == m_EditPoints[i].end())
-		{
-			continue;
-		}
-		m_nEditPointIndex = iter - m_EditPoints[i].begin();
-		m_nModifiedFaceInfoIndex = i;
-	}
-
-	std::cout << "Edit Point Index: " << m_nEditPointIndex << "Modified FaceInfo Index: " << m_nModifiedFaceInfoIndex << std::endl;
-	return m_nEditPointIndex != -1;
-}
-
 void CPictureBox::PrepareEdit()
 {
 // 	m_ModifiedFaceInfo.clear();
@@ -608,39 +668,8 @@ void CPictureBox::PrepareEdit()
 // 		}
 // 	}
 
-
-	m_EditBoxes.clear();
 	cv::Rect square = m_Trans.Trans({ m_ActivePoints[0], m_ActivePoints[1] }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw);
-	for (auto iter = m_FrameInfo.facesInfo.begin(); iter != m_FrameInfo.facesInfo.end(); ++iter)
-	{
-		if ((iter->box & square).area() > 0)
-		{
-			m_EditBoxes.emplace_back(&iter->box);
-		}
-	}
-	for (size_t i = 0; i < m_UnsavedBoxes.size(); ++i)
-	{
-		if ((m_UnsavedBoxes[i] & square).area() > 0)
-		{
-			m_EditBoxes.emplace_back(&m_UnsavedBoxes[i]);
-		}
-	}
-
-
-}
-
-void CPictureBox::CalculateEditPoints(const cv::Rect& rc)
-{
-	std::vector<cv::Rect> temp;
-	for (size_t i = 0; i < 3; ++i)
-	{
-		for (size_t j = 0; j < 3; ++j)
-		{
-			temp.push_back({ rc.tl() + cv::Point(i*(rc.width / 2), j*(rc.height / 2)) - cv::Point(20, 20), rc.tl() + cv::Point(i*(rc.width / 2), j*(rc.height / 2)) + cv::Point(20, 20) });
-		}
-	}
-	temp.erase(temp.begin() + 4);
-	m_EditPoints.push_back(temp);
+	m_pSelectItemManager->Select(m_FrameInfo.facesInfo, m_UnsavedBoxes, square);
 }
 
 FrameInfo CPictureBox::GetUnsavedFrameInfo() const
@@ -655,8 +684,15 @@ FrameInfo CPictureBox::GetUnsavedFrameInfo() const
 
 void CPictureBox::ClearEditBoxes()
 {
-	m_EditBoxes.clear();
+	//auto& m_EditBoxes = Getm_EditBoxes();
+	//m_EditBoxes.clear();
+	m_pSelectItemManager->Clear();
 }
+
+//std::vector<CEditBox>& CPictureBox::Getm_EditBoxes()
+//{
+//	return m_pSelectItemManager->m_SelectedItems;
+//}
 
 
 
