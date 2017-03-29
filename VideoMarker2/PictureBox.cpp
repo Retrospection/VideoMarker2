@@ -174,10 +174,13 @@ void CPictureBox::OnLButtonUp(UINT nFlags, CPoint point)
 	}
 	case CHANGE_MARK:
 	{
-		if (m_nEditPointIndex == -1)
+		if (m_nModifiedFaceInfoIndex == -1)
 		{
-			// 鼠标点击区域位于 EditPoint 区域
+			// 当前为选择模式
 			PrepareEdit();
+
+
+
 		}
 		else
 		{
@@ -221,16 +224,9 @@ void CPictureBox::OnMouseMove(UINT nFlags, CPoint point)
 // 		m_ModifiedFaceInfo[0]->box.width += 3;
 // 		m_ModifiedFaceInfo[0]->box.height += 3; 		
 
-		if (m_nEditPointIndex != -1)
+		if (m_nModifiedFaceInfoIndex != -1)
 		{
-			// 鼠标点击区域位于 EditPoint 区域
-			if (m_nEditPointIndex == 0)
-			{
-				cv::Point roiPoint = m_Trans.Trans(cv::Rect{ point.x, point.y, 1, 1 }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw).tl();
-				m_ModifiedFaceInfo[0]->box.x = roiPoint.x;
-				m_ModifiedFaceInfo[0]->box.y = roiPoint.y;
-				PrepareEdit();
-			}
+			m_EditBoxes[m_nModifiedFaceInfoIndex].Change(m_Trans.Trans({ point.x, point.y,1,1 },Transformer::Coordinate::PictureBox,Transformer::Coordinate::Raw).tl());
 		}
 	}
 	else
@@ -268,18 +264,30 @@ void CPictureBox::OnLButtonDown(UINT nFlags, CPoint point)
 	else
 	{
 		m_bDrawing = true;
-		if (!SetEditPoint({ point.x, point.y }))
+		
+		auto iter = std::find_if(m_EditBoxes.begin(), m_EditBoxes.end(), [&](CEditBox& box){return box.SetEditPointIndex({ m_Trans.Trans({ point.x, point.y, 1, 1 }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw).tl() }); });
+		if (iter != m_EditBoxes.end())
 		{
-			// 鼠标点击区域不在 EditPoint 区域
-			m_ModifiedFaceInfo.clear();
-			m_EditPoints.clear();
+			m_nModifiedFaceInfoIndex = iter - m_EditBoxes.begin();
 		}
 		else
 		{
-			// 鼠标点击区域位于 EditPoint 区域
-
-
+			m_nModifiedFaceInfoIndex = -1;
 		}
+		std::cout << "EditBoxes Index: " << m_nModifiedFaceInfoIndex << std::endl;
+	
+// 		if (!SetEditPoint({ point.x, point.y }))
+// 		{
+// 			// 鼠标点击区域不在 EditPoint 区域
+// 			m_ModifiedFaceInfo.clear();
+// 			m_EditPoints.clear();
+// 		}
+// 		else
+// 		{
+// 			// 鼠标点击区域位于 EditPoint 区域
+// 
+// 
+// 		}
 
 		m_ActivePoints[0] = { point.x, point.y };
 		Invalidate(FALSE);
@@ -334,7 +342,7 @@ void CPictureBox::DrawFrameInfo(cv::Mat& img)
 		m_drawables.push_back(new DText(m_UnsavedNames[i], { m_UnsavedBoxes[i].x, m_UnsavedBoxes[i].y }, ColorSaved));
 	}
 
-	if (m_nEditPointIndex == -1)
+	if (m_nModifiedFaceInfoIndex == -1)
 	{
 		cv::Rect rc;
 		if (GetActiveBox(rc))
@@ -343,14 +351,14 @@ void CPictureBox::DrawFrameInfo(cv::Mat& img)
 		}
 	}
 
-	for (size_t i = 0; i < m_ModifiedFaceInfo.size(); ++i)
+	for (size_t i = 0; i < m_EditBoxes.size(); ++i)
 	{
 		std::vector<cv::Rect> roiEditPoints;
-		for (auto& rc : m_EditPoints[i])
+		for (auto& rc : m_EditBoxes[i].GetEditPoints())
 		{
 			roiEditPoints.push_back(m_Trans.Trans(rc, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi));
 		}
-		m_drawables.push_back(new DEditBox(m_Trans.Trans(m_ModifiedFaceInfo[i]->box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi), roiEditPoints, ColorIllegal));
+		m_drawables.push_back(new DEditBox(m_Trans.Trans(*m_EditBoxes[i].GetBox(), Transformer::Coordinate::Raw, Transformer::Coordinate::Roi), roiEditPoints, ColorIllegal));
 	}
 
 	for (auto& deleted: m_ToBeDeleteFaceInfo)
@@ -581,17 +589,17 @@ bool CPictureBox::SetEditPoint(const cv::Point& point)
 
 void CPictureBox::PrepareEdit()
 {
-	m_ModifiedFaceInfo.clear();
-	m_EditPoints.clear();
-	cv::Rect square = m_Trans.Trans({ m_ActivePoints[0], m_ActivePoints[1] }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw);
-	for (auto iter = m_FrameInfo.facesInfo.begin(); iter != m_FrameInfo.facesInfo.end(); ++iter)
-	{
-		if ((iter->box & square).area() > 0)
-		{
-			m_ModifiedFaceInfo.push_back(&(*iter));
-			CalculateEditPoints(iter->box);
-		}
-	}
+// 	m_ModifiedFaceInfo.clear();
+// 	m_EditPoints.clear();
+// 	cv::Rect square = m_Trans.Trans({ m_ActivePoints[0], m_ActivePoints[1] }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw);
+// 	for (auto iter = m_FrameInfo.facesInfo.begin(); iter != m_FrameInfo.facesInfo.end(); ++iter)
+// 	{
+// 		if ((iter->box & square).area() > 0)
+// 		{
+// 			m_ModifiedFaceInfo.push_back(&(*iter));
+// 			CalculateEditPoints(iter->box);
+// 		}
+// 	}
 // 	for (size_t i = 0; i < m_UnsavedBoxes.size(); ++i)
 // 	{
 // 		if ((m_UnsavedBoxes[i] & square).area() > 0)
@@ -599,6 +607,25 @@ void CPictureBox::PrepareEdit()
 // 			m_ModifiedFaceInfo.push_back()
 // 		}
 // 	}
+
+
+	m_EditBoxes.clear();
+	cv::Rect square = m_Trans.Trans({ m_ActivePoints[0], m_ActivePoints[1] }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw);
+	for (auto iter = m_FrameInfo.facesInfo.begin(); iter != m_FrameInfo.facesInfo.end(); ++iter)
+	{
+		if ((iter->box & square).area() > 0)
+		{
+			m_EditBoxes.emplace_back(&iter->box);
+		}
+	}
+	for (size_t i = 0; i < m_UnsavedBoxes.size(); ++i)
+	{
+		if ((m_UnsavedBoxes[i] & square).area() > 0)
+		{
+			m_EditBoxes.emplace_back(&m_UnsavedBoxes[i]);
+		}
+	}
+
 
 }
 

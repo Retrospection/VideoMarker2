@@ -5,6 +5,7 @@
 #include "Transformer.h"
 
 #include "FrameInfo.h"
+#include "EditBox.h"
 
 class CS5;
 class CS12;
@@ -105,6 +106,8 @@ private:
 
 	int m_nEditPointIndex;
 	int m_nModifiedFaceInfoIndex;
+
+	std::vector<CEditBox> m_EditBoxes;
 
 	size_t m_nEndIndexOfUnsavedDrawables;
 
