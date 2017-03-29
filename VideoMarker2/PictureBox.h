@@ -37,8 +37,11 @@ public:
 	std::vector<cv::Rect> GetUnsavedBoxesInRaw();
 	std::vector<std::string> GetUnsavedNames() const;
 
+	FrameInfo GetUnsavedFrameInfo() const;
+
 	void ClearUnsavedBoxes();
 	void ClearUnsavedNames();
+	void ClearEditBoxes();
 
 	void Undo();
 	void Redo();

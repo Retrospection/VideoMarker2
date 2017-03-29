@@ -166,6 +166,7 @@ void CTextFileManager::DeleteFrameInfo(size_t nPos, const std::vector<size_t>& d
 void CTextFileManager::UpdateFrameInfo(int nPos, const FrameInfo& frameInfo)
 {
 	std::cout << "TextMgr 要更新的 FrameInfo 为：" << frameInfo.toString() << std::endl;
+	m_FrameInfos[nPos] = frameInfo;
 }
 
 std::vector<FrameInfo> CTextFileManager::GetFrameInfo()

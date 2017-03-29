@@ -63,7 +63,7 @@ BEGIN_MESSAGE_MAP(CVideoMarker2Dlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_REDO, &CVideoMarker2Dlg::OnBnClickedButtonRedo)
 	ON_BN_CLICKED(IDC_BUTTON_OPENPROJECT, &CVideoMarker2Dlg::OnBnClickedButtonProject)
 	ON_BN_CLICKED(IDC_BUTTON_DELETEMARK, &CVideoMarker2Dlg::OnBnClickedButtonDeletemark)
-	ON_BN_CLICKED(IDC_BUTTON_SAVEINFO, &CVideoMarker2Dlg::OnBnClickedButtonSaveinfo)
+	ON_BN_CLICKED(IDC_BUTTON_EDITMARK, &CVideoMarker2Dlg::OnBnClickedButtonSaveinfo)
 END_MESSAGE_MAP()
 
 // CVideoMarker2Dlg 消息处理程序
@@ -564,8 +564,10 @@ void CVideoMarker2Dlg::OnBnClickedButtonDeletemark()
 FrameInfo CVideoMarker2Dlg::GetFrameInfo() const
 {
 	FrameInfo ret;
-
-	return{ { { "abc", {10,10,50,50} } } };
+	FrameInfo unsavedFrameInfo = m_pPictureBox->GetUnsavedFrameInfo();
+	ret.facesInfo.insert(ret.facesInfo.end(), m_FrameInfo.facesInfo.begin(), m_FrameInfo.facesInfo.end());
+	ret.facesInfo.insert(ret.facesInfo.end(), unsavedFrameInfo.facesInfo.begin(), unsavedFrameInfo.facesInfo.end());
+	return ret;
 }
 
 
@@ -573,11 +575,13 @@ void CVideoMarker2Dlg::OnBnClickedButtonSaveinfo()
 {
 	
 	CString str;
-	GetDlgItemText(IDC_BUTTON_DELETEMARK, str);
+	GetDlgItemText(IDC_BUTTON_EDITMARK, str);
 	if (str == L"保存信息")
 	{
-		SetState(S1);
 		m_pPresenter->UpdateFrameInfo();
+		m_pPictureBox->ClearEditBoxes();
+		SetState(S1);
+		SetDlgItemText(IDC_BUTTON_EDITMARK, L"编辑标注");
 	}
 	else
 	{

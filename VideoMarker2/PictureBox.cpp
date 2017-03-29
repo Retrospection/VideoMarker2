@@ -643,6 +643,21 @@ void CPictureBox::CalculateEditPoints(const cv::Rect& rc)
 	m_EditPoints.push_back(temp);
 }
 
+FrameInfo CPictureBox::GetUnsavedFrameInfo() const
+{
+	FrameInfo ret;
+	for (size_t i = 0; i < m_UnsavedBoxes.size(); ++i)
+	{
+		ret.facesInfo.push_back({ m_UnsavedNames[i], m_UnsavedBoxes[i] });
+	}
+	return std::move(ret);
+}
+
+void CPictureBox::ClearEditBoxes()
+{
+	m_EditBoxes.clear();
+}
+
 
 
 
