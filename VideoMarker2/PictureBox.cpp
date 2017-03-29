@@ -226,8 +226,10 @@ void CPictureBox::OnMouseMove(UINT nFlags, CPoint point)
 			// 鼠标点击区域位于 EditPoint 区域
 			if (m_nEditPointIndex == 0)
 			{
-				m_ModifiedFaceInfo[0]->box.x = point.x;
-				m_ModifiedFaceInfo[0]->box.y = point.y;
+				cv::Point roiPoint = m_Trans.Trans(cv::Rect{ point.x, point.y, 1, 1 }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw).tl();
+				m_ModifiedFaceInfo[0]->box.x = roiPoint.x;
+				m_ModifiedFaceInfo[0]->box.y = roiPoint.y;
+				PrepareEdit();
 			}
 		}
 	}
@@ -579,6 +581,8 @@ bool CPictureBox::SetEditPoint(const cv::Point& point)
 
 void CPictureBox::PrepareEdit()
 {
+	m_ModifiedFaceInfo.clear();
+	m_EditPoints.clear();
 	cv::Rect square = m_Trans.Trans({ m_ActivePoints[0], m_ActivePoints[1] }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw);
 	for (auto iter = m_FrameInfo.facesInfo.begin(); iter != m_FrameInfo.facesInfo.end(); ++iter)
 	{
@@ -606,7 +610,6 @@ void CPictureBox::CalculateEditPoints(const cv::Rect& rc)
 		for (size_t j = 0; j < 3; ++j)
 		{
 			temp.push_back({ rc.tl() + cv::Point(i*(rc.width / 2), j*(rc.height / 2)) - cv::Point(20, 20), rc.tl() + cv::Point(i*(rc.width / 2), j*(rc.height / 2)) + cv::Point(20, 20) });
-			
 		}
 	}
 	temp.erase(temp.begin() + 4);
