@@ -15,10 +15,8 @@ class SelectItemManager;
 
 class CPictureBox : public CStatic
 {
-
 	friend CS5;
 	friend CS12;
-
 	DECLARE_DYNAMIC(CPictureBox)
 
 public:
@@ -26,9 +24,7 @@ public:
 	virtual ~CPictureBox();
 
 	void SetState(CStateBase* pState);
-
 	void SetDrawable(bool drawable);
-
 	void SetEditType(size_t nEditType);
 
 public:
@@ -47,7 +43,7 @@ public:
 	void Undo();
 	void Redo();
 
-	void SetIllegal(const FaceInfo& info, size_t index);
+//	void SetIllegal(const FaceInfo& info, size_t index);
 
 	void DecreaseEndIndex();
 

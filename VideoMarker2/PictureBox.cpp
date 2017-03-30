@@ -17,9 +17,6 @@
 //#include "Transformer.h"
 
 #include <iostream>
-
-// ScopeGuard
-
 #include <functional>
 
 
@@ -149,9 +146,6 @@ private:
 IMPLEMENT_DYNAMIC(CPictureBox, CStatic)
 
 
-
-
-
 const wchar_t* CPictureBox::m_AlertMessage[] = { L"", L"包围盒面积过小！", L"当前帧存在同名标注！", L"IOU过大！" };
 
 
@@ -166,7 +160,6 @@ CPictureBox::CPictureBox(CStateBase* pState)
 	m_DeleteArea = {};
 	m_nEditPointIndex = -1;
 	m_nModifiedFaceInfoIndex = -1;
-
 	m_pSelectItemManager = new SelectItemManager();
 }
 
@@ -244,7 +237,6 @@ void CPictureBox::OnLButtonUp(UINT nFlags, CPoint point)
 	}
 	m_ActivePoints[1] = {point.x, point.y};
 	m_bDrawing = false;
-//	CNameInputDialog dlg;
 	switch (m_nEditType)
 	{
 	case ADD_MARK_TYPE:
@@ -254,9 +246,6 @@ void CPictureBox::OnLButtonUp(UINT nFlags, CPoint point)
 		if (((CVideoMarker2Dlg*)GetParent())->GetUnsavedName2(strPersonName) && GetActiveBox(activeBox))
 		{
 			CacheUnsaveFaceInfo({ strPersonName, m_Trans.Trans(activeBox, Transformer::Coordinate::Roi, Transformer::Coordinate::Raw) });
-			//m_nEditType = CHANGE_MARK;
-			//m_nModifiedFaceInfoIndex = 0;
-			//m_pSelectItemManager->Select(xxx);
 		}
 		break;
 	}
@@ -307,16 +296,7 @@ void CPictureBox::OnMouseMove(UINT nFlags, CPoint point)
 
 	if (m_nEditType == CHANGE_MARK)
 	{
-// 		if (m_ModifiedFaceInfo.empty())
-// 		{
-// 			m_ModifiedFaceInfo.push_back(&m_FrameInfo.facesInfo[0]);
-// 		}
-// 
-// 		m_ModifiedFaceInfo[0]->box.width += 3;
-// 		m_ModifiedFaceInfo[0]->box.height += 3; 		
-
 		// 改变选中的box
-
 		if (m_nModifiedFaceInfoIndex != -1)
 		{
 			cv::Point _point = m_Trans.Trans({ point.x, point.y, 1, 1 }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw).tl();
@@ -325,7 +305,6 @@ void CPictureBox::OnMouseMove(UINT nFlags, CPoint point)
 	}
 	else
 	{
-
 		if ((point.x > (RoiRect.x + RoiRect.width)) || (point.y > RoiRect.height))
 		{
 			m_bDrawing = false;
@@ -364,19 +343,6 @@ void CPictureBox::OnLButtonDown(UINT nFlags, CPoint point)
 		m_nModifiedFaceInfoIndex = m_pSelectItemManager->SelectEditPoint(_point);
 		std::cout << "EditBoxes Index: " << m_nModifiedFaceInfoIndex << std::endl;
 	
-// 		if (!SetEditPoint({ point.x, point.y }))
-// 		{
-// 			// 鼠标点击区域不在 EditPoint 区域
-// 			m_ModifiedFaceInfo.clear();
-// 			m_EditPoints.clear();
-// 		}
-// 		else
-// 		{
-// 			// 鼠标点击区域位于 EditPoint 区域
-// 
-// 
-// 		}
-
 		m_ActivePoints[0] = { point.x, point.y };
 		Invalidate(FALSE);
 		CStatic::OnLButtonDown(nFlags, point);
@@ -416,13 +382,6 @@ void CPictureBox::DrawFrameInfo(cv::Mat& img)
 		m_drawables.push_back(new DBox(rc, ColorSaved));
 		m_drawables.push_back(new DText(faceInfo.strPersonName, { rc.x, rc.y }, ColorSaved));
 	}
-
-// 	assert(m_UnsavedBoxes.size() == m_UnsavedNames.size());
-// 	for (size_t i = 0; i < m_UnsavedBoxes.size();++i)
-// 	{
-// 		m_drawables.push_back(new DBox(m_UnsavedBoxes[i], ColorUnsaved));
-// 		m_drawables.push_back(new DText(m_UnsavedNames[i], { m_UnsavedBoxes[i].x, m_UnsavedBoxes[i].y }, ColorSaved));
-// 	}
 
 	for (size_t i = 0; i < m_nEndIndexOfUnsavedDrawables; ++i)
 	{
@@ -511,11 +470,9 @@ void CPictureBox::Redo()
 	Invalidate(FALSE);
 }
 
-void CPictureBox::SetIllegal(const FaceInfo& info, size_t index)
-{
-// 	m_IllegalFaceInfo.push_back(info);
-// 	m_IllegalIndex.push_back(index);
-}
+// void CPictureBox::SetIllegal(const FaceInfo& info, size_t index)
+// {
+// }
 
 void CPictureBox::DecreaseEndIndex()
 {
@@ -600,19 +557,6 @@ void CPictureBox::CacheDeleteArea()
 
 void CPictureBox::DeleteUnsavedFaceInfo()
 {
-// 	std::vector<cv::Rect> newUnsavedBoxes;
-// 	std::vector<std::string> newUnsavedNames;
-// 	for (size_t i = 0; i < m_UnsavedBoxes.size(); ++i)
-// 	{
-// 		if (std::none_of(m_DeleteUnsavedFaceInfoIndexes.begin(), m_DeleteUnsavedFaceInfoIndexes.end(), [&](int index){return index == i; }))
-// 		{
-// 			newUnsavedBoxes.push_back(m_UnsavedBoxes[i]);
-// 			newUnsavedNames.push_back(m_UnsavedNames[i]);
-// 		}
-// 	}
-// 	m_UnsavedBoxes = newUnsavedBoxes;
-// 	m_UnsavedNames = newUnsavedNames;
-
 	std::sort(m_DeleteUnsavedFaceInfoIndexes.begin(), m_DeleteUnsavedFaceInfoIndexes.end(), std::greater<size_t>());
 	for (auto index:m_DeleteUnsavedFaceInfoIndexes)
 	{
@@ -620,7 +564,6 @@ void CPictureBox::DeleteUnsavedFaceInfo()
 		m_UnsavedNames.erase(m_UnsavedNames.begin() + index);
 		DecreaseEndIndex();
 	}
-
 }
 
 void CPictureBox::HighLightDeleteFaceInfo()
@@ -649,25 +592,6 @@ std::vector<FaceInfo> CPictureBox::GetModifiedFacesInfo() const
 
 void CPictureBox::PrepareEdit()
 {
-// 	m_ModifiedFaceInfo.clear();
-// 	m_EditPoints.clear();
-// 	cv::Rect square = m_Trans.Trans({ m_ActivePoints[0], m_ActivePoints[1] }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw);
-// 	for (auto iter = m_FrameInfo.facesInfo.begin(); iter != m_FrameInfo.facesInfo.end(); ++iter)
-// 	{
-// 		if ((iter->box & square).area() > 0)
-// 		{
-// 			m_ModifiedFaceInfo.push_back(&(*iter));
-// 			CalculateEditPoints(iter->box);
-// 		}
-// 	}
-// 	for (size_t i = 0; i < m_UnsavedBoxes.size(); ++i)
-// 	{
-// 		if ((m_UnsavedBoxes[i] & square).area() > 0)
-// 		{
-// 			m_ModifiedFaceInfo.push_back()
-// 		}
-// 	}
-
 	cv::Rect square = m_Trans.Trans({ m_ActivePoints[0], m_ActivePoints[1] }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw);
 	m_pSelectItemManager->Select(m_FrameInfo.facesInfo, m_UnsavedBoxes, square);
 }
@@ -684,22 +608,6 @@ FrameInfo CPictureBox::GetUnsavedFrameInfo() const
 
 void CPictureBox::ClearEditBoxes()
 {
-	//auto& m_EditBoxes = Getm_EditBoxes();
-	//m_EditBoxes.clear();
 	m_pSelectItemManager->Clear();
 }
-
-//std::vector<CEditBox>& CPictureBox::Getm_EditBoxes()
-//{
-//	return m_pSelectItemManager->m_SelectedItems;
-//}
-
-
-
-
-
-
-
-
-
 
