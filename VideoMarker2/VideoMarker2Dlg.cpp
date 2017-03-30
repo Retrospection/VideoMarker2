@@ -577,7 +577,7 @@ void CVideoMarker2Dlg::OnBnClickedButtonSaveinfo()
 	if (str == L"保存信息")
 	{
 		m_pPresenter->UpdateFrameInfo();
-		m_pPictureBox->ClearEditBoxes();
+		m_pPictureBox->ClearSelectedBoxes();
 		SetState(S1);
 		SetDlgItemText(IDC_BUTTON_EDITMARK, L"编辑标注");
 	}
