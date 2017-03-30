@@ -228,7 +228,6 @@ void CVideoMarker2Dlg::SetState(const std::string& state)
 	if (iter != m_States.end())
 	{
 		m_pState = iter->second;
-		m_pPictureBox->SetState(m_pState);
 		Refresh();
 		m_pState->RefreshButton();
 
@@ -240,7 +239,6 @@ void CVideoMarker2Dlg::SetState(const std::string& state)
 	assert(bResult);
 	m_pState = CStateFactory::GetInstance().Create(state, this,config);
 	m_States.insert(std::make_pair(state, m_pState));
-	m_pPictureBox->SetState(m_pState);
 	Refresh();
 	m_pState->RefreshButton();
 

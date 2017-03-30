@@ -14,7 +14,6 @@
 #include "StringHelper.h"
 
 #include "VideoMarker2Dlg.h"
-//#include "Transformer.h"
 
 #include <iostream>
 #include <functional>
@@ -150,10 +149,9 @@ const wchar_t* CPictureBox::m_AlertMessage[] = { L"", L"°üÎ§ºÐÃæ»ý¹ýÐ¡£¡", L"µ±Ç
 
 
 CPictureBox::CPictureBox(CStateBase* pState) 
-	:CStatic(), m_Trans(Transformer::Default()), m_nEndIndexOfUnsavedDrawables(0), m_bDrawable(false)
+	:CStatic(), m_Trans(Transformer::Default()), m_bDrawable(false)
 
 {
-	m_pState = pState;
 	m_bDrawing = false;
 	m_ActivePoints[0] = INIT_POINT;
 	m_ActivePoints[1] = INIT_POINT;
@@ -176,53 +174,75 @@ END_MESSAGE_MAP()
 
 // CPictureBox ÏûÏ¢´¦Àí³ÌÐò
 
-void CPictureBox::SetState(CStateBase* pState)
+
+void CPictureBox::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	m_pState = pState; 
+	if (!m_bDrawable)
+	{
+		return;
+	}
+	((CVideoMarker2Dlg*)GetParent())->OnPictureBoxLBtnDown();
+	if (m_bDrawing)
+	{
+		m_ActivePoints[1] = { point.x, point.y };
+		Invalidate(FALSE); 
+		CStatic::OnLButtonDown(nFlags, point);
+	}
+	else
+	{
+		m_bDrawing = true;
+		
+		// Ñ¡ÖÐEditPoint
+		cv::Point _point{ m_Trans.Trans({ point.x, point.y, 1, 1 }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw).tl() };
+		m_nModifiedFaceInfoIndex = m_pSelectItemManager->SelectEditPoint(_point);
+		std::cout << "EditBoxes Index: " << m_nModifiedFaceInfoIndex << std::endl;
+	
+		m_ActivePoints[0] = { point.x, point.y };
+		Invalidate(FALSE);
+		CStatic::OnLButtonDown(nFlags, point);
+	}
 }
 
-bool CPictureBox::GetActiveBox(cv::Rect& activeBox) const
+void CPictureBox::OnMouseMove(UINT nFlags, CPoint point)
 {
-	if (m_ActivePoints[0] == INIT_POINT || m_ActivePoints[1] == INIT_POINT)
+	if (!m_bDrawable)
 	{
-		return false;
+		return;
+	}
+	if (!m_bDrawing)
+	{
+		return;
 	}
 
-	if (m_ActivePoints[0] == m_ActivePoints[1] )
+	cv::Rect RoiRect = m_Trans.GetRoiRect();
+
+
+	if (m_nEditType == CHANGE_MARK)
 	{
-		return false;
+		// ¸Ä±äÑ¡ÖÐµÄbox
+		if (m_nModifiedFaceInfoIndex != -1)
+		{
+			cv::Point _point = m_Trans.Trans({ point.x, point.y, 1, 1 }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw).tl();
+			m_pSelectItemManager->Move(_point);
+		}
 	}
-	activeBox = cv::Rect(m_Trans.Trans({ m_ActivePoints[0], m_ActivePoints[1] }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Roi));
-	return true;
+	else
+	{
+		if ((point.x > (RoiRect.x + RoiRect.width)) || (point.y > RoiRect.height))
+		{
+			m_bDrawing = false;
+			m_ActivePoints[0] = INIT_POINT;
+			m_ActivePoints[1] = INIT_POINT;
+			Invalidate(FALSE);
+			CStatic::OnMouseMove(nFlags, point);
+			return;
+		}
+	}
+
+	m_ActivePoints[1] = { point.x, point.y };
+	Invalidate(FALSE);
+	CStatic::OnMouseMove(nFlags, point);
 }
-
-void CPictureBox::SetImage(const cv::Mat& image)
-{
-
-	if (m_image.empty())
-	{
-		CRect rc;
-		this->GetWindowRect(&rc);
-		m_image = cv::Mat(rc.Height(), rc.Width(), CV_8UC3);
-	}
-	if (m_image.size() != image.size())
-	{
-		m_Trans = Transformer::Make(m_image.size(), image.size());
-		m_image = cv::Mat(m_image.size(),CV_8UC3, Black);
-	}
-	cv::resize(image, m_image(m_Trans.GetRoiRect()), m_Trans.GetRoiRect().size());
-}
-
-std::vector<cv::Rect> CPictureBox::GetUnsavedBoxesInRaw()
-{
-	std::vector<cv::Rect> ret;
-	for (const auto& rect : m_UnsavedBoxes)
-	{
-		ret.push_back(m_Trans.Trans(rect,Transformer::Coordinate::Roi, Transformer::Coordinate::Raw));
-	}
-	return std::move(ret);
-}
-
 
 void CPictureBox::OnLButtonUp(UINT nFlags, CPoint point)
 {
@@ -280,82 +300,6 @@ void CPictureBox::OnLButtonUp(UINT nFlags, CPoint point)
 
 }
 
-void CPictureBox::OnMouseMove(UINT nFlags, CPoint point)
-{
-	if (!m_bDrawable)
-	{
-		return;
-	}
-	if (!m_bDrawing)
-	{
-		return;
-	}
-
-	cv::Rect RoiRect = m_Trans.GetRoiRect();
-
-
-	if (m_nEditType == CHANGE_MARK)
-	{
-		// ¸Ä±äÑ¡ÖÐµÄbox
-		if (m_nModifiedFaceInfoIndex != -1)
-		{
-			cv::Point _point = m_Trans.Trans({ point.x, point.y, 1, 1 }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw).tl();
-			m_pSelectItemManager->Move(_point);
-		}
-	}
-	else
-	{
-		if ((point.x > (RoiRect.x + RoiRect.width)) || (point.y > RoiRect.height))
-		{
-			m_bDrawing = false;
-			m_ActivePoints[0] = INIT_POINT;
-			m_ActivePoints[1] = INIT_POINT;
-			Invalidate(FALSE);
-			CStatic::OnMouseMove(nFlags, point);
-			return;
-		}
-	}
-
-	m_ActivePoints[1] = { point.x, point.y };
-	Invalidate(FALSE);
-	CStatic::OnMouseMove(nFlags, point);
-}
-
-void CPictureBox::OnLButtonDown(UINT nFlags, CPoint point)
-{
-	if (!m_bDrawable)
-	{
-		return;
-	}
-	((CVideoMarker2Dlg*)GetParent())->OnPictureBoxLBtnDown();
-	if (m_bDrawing)
-	{
-		m_ActivePoints[1] = { point.x, point.y };
-		Invalidate(FALSE); 
-		CStatic::OnLButtonDown(nFlags, point);
-	}
-	else
-	{
-		m_bDrawing = true;
-		
-		// Ñ¡ÖÐEditPoint
-		cv::Point _point{ m_Trans.Trans({ point.x, point.y, 1, 1 }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw).tl() };
-		m_nModifiedFaceInfoIndex = m_pSelectItemManager->SelectEditPoint(_point);
-		std::cout << "EditBoxes Index: " << m_nModifiedFaceInfoIndex << std::endl;
-	
-		m_ActivePoints[0] = { point.x, point.y };
-		Invalidate(FALSE);
-		CStatic::OnLButtonDown(nFlags, point);
-	}
-}
-
-void CPictureBox::PreSubclassWindow()
-{
-	DWORD dwStyle = GetStyle();
-	SetWindowLong(GetSafeHwnd(), GWL_STYLE, dwStyle | SS_OWNERDRAW);
-	CStatic::PreSubclassWindow();
-}
-
 void CPictureBox::DrawItem(LPDRAWITEMSTRUCT /*lpDrawItemStruct*/)
 {
 	if (m_image.empty())
@@ -374,6 +318,114 @@ void CPictureBox::DrawItem(LPDRAWITEMSTRUCT /*lpDrawItemStruct*/)
 	ReleaseDC(pDC);
 }
 
+void CPictureBox::SetFrameInfo(const FrameInfo& frameInfo)
+{
+	m_FrameInfo = frameInfo;
+	Invalidate(FALSE);
+}
+
+void CPictureBox::SetHighLight(const std::vector<cv::Rect>& highLight)
+{
+	m_HighLights = highLight;
+	Invalidate(FALSE);
+}
+
+bool CPictureBox::GetActiveBox(cv::Rect& activeBox) const
+{
+	if (m_ActivePoints[0] == INIT_POINT || m_ActivePoints[1] == INIT_POINT)
+	{
+		return false;
+	}
+
+	if (m_ActivePoints[0] == m_ActivePoints[1] )
+	{
+		return false;
+	}
+	activeBox = cv::Rect(m_Trans.Trans({ m_ActivePoints[0], m_ActivePoints[1] }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Roi));
+	return true;
+}
+
+std::vector<cv::Rect> CPictureBox::GetUnsavedBoxesInRaw()
+{
+	std::vector<cv::Rect> ret;
+	for (const auto& rect : m_UnsavedBoxes)
+	{
+		ret.push_back(m_Trans.Trans(rect,Transformer::Coordinate::Roi, Transformer::Coordinate::Raw));
+	}
+	return std::move(ret);
+}
+
+
+std::vector<std::string> CPictureBox::GetUnsavedNames() const
+{
+	return m_UnsavedNames;
+}
+
+void CPictureBox::CacheUnsaveFaceInfo(const FaceInfo& faceInfo)
+{
+	unsigned int validateResult = ((CVideoMarker2Dlg*)GetParent())->ValidateFaceInfo(faceInfo);
+	assert(validateResult < NUMBER_OF_VALIDATOR_TYPES);
+	if (validateResult != 0)
+	{
+		MessageBox(m_AlertMessage[validateResult]);
+		return;
+	}
+
+	m_UnsavedBoxes.push_back(m_Trans.Trans(faceInfo.box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi));
+	m_UnsavedNames.push_back(faceInfo.strPersonName);
+
+}
+
+void CPictureBox::ClearUnsavedBoxes()
+{
+	m_UnsavedBoxes.clear();
+}
+
+void CPictureBox::ClearUnsavedNames()
+{
+	m_UnsavedNames.clear();
+}
+
+std::vector<size_t> CPictureBox::GetDeleteFrameInfo() const
+{
+	return std::move(m_DeleteFaceInfoIndexes);
+}
+
+void CPictureBox::CacheDeleteFrameInfo(const std::vector<size_t>& deletedFaceInfoIndex)
+{
+	m_DeleteFaceInfoIndexes = deletedFaceInfoIndex;
+}
+
+void CPictureBox::CacheDeleteArea()
+{
+	m_DeleteArea = cv::Rect(m_Trans.Trans({ m_ActivePoints[0], m_ActivePoints[1] }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw));
+	std::cout << "Delete Area:" << m_DeleteArea << std::endl;
+}
+
+void CPictureBox::SetImage(const cv::Mat& image)
+{
+
+	if (m_image.empty())
+	{
+		CRect rc;
+		this->GetWindowRect(&rc);
+		m_image = cv::Mat(rc.Height(), rc.Width(), CV_8UC3);
+	}
+	if (m_image.size() != image.size())
+	{
+		m_Trans = Transformer::Make(m_image.size(), image.size());
+		m_image = cv::Mat(m_image.size(),CV_8UC3, Black);
+	}
+	cv::resize(image, m_image(m_Trans.GetRoiRect()), m_Trans.GetRoiRect().size());
+}
+
+void CPictureBox::PreSubclassWindow()
+{
+	DWORD dwStyle = GetStyle();
+	SetWindowLong(GetSafeHwnd(), GWL_STYLE, dwStyle | SS_OWNERDRAW);
+	CStatic::PreSubclassWindow();
+}
+
 void CPictureBox::DrawFrameInfo(cv::Mat& img)
 {
 	for (const auto& faceInfo : m_FrameInfo.facesInfo)
@@ -383,7 +435,7 @@ void CPictureBox::DrawFrameInfo(cv::Mat& img)
 		m_drawables.push_back(new DText(faceInfo.strPersonName, { rc.x, rc.y }, ColorSaved));
 	}
 
-	for (size_t i = 0; i < m_nEndIndexOfUnsavedDrawables; ++i)
+	for (size_t i = 0; i < m_UnsavedBoxes.size(); ++i)
 	{
 		m_drawables.push_back(new DBox(m_UnsavedBoxes[i], ColorUnsaved));
 		m_drawables.push_back(new DText(m_UnsavedNames[i], { m_UnsavedBoxes[i].x, m_UnsavedBoxes[i].y }, ColorSaved));
@@ -420,97 +472,18 @@ void CPictureBox::DrawFrameInfo(cv::Mat& img)
 	m_drawables.clear();
 }
 
-void CPictureBox::SetHighLight(const std::vector<cv::Rect>& highLight)
-{
-	m_HighLights = highLight;
-	Invalidate(FALSE);
-}
-
-void CPictureBox::SetFrameInfo(const FrameInfo& frameInfo)
-{
-	m_FrameInfo = frameInfo;
-	Invalidate(FALSE);
-}
-
-void CPictureBox::ClearUnsavedBoxes()
-{
-	m_UnsavedBoxes.clear();
-	m_nEndIndexOfUnsavedDrawables = 0;
-}
-
-std::vector<std::string> CPictureBox::GetUnsavedNames() const
-{
-	return m_UnsavedNames;
-}
-
-void CPictureBox::ClearUnsavedNames()
-{
-	m_UnsavedNames.clear();
-	m_nEndIndexOfUnsavedDrawables = 0;
-}
-
 void CPictureBox::Undo()
 {
-	if (m_nEndIndexOfUnsavedDrawables == 0)
-	{
-		return;
-	}
-	--m_nEndIndexOfUnsavedDrawables;
-	Invalidate(FALSE);
 }
 
 void CPictureBox::Redo()
 {
-	assert(m_UnsavedNames.size() == m_UnsavedBoxes.size());
-	if (m_nEndIndexOfUnsavedDrawables == m_UnsavedBoxes.size())
-	{
-		return;
-	}
-	++m_nEndIndexOfUnsavedDrawables;
-	Invalidate(FALSE);
-}
-
-// void CPictureBox::SetIllegal(const FaceInfo& info, size_t index)
-// {
-// }
-
-void CPictureBox::DecreaseEndIndex()
-{
-	assert(m_nEndIndexOfUnsavedDrawables > 0);
-	--m_nEndIndexOfUnsavedDrawables;
-}
-
-void CPictureBox::CacheUnsaveFaceInfo(const FaceInfo& faceInfo)
-{
-	unsigned int validateResult = ((CVideoMarker2Dlg*)GetParent())->ValidateFaceInfo(faceInfo);
-	assert(validateResult < NUMBER_OF_VALIDATOR_TYPES);
-	if (validateResult != 0)
-	{
-		MessageBox(m_AlertMessage[validateResult]);
-		return;
-	}
-
-	if (m_nEndIndexOfUnsavedDrawables != m_UnsavedBoxes.size())
-	{
-		m_UnsavedBoxes.resize(m_nEndIndexOfUnsavedDrawables);
-
-		m_UnsavedNames.resize(m_nEndIndexOfUnsavedDrawables);
-	}
-	m_UnsavedBoxes.push_back(m_Trans.Trans(faceInfo.box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi));
-	m_UnsavedNames.push_back(faceInfo.strPersonName);
-	++m_nEndIndexOfUnsavedDrawables;
-
 }
 
 void CPictureBox::SetDrawable(bool drawable)
 {
 	m_bDrawable = drawable;
 	std::cout << "drawable? " << m_bDrawable << std::endl;
-}
-
-std::vector<size_t> CPictureBox::GetDeleteFrameInfo() const
-{
-	return std::move(m_DeleteFaceInfoIndexes);
 }
 
 void CPictureBox::CalculateDeleteFrameInfoIndex()
@@ -533,26 +506,9 @@ void CPictureBox::CalculateDeleteFrameInfoIndex()
 	}
 }
 
-void CPictureBox::CacheDeleteFrameInfo(const std::vector<size_t>& deletedFaceInfoIndex)
-{
-	m_DeleteFaceInfoIndexes = deletedFaceInfoIndex;
-}
-
-void CPictureBox::ClearDeleteFrameInfo()
-{
-	m_DeleteFaceInfoIndexes.clear();
-	m_DeleteUnsavedFaceInfoIndexes.clear();
-}
-
 void CPictureBox::SetEditType(size_t nEditType)
 {
 	m_nEditType = nEditType;
-}
-
-void CPictureBox::CacheDeleteArea()
-{
-	m_DeleteArea = cv::Rect(m_Trans.Trans({ m_ActivePoints[0], m_ActivePoints[1] }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw));
-	std::cout << "Delete Area:" << m_DeleteArea << std::endl;
 }
 
 void CPictureBox::DeleteUnsavedFaceInfo()
@@ -562,7 +518,6 @@ void CPictureBox::DeleteUnsavedFaceInfo()
 	{
 		m_UnsavedBoxes.erase(m_UnsavedBoxes.begin() + index);
 		m_UnsavedNames.erase(m_UnsavedNames.begin() + index);
-		DecreaseEndIndex();
 	}
 }
 
@@ -577,6 +532,12 @@ void CPictureBox::HighLightDeleteFaceInfo()
 	{
 		m_ToBeDeleteFaceInfo.push_back({ m_UnsavedNames[index], m_UnsavedBoxes[index] });
 	}
+}
+
+void CPictureBox::ClearDeleteFrameInfo()
+{
+	m_DeleteFaceInfoIndexes.clear();
+	m_DeleteUnsavedFaceInfoIndexes.clear();
 }
 
 void CPictureBox::ClearToBeDeleted()

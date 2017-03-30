@@ -23,9 +23,10 @@ public:
 	CPictureBox(CStateBase* pState);
 	virtual ~CPictureBox();
 
-	void SetState(CStateBase* pState);
+public:
 	void SetDrawable(bool drawable);
 	void SetEditType(size_t nEditType);
+
 
 public:
 	void SetImage(const cv::Mat& image);
@@ -43,9 +44,6 @@ public:
 	void Undo();
 	void Redo();
 
-//	void SetIllegal(const FaceInfo& info, size_t index);
-
-	void DecreaseEndIndex();
 
 	std::vector<size_t> GetDeleteFrameInfo() const;
 	void ClearDeleteFrameInfo();
@@ -60,7 +58,6 @@ public:
 private:
 	void DrawFrameInfo(cv::Mat& img);
 	bool GetActiveBox(cv::Rect& activeBox) const;
-
 	void CacheUnsaveFaceInfo(const FaceInfo& faceInfo);
 	void HighLightDeleteFaceInfo();
 
@@ -75,18 +72,10 @@ public:
 
 private:
 	void CacheDeleteArea();
-
-private:
-	//bool SetEditPoint(const cv::Point& point);
-	// 求所有被选中的box
 	void PrepareEdit();
-	//void CalculateEditPoints(const cv::Rect& rc);
-
-	//std::vector<CEditBox>& Getm_EditBoxes();
 
 private:
 	Transformer m_Trans;
-	CStateBase* m_pState;
 
 
 private:
@@ -108,10 +97,6 @@ private:
 	int m_nEditPointIndex;
 	int m_nModifiedFaceInfoIndex;
 
-	//std::vector<CEditBox> m_EditBoxes;
-
-	size_t m_nEndIndexOfUnsavedDrawables;
-
 	bool m_bDrawable;
 	bool m_bDrawing;
 	cv::Mat m_image;
@@ -124,7 +109,7 @@ private:
 
 	size_t m_nEditType;
 
-	//
+	
 	SelectItemManager* m_pSelectItemManager;
 
 protected:
