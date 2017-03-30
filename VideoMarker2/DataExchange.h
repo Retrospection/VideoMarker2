@@ -23,8 +23,6 @@ public:
 	std::wstring ConvertFromFrameInfo(const FaceInfo& faceInfo)
 	{
 		std::wstringstream wss;
-// 		wss << faceInfo.strPersonName.c_str() << ",";
-// 		wss << faceInfo.box.height << "," << faceInfo.box.width << "," << faceInfo.box.y << "," << faceInfo.box.x;
 		wss << faceInfo.strPersonName.c_str() << " ";
 		wss << faceInfo.box.x << " " << faceInfo.box.y << " " << faceInfo.box.width << " " << faceInfo.box.height;
 		return wss.str();

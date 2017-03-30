@@ -404,7 +404,6 @@ void CPictureBox::CacheDeleteArea()
 
 void CPictureBox::SetImage(const cv::Mat& image)
 {
-
 	if (m_image.empty())
 	{
 		CRect rc;

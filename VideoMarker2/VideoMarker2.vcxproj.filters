@@ -16,9 +16,6 @@
     <Filter Include="State">
       <UniqueIdentifier>{61920604-c172-45cc-879e-137f1b8c8f74}</UniqueIdentifier>
     </Filter>
-    <Filter Include="CvvImage">
-      <UniqueIdentifier>{9b4fe784-882a-4968-9620-9ffae33e3bd2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="View">
       <UniqueIdentifier>{4854ec52-78a7-46cd-9654-1dddc137c91a}</UniqueIdentifier>
     </Filter>
@@ -36,9 +33,6 @@
     </Filter>
     <Filter Include="State\StateFactory">
       <UniqueIdentifier>{bd31ab3b-4d10-410f-a355-b23057368087}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="State\EditMarkState">
-      <UniqueIdentifier>{8a9d1664-dd60-4e39-b38a-ac33693098ab}</UniqueIdentifier>
     </Filter>
     <Filter Include="State\StateBase">
       <UniqueIdentifier>{a935c75d-d959-4d37-bffd-9a3924fc0308}</UniqueIdentifier>
@@ -67,6 +61,12 @@
     <Filter Include="State\S5">
       <UniqueIdentifier>{6f20a05c-d203-414a-9234-d198ab24cbda}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Util\CvvImage">
+      <UniqueIdentifier>{9b4fe784-882a-4968-9620-9ffae33e3bd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Primitive">
+      <UniqueIdentifier>{161466c7-d1ff-4ad3-b693-9097088248f3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -88,7 +88,7 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="CvvImage.h">
-      <Filter>CvvImage</Filter>
+      <Filter>Util\CvvImage</Filter>
     </ClInclude>
     <ClInclude Include="VideoMarker2Dlg.h">
       <Filter>View</Filter>
@@ -108,9 +108,6 @@
     <ClInclude Include="StateFactory.h">
       <Filter>State\StateFactory</Filter>
     </ClInclude>
-    <ClInclude Include="EditMarkState.h">
-      <Filter>State\EditMarkState</Filter>
-    </ClInclude>
     <ClInclude Include="StateBase.h">
       <Filter>State\StateBase</Filter>
     </ClInclude>
@@ -125,9 +122,6 @@
     </ClInclude>
     <ClInclude Include="StopState.h">
       <Filter>State\StopState</Filter>
-    </ClInclude>
-    <ClInclude Include="NameInputDialog.h">
-      <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="PictureBox.h">
       <Filter>View</Filter>
@@ -172,10 +166,13 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DEditBox.h">
-      <Filter>头文件</Filter>
+      <Filter>Drawable</Filter>
     </ClInclude>
     <ClInclude Include="EditBox.h">
-      <Filter>头文件</Filter>
+      <Filter>Primitive</Filter>
+    </ClInclude>
+    <ClInclude Include="NameInputDialog.h">
+      <Filter>View</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -186,7 +183,7 @@
       <Filter>Presenter</Filter>
     </ClCompile>
     <ClCompile Include="CvvImage.cpp">
-      <Filter>CvvImage</Filter>
+      <Filter>Util\CvvImage</Filter>
     </ClCompile>
     <ClCompile Include="VideoMarker2Dlg.cpp">
       <Filter>View</Filter>
@@ -206,9 +203,6 @@
     <ClCompile Include="StateFactory.cpp">
       <Filter>State\StateFactory</Filter>
     </ClCompile>
-    <ClCompile Include="EditMarkState.cpp">
-      <Filter>State\EditMarkState</Filter>
-    </ClCompile>
     <ClCompile Include="StateBase.cpp">
       <Filter>State\StateBase</Filter>
     </ClCompile>
@@ -220,9 +214,6 @@
     </ClCompile>
     <ClCompile Include="StopState.cpp">
       <Filter>State\StopState</Filter>
-    </ClCompile>
-    <ClCompile Include="NameInputDialog.cpp">
-      <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="PictureBox.cpp">
       <Filter>View</Filter>
@@ -246,7 +237,10 @@
       <Filter>State\S5</Filter>
     </ClCompile>
     <ClCompile Include="EditBox.cpp">
-      <Filter>源文件</Filter>
+      <Filter>Primitive</Filter>
+    </ClCompile>
+    <ClCompile Include="NameInputDialog.cpp">
+      <Filter>View</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
