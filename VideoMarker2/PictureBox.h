@@ -14,6 +14,7 @@ class CStateBase;
 class IDrawable;
 class SelectItemManager;
 class CUnsavedFrameInfo;
+class FaceInfoManager;
 
 class CPictureBox : public CStatic
 {
@@ -25,6 +26,8 @@ class CPictureBox : public CStatic
 public:
 	CPictureBox(CStateBase* pState);
 	virtual ~CPictureBox();
+
+	unsigned int ValidateFaceInfo(const FaceInfo& faceInfo);
 
 ///////////////////////// Unsaved ///////////////////////////////
 public:
@@ -122,6 +125,8 @@ private:
 	static const size_t NUMBER_OF_VALIDATOR_TYPES = sizeof(m_AlertMessage) / sizeof(m_AlertMessage[0]);
 	size_t m_nEditType;
 	SelectItemManager* m_pSelectItemManager;
+	FaceInfoManager* m_pFaceInfoManager;
+
 protected:
 	DECLARE_MESSAGE_MAP()
 public:

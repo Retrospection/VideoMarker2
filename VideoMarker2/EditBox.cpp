@@ -16,15 +16,6 @@ public:
 	cv::Point BottomMid() const		{ return { x + width / 2,	y + height }; }
 	cv::Point BottomRight() const	{ return { x + width,		y + height }; }
 
-	//void MoveTopLeft(const cv::Point& offset)		{ TopLeft(TopLeft() + offset); }
-	//void MoveTopMid(const cv::Point& offset)		{ TopMid(TopMid() + offset); }
-	//void MoveTopRight(const cv::Point& offset)		{ TopRight(TopRight() + offset); }
-	//void MoveMidLeft(const cv::Point& offset)		{ MidLeft(MidLeft() + offset); }
-	//void MoveMidRight(const cv::Point& offset)		{ MidRight(MidRight() + offset); }
-	//void MoveBottomLeft(const cv::Point& offset)	{ BottomLeft(BottomLeft() + offset); }
-	//void MoveBottomMid(const cv::Point& offset)		{ BottomMid(BottomMid() + offset); }
-	//void MoveBottomRight(const cv::Point& offset)	{ BottomRight(BottomRight() + offset); }
-
 	void TopLeft(const cv::Point& pt)		{ ThisRect() = { pt, br() }; }
 	void TopMid(const cv::Point& pt)		{ ThisRect() = { cv::Point{ x, pt.y }, br() }; }
 	void MidLeft(const cv::Point& pt)		{ ThisRect() = { cv::Point{ pt.x, y }, br() }; }
@@ -120,18 +111,6 @@ cv::Rect CEditBox::GetEditMarkRect(const cv::Point& editPoint)
 
 void CEditBox::UpdateLocation(int nType, const cv::Point& offset)
 {
-	//switch (nType)
-	//{
-	//case 0: {m_pBox->MoveTopLeft(offset); break; }
-	//case 1: {m_pBox->MoveTopMid(offset);  break; }
-	//case 2: {m_pBox->MoveTopRight(offset); break; }
-	//case 3: {m_pBox->MoveMidLeft(offset);  break; }
-	//case 4: {m_pBox->MoveMidRight(offset); break; }
-	//case 5: {m_pBox->MoveBottomLeft(offset);  break; }
-	//case 6: {m_pBox->MoveBottomMid(offset); break; }
-	//case 7: {m_pBox->MoveBottomRight(offset);  break; }
-	//default: break;
-	//}
 	m_Box.Move(nType, offset);
 	UpdateEditRects();
 }

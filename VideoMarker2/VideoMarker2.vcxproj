@@ -114,6 +114,7 @@
     <ClInclude Include="DataExchange.h" />
     <ClInclude Include="DBox.h" />
     <ClInclude Include="DEditBox.h" />
+    <ClInclude Include="DFaceInfo.h" />
     <ClInclude Include="DText.h" />
     <ClInclude Include="EditBox.h" />
     <ClInclude Include="FrameInfo.h" />
