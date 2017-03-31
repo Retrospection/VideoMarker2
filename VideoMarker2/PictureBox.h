@@ -7,11 +7,13 @@
 #include "FrameInfo.h"
 #include "EditBox.h"
 
+
 class CS5;
 class CS12;
 class CStateBase;
 class IDrawable;
 class SelectItemManager;
+class CUnsavedFrameInfo;
 
 class CPictureBox : public CStatic
 {
@@ -36,6 +38,7 @@ public:
 private:
 	std::vector<std::string> m_UnsavedNames;
 	std::vector<cv::Rect> m_UnsavedBoxes;
+	CUnsavedFrameInfo* m_pUnsavedFrameInfo;
 
 /////////////////////////////////////////////////////////////////
 

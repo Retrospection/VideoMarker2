@@ -136,6 +136,7 @@
     <ClInclude Include="StringHelper.h" />
     <ClInclude Include="TextFileManager.h" />
     <ClInclude Include="Transformer.h" />
+    <ClInclude Include="UnsavedFrameInfo.h" />
     <ClInclude Include="VideoMarkerPresenter.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -162,6 +163,7 @@
     <ClCompile Include="StringHelper.cpp" />
     <ClCompile Include="TextFileManager.cpp" />
     <ClCompile Include="Transformer.cpp" />
+    <ClCompile Include="UnsavedFrameInfo.cpp" />
     <ClCompile Include="VideoMarkerPresenter.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
