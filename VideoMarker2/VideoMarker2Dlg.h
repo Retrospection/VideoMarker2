@@ -57,8 +57,8 @@ public:
 
 
 	bool GetUnsavedName2(std::string& unsavedName);
-	void OnPictureBoxLBtnDown();
-	void OnPictureBoxLBtnUp();
+// 	void OnPictureBoxLBtnDown();
+// 	void OnPictureBoxLBtnUp();
 
 public:
 	virtual void SetFrameInfo(const FrameInfo& frameInfo) override;

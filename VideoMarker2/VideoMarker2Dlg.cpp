@@ -299,20 +299,7 @@ void CVideoMarker2Dlg::OnBnClickedPauseButton()
 
 void CVideoMarker2Dlg::OnBnClickedAddMark()
 {
-	CString str;
-	GetDlgItemText(IDC_BUTTON_ADDMARK, str);
-	if (str == L"完成编辑")
-	{
-		m_pState->SaveMark();
-		SetDlgItemText(IDC_BUTTON_ADDMARK, L"添加标注");
-	}
-	else
-	{
-		m_pState->AddMark();
-		m_pPictureBox->SetEditType(CPictureBox::ADD_MARK_TYPE);
-	}
-	Refresh();
-	
+	m_pState->AddSaveMarkBtnClicked();
 }
 
 void CVideoMarker2Dlg::OnTimer(UINT_PTR nIDEvent)
@@ -468,32 +455,20 @@ bool CVideoMarker2Dlg::GetUnsavedName2(std::string& unsavedName)
 	return true;
 }
 
-void CVideoMarker2Dlg::OnPictureBoxLBtnDown()
-{
-	m_pState->OnPictureBoxLBtnDown();
-}
-
-void CVideoMarker2Dlg::OnPictureBoxLBtnUp()
-{
-	m_pState->OnPictureBoxLBtnUp();
-}
-
 std::vector<size_t> CVideoMarker2Dlg::GetDeleteFrameInfo()
 {
-	std::vector<size_t> indexes = m_pPictureBox->GetDeleteFrameInfo();
+	std::vector<size_t> indexes;
 	return indexes;
 }
 
 void CVideoMarker2Dlg::ClearDeleteFrameInfo()
 {
-	m_pPictureBox->ClearDeleteFrameInfo();
 }
 
 
 void CVideoMarker2Dlg::OnBnClickedButtonDeletemark()
 {
-	m_pPictureBox->DeleteSelectedFacesInfo();
-	Refresh();
+	m_pState->DeleteMarkBtnClicked();
 }
 
 FrameInfo CVideoMarker2Dlg::GetFrameInfo() const
@@ -504,20 +479,7 @@ FrameInfo CVideoMarker2Dlg::GetFrameInfo() const
 
 void CVideoMarker2Dlg::OnBnClickedButtonSelectMark()
 {
-	CString str;
-	GetDlgItemText(IDC_BUTTON_SELECTMARK, str);
-
-	if (str == L"结束选择")
-	{
-		SetState(S1);
-		SetDlgItemText(IDC_BUTTON_SELECTMARK, L"选择标注");
-	}
-	else
-	{
-		SetState(S5);
-		m_pPictureBox->SetEditType(CPictureBox::SELECT_MARK);
-		SetDlgItemText(IDC_BUTTON_SELECTMARK, L"结束选择");
-	}
+	m_pState->SelectMarkBtnClicked();
 }
 
 std::vector<FaceInfo> CVideoMarker2Dlg::GetUnsavedFacesInfo()

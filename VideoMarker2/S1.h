@@ -10,12 +10,13 @@ public:
 
 	virtual void RefreshButton() override;
 
-
-	virtual void SaveMark() override;
+	virtual void AddSaveMarkBtnClicked() override;
 
 	virtual void Undo() override;
 	
 	virtual void Redo() override;
+
+	virtual void SelectMarkBtnClicked() override;
 
 
 

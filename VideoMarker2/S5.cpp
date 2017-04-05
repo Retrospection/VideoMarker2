@@ -20,26 +20,15 @@ void CS5::RefreshButton()
 	GetPictureBox()->SetDrawable(true);
 }
 
-void CS5::OpenProject()
-{
-
-}
-
-void CS5::AddMark()
-{
-
-}
-
 bool CS5::CanDraw() const
 {
 	return true;
 }
 
-void CS5::OnPictureBoxLBtnDown()
+void CS5::AddSaveMarkBtnClicked()
 {
-	_pDlg->GetDlgItem(IDC_BUTTON_ADDMARK)->EnableWindow(FALSE);
+	GetPresenter()->SaveMark();
+	_pDlg->SetDlgItemText(IDC_BUTTON_ADDMARK, L"Ìí¼Ó±ê×¢");
+	SetState(S1);
 }
-
-
-
 

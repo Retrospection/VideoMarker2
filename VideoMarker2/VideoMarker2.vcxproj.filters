@@ -180,6 +180,9 @@
     <ClInclude Include="RectEx.h">
       <Filter>Primitive</Filter>
     </ClInclude>
+    <ClInclude Include="S13.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -246,6 +249,9 @@
       <Filter>View</Filter>
     </ClCompile>
     <ClCompile Include="UnsavedFrameInfo.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="S13.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

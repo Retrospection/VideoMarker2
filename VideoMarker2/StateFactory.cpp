@@ -8,8 +8,8 @@
 #include "VideoMarker2Dlg.h"
 #include "S1.h"
 #include "S5.h"
-#include "S12.h"
-#include "S8.h"
+#include "S13.h"
+
 
 CStateFactory::CStateFactory()
 {
@@ -56,6 +56,10 @@ CStateBase* CStateFactory::Create(const std::string& state, CVideoMarker2Dlg* pD
 	else if (state == S5)
 	{
 		return new CS5(pDlg, config);
+	}
+	else if (state == S13)
+	{
+		return new CS13(pDlg, config);
 	}
 // 	else if (state == S12)
 // 	{

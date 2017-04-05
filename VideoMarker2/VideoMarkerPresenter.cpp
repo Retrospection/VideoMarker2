@@ -223,9 +223,12 @@ void CVideoMarkerPresenter::SaveMark()
 // 	m_pTextMgr->AddFaceInfo(frameIndex, newFrameInfo);
 // 	m_pDlg->ClearUnsavedFrameInfo();
 
+	// ±£´æ
 	size_t frameIndex = static_cast<size_t>(m_pVideoPlayer->m_nCurrentFrameIndex);
 	FrameInfo frameInfo = m_pDlg->GetFrameInfo();
 	m_pTextMgr->UpdateFrameInfo(frameIndex, frameInfo);
+
+	// ¸üÐÂ
 	bool result = m_pTextMgr->GetFrameInfoByPos(frameInfo, frameIndex);
 	assert(result);
 	m_pDlg->SetFrameInfo(frameInfo);

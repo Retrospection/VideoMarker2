@@ -59,8 +59,6 @@ public:
 
 
 	virtual void OpenProject();
-	virtual void AddMark();
-	virtual void SaveMark();
 
 	virtual void OnLButtonDown(int nFlags, cv::Point point);
 	virtual void OnMouseMove(int nFlags, cv::Point point);
@@ -83,10 +81,9 @@ public:
 
 	virtual bool CanDraw() const;
 
-
-	virtual void OnPictureBoxLBtnDown();
-	virtual void OnPictureBoxLBtnUp();
-
+	virtual void AddSaveMarkBtnClicked();
+	virtual void SelectMarkBtnClicked();
+	virtual void DeleteMarkBtnClicked();
 	
 
 

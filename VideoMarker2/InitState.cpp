@@ -19,15 +19,6 @@ void CInitState::RefreshButton()
 	GetPictureBox()->SetDrawable(false);
 }
 
-void CInitState::AddMark()
-{
-
-}
-
-void CInitState::SaveMark()
-{
-
-}
 
 void CInitState::Undo()
 {

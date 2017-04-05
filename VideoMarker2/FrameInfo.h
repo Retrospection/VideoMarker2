@@ -10,7 +10,7 @@
 struct FaceInfo
 {
 	std::string strPersonName;
-	RectEx box;
+	cv::Rect box;
 
 	std::string toString()
 	{

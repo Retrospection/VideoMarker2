@@ -10,18 +10,9 @@ public:
 
 	virtual void RefreshButton() override;
 
-	virtual void OpenProject() override;
-
-	virtual void AddMark() override;
-
 	virtual bool CanDraw() const override;
 
-
-//	virtual void OnLButtonDown(int nFlags, cv::Point point) override;
-
-	virtual void OnPictureBoxLBtnDown() override;
-
-
+	virtual void AddSaveMarkBtnClicked() override;
 
 };
 

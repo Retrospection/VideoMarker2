@@ -48,17 +48,13 @@ void CStateBase::OpenProject()
 	SetState(S1);
 }
 
-void CStateBase::AddMark()
+void CStateBase::AddSaveMarkBtnClicked()
 {
-	SetState(S5);
-	_pDlg->SetDlgItemText(IDC_BUTTON_ADDMARK,L"完成编辑");
+// 	SetState(S5);
+// 	_pDlg->SetDlgItemText(IDC_BUTTON_ADDMARK,L"完成编辑");
 }
 
-void CStateBase::SaveMark()
-{
-	GetPresenter()->SaveMark();
-	SetState(S1);
-}
+
 
 
 void CStateBase::OnLButtonDown(int nFlags, cv::Point point)
@@ -170,21 +166,14 @@ CPictureBox* CStateBase::GetPictureBox() const
 	return _pDlg->m_pPictureBox;
 }
 
-void CStateBase::OnPictureBoxLBtnDown()
+void CStateBase::SelectMarkBtnClicked()
 {
-	_pDlg->GetDlgItem(IDC_BUTTON_ADDMARK)->EnableWindow(TRUE);
 }
 
-void CStateBase::OnPictureBoxLBtnUp()
+void CStateBase::DeleteMarkBtnClicked()
 {
-	_pDlg->GetDlgItem(IDC_BUTTON_ADDMARK)->EnableWindow(TRUE);
+
 }
-
-
-
-
-
-
 
 
 
@@ -225,6 +214,8 @@ CUI::CUI(CVideoMarker2Dlg* pDlg, const UIConfig& config) :m_pDlg(pDlg), m_Config
 	m_IDByName.insert(std::make_pair("StepForward", IDC_BUTTON_STEPFORWARD));
 	m_IDByName.insert(std::make_pair("StepBackward", IDC_BUTTON_STEPBACK));
 	m_IDByName.insert(std::make_pair("AddMark", IDC_BUTTON_ADDMARK));
+	m_IDByName.insert(std::make_pair("DeleteMark", IDC_BUTTON_DELETEMARK));
+	m_IDByName.insert(std::make_pair("SelectMark", IDC_BUTTON_SELECTMARK));
 	m_IDByName.insert(std::make_pair("Slider", IDC_SLIDER_1));
 	m_IDByName.insert(std::make_pair("Undo", IDC_BUTTON_UNDO));
 	m_IDByName.insert(std::make_pair("Redo", IDC_BUTTON_REDO));
