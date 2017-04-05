@@ -38,7 +38,7 @@ CVideoMarker2Dlg::CVideoMarker2Dlg(CWnd* pParent /*=NULL*/)
 void CVideoMarker2Dlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_SLIDER1, m_Slider);
+	DDX_Control(pDX, IDC_SLIDER_1, m_Slider);
 	DDX_Control(pDX, IDC_LIST1, m_ListBox);
 	DDX_Control(pDX, IDC_STATIC_FRAME, *m_pPictureBox);
 }
@@ -50,20 +50,19 @@ BEGIN_MESSAGE_MAP(CVideoMarker2Dlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_PLAY, &CVideoMarker2Dlg::OnBnClickedPlayVideoButton)
 	ON_WM_HSCROLL()
 	ON_WM_DESTROY()
-	ON_BN_CLICKED(IDC_BUTTON7, &CVideoMarker2Dlg::OnBnClickedBackOneFrame)
-	ON_BN_CLICKED(IDC_BUTTON8, &CVideoMarker2Dlg::OnBnClickedForwardOneFrame)
+	ON_BN_CLICKED(IDC_BUTTON_STEPBACK, &CVideoMarker2Dlg::OnBnClickedBackOneFrame)
+	ON_BN_CLICKED(IDC_BUTTON_STEPFORWARD, &CVideoMarker2Dlg::OnBnClickedForwardOneFrame)
 	ON_BN_CLICKED(IDC_BUTTON5, &CVideoMarker2Dlg::OnBnClickedOpenTextFile)
 	ON_BN_CLICKED(IDC_BUTTON6, &CVideoMarker2Dlg::OnBnClickedStopButton)
 	ON_BN_CLICKED(IDC_BUTTON_PAUSE, &CVideoMarker2Dlg::OnBnClickedPauseButton)
 	ON_BN_CLICKED(IDC_BUTTON_ADDMARK, &CVideoMarker2Dlg::OnBnClickedAddMark)
 	ON_WM_TIMER()
-	ON_BN_CLICKED(IDC_BUTTON4, &CVideoMarker2Dlg::OnBnClickedButton4)
 	ON_LBN_DBLCLK(IDC_LIST1, &CVideoMarker2Dlg::OnLbnDblclkList1)
 	ON_BN_CLICKED(IDC_BUTTON_UNDO, &CVideoMarker2Dlg::OnBnClickedButtonRevoke)
 	ON_BN_CLICKED(IDC_BUTTON_REDO, &CVideoMarker2Dlg::OnBnClickedButtonRedo)
 	ON_BN_CLICKED(IDC_BUTTON_OPENPROJECT, &CVideoMarker2Dlg::OnBnClickedButtonProject)
 	ON_BN_CLICKED(IDC_BUTTON_DELETEMARK, &CVideoMarker2Dlg::OnBnClickedButtonDeletemark)
-	ON_BN_CLICKED(IDC_BUTTON_EDITMARK, &CVideoMarker2Dlg::OnBnClickedButtonSaveinfo)
+	ON_BN_CLICKED(IDC_BUTTON_SELECTMARK, &CVideoMarker2Dlg::OnBnClickedButtonSelectMark)
 END_MESSAGE_MAP()
 
 // CVideoMarker2Dlg 消息处理程序
@@ -148,7 +147,7 @@ HCURSOR CVideoMarker2Dlg::OnQueryDragIcon()
 void CVideoMarker2Dlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	//TODO:  在此添加消息处理程序代码和/或调用默认值
-	CSliderCtrl   *pSlidCtrl = (CSliderCtrl*)GetDlgItem(IDC_SLIDER1);
+	CSliderCtrl   *pSlidCtrl = (CSliderCtrl*)GetDlgItem(IDC_SLIDER_1);
 	m_pState->SeekTo(pSlidCtrl->GetPos());
 	CDialogEx::OnHScroll(nSBCode, nPos, pScrollBar);
 }
@@ -156,12 +155,8 @@ void CVideoMarker2Dlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar
 void CVideoMarker2Dlg::Refresh()
 {
 	RefreshSlider();
-//	m_pState->RefreshButton();
-// 	GetDlgItem(IDC_BUTTON7)->EnableWindow((m_nCurrentFrameIndex > 0) ? TRUE : FALSE);
-// 	GetDlgItem(IDC_BUTTON8)->EnableWindow((m_nCurrentFrameIndex < m_nTotalFrameCount) ? TRUE : FALSE);
 	ShowFrameInfoInListBox();
 	Invalidate(FALSE);   // FIX IT
-	
 }
 
 std::string CVideoMarker2Dlg::GetFileName() const 
@@ -182,7 +177,6 @@ void CVideoMarker2Dlg::SetFileOpenedStatus(bool status)
 
 void CVideoMarker2Dlg::SetRawFrame(const cv::Mat& frame)
 {
-//	assert(m_bStatus);
 	m_pPictureBox->SetImage(frame);
 }
 
@@ -209,7 +203,7 @@ void CVideoMarker2Dlg::SetTextFileOpenedStatus(bool status)
 
 void CVideoMarker2Dlg::RefreshSlider()
 {
-	CSliderCtrl* pSlidCtrl = (CSliderCtrl*)GetDlgItem(IDC_SLIDER1);
+	CSliderCtrl* pSlidCtrl = (CSliderCtrl*)GetDlgItem(IDC_SLIDER_1);
 	pSlidCtrl->SetPos(m_nCurrentFrameIndex);
 	pSlidCtrl->SetRange(0, m_nTotalFrameCount == 0 ? 0 : m_nTotalFrameCount - 1);
 }
@@ -265,8 +259,7 @@ void CVideoMarker2Dlg::OnBnClickedPlayVideoButton()
 
 void CVideoMarker2Dlg::OnBnClickedBackOneFrame()
 {
-	m_pPictureBox->ClearUnsavedBoxes();
-	m_pPictureBox->ClearUnsavedNames();
+	m_pPictureBox->ClearUnsavedFaceInfo();
 	m_pState->Pause();
 	m_pState->BackOneFrame(m_nCurrentFrameIndex);
 
@@ -274,8 +267,7 @@ void CVideoMarker2Dlg::OnBnClickedBackOneFrame()
 
 void CVideoMarker2Dlg::OnBnClickedForwardOneFrame()
 {
-	m_pPictureBox->ClearUnsavedBoxes();
-	m_pPictureBox->ClearUnsavedNames();
+	m_pPictureBox->ClearUnsavedFaceInfo();
 	m_pState->Pause();
 	m_pState->ForwardOneFrame(m_nCurrentFrameIndex);
 }
@@ -325,7 +317,6 @@ void CVideoMarker2Dlg::OnBnClickedAddMark()
 
 void CVideoMarker2Dlg::OnTimer(UINT_PTR nIDEvent)
 {
-	// TODO:  在此添加消息处理程序代码和/或调用默认值
 	if (m_nCurrentFrameIndex+1 >= m_nTotalFrameCount)
 	{
 		CDialogEx::OnTimer(nIDEvent);
@@ -346,14 +337,9 @@ void CVideoMarker2Dlg::ShowFrameInfoInListBox()
 
 }
 
-void CVideoMarker2Dlg::OnBnClickedButton4()
-{
-	// TODO:  在此添加控件通知处理程序代码
-}
 
 void CVideoMarker2Dlg::OnLbnDblclkList1()
 {
-	// TODO:  在此添加控件通知处理程序代码
 	int i = m_ListBox.GetCurSel();
 
 	CString item;
@@ -380,38 +366,21 @@ void CVideoMarker2Dlg::OnBnClickedButtonRedo()
 	m_pPictureBox->Redo();
 }
 
-std::vector<cv::Rect> CVideoMarker2Dlg::GetUnsavedBox()
-{
-	return m_pPictureBox->GetUnsavedBoxesInRaw();
-}
-
 void CVideoMarker2Dlg::ClearHighLight()
 {
 	m_pPictureBox->SetHighLight({});
 	m_HighLight = {};
 }
 
-std::vector<std::string> CVideoMarker2Dlg::GetUnsavedName()
-{
-	return m_pPictureBox->GetUnsavedNames();
-}
-
 void CVideoMarker2Dlg::ClearUnsavedFrameInfo()
 {
-	m_pPictureBox->ClearUnsavedNames();
-	m_pPictureBox->ClearUnsavedBoxes();
+	m_pPictureBox->ClearUnsavedFaceInfo();
 }
 
 unsigned int CVideoMarker2Dlg::ValidateFaceInfo(const FaceInfo& info)
 {
-	std::vector<FaceInfo> allUnsavedFaceInfo;
-	std::vector<std::string> unsavedNames = m_pPictureBox->GetUnsavedNames();
-	std::vector<cv::Rect> unsavedBoxes = m_pPictureBox->GetUnsavedBoxesInRaw();
-	allUnsavedFaceInfo.resize(GetUnsavedName().size());
-	std::transform(unsavedBoxes.begin(), unsavedBoxes.end(), unsavedNames.begin(), allUnsavedFaceInfo.begin(),
-		[](const cv::Rect& box, const std::string& strPersonName )->FaceInfo{ return{ strPersonName, box }; });
-
-	allUnsavedFaceInfo.push_back(info);
+	FrameInfo frameInfo = m_pPictureBox->GetUnsavedFrameInfo();
+	std::vector<FaceInfo> allUnsavedFaceInfo = frameInfo.facesInfo;
 	return m_pPresenter->ValidateFacesInfo(allUnsavedFaceInfo);
 }
 
@@ -445,8 +414,6 @@ std::string CVideoMarker2Dlg::GetProjectFileName() const
 
 bool  CVideoMarker2Dlg::GetUIConfig(UIConfig& config, const std::string& state)
 {
-
-	
 	auto iter = m_UIConfigs.find(state);
 	if (iter == m_UIConfigs.end())
 	{
@@ -462,12 +429,9 @@ void CVideoMarker2Dlg::LoadUIConfig()
 	{
 		return;
 	}
-
 	std::vector<std::string> lines = GetLines("D:\\WorkSpace\\VideoMarker2\\UIConfig.txt");
-
 	size_t numberOfLine = lines.size();
 	assert(numberOfLine % 3 == 0 && numberOfLine != 0);
-
 	for (size_t i = 0; i < numberOfLine; i += 3)
 	{
 		auto iter = m_UIConfigs.find(lines[i]);
@@ -476,9 +440,7 @@ void CVideoMarker2Dlg::LoadUIConfig()
 		std::vector<std::string> disables = CStringHelper::Split(lines[i + 2], " ");
 		m_UIConfigs.insert(std::make_pair(lines[i], UIConfig{enables,disables}));
 	}
-
 	m_bUIConfigLoaded = true;
-	
 }
 
 std::vector<std::string> CVideoMarker2Dlg::GetLines(const std::string& filename)
@@ -495,11 +457,6 @@ std::vector<std::string> CVideoMarker2Dlg::GetLines(const std::string& filename)
 	}
 	return ret;
 }
-
-// bool CVideoMarker2Dlg::CanDraw()
-// {
-// 	return m_pState->CanDraw();
-// }
 
 bool CVideoMarker2Dlg::GetUnsavedName2(std::string& unsavedName)
 {
@@ -535,56 +492,35 @@ void CVideoMarker2Dlg::ClearDeleteFrameInfo()
 
 void CVideoMarker2Dlg::OnBnClickedButtonDeletemark()
 {
-	CString str;
-	GetDlgItemText(IDC_BUTTON_DELETEMARK, str);
-	if (str == L"确认删除")
-	{
-		SetState(S1);
-		m_pPictureBox->CalculateDeleteFrameInfoIndex();
-		m_pPictureBox->DeleteUnsavedFaceInfo();
-		m_pPresenter->Delete();
-		m_pPictureBox->ClearToBeDeleted();
-		SetDlgItemText(IDC_BUTTON_DELETEMARK, L"删除标注");
-	}
-	else
-	{
-		SetState(S5);
-		m_pPictureBox->SetEditType(CPictureBox::DELETE_MAKR_TYPE);
-		SetDlgItemText(IDC_BUTTON_DELETEMARK, L"确认删除");
-	}
+	m_pPictureBox->DeleteSelectedFacesInfo();
 	Refresh();
-
-
-
-	
 }
 
 FrameInfo CVideoMarker2Dlg::GetFrameInfo() const
 {
-	FrameInfo ret;
-	FrameInfo unsavedFrameInfo = m_pPictureBox->GetUnsavedFrameInfo();
-	ret.facesInfo.insert(ret.facesInfo.end(), m_FrameInfo.facesInfo.begin(), m_FrameInfo.facesInfo.end());
-	ret.facesInfo.insert(ret.facesInfo.end(), unsavedFrameInfo.facesInfo.begin(), unsavedFrameInfo.facesInfo.end());
-	return ret;
+	return m_pPictureBox->GetFrameInfo();
 }
 
 
-void CVideoMarker2Dlg::OnBnClickedButtonSaveinfo()
+void CVideoMarker2Dlg::OnBnClickedButtonSelectMark()
 {
-	
 	CString str;
-	GetDlgItemText(IDC_BUTTON_EDITMARK, str);
-	if (str == L"保存信息")
+	GetDlgItemText(IDC_BUTTON_SELECTMARK, str);
+
+	if (str == L"结束选择")
 	{
-		m_pPresenter->UpdateFrameInfo();
-		m_pPictureBox->ClearSelectedBoxes();
 		SetState(S1);
-		SetDlgItemText(IDC_BUTTON_EDITMARK, L"编辑标注");
+		SetDlgItemText(IDC_BUTTON_SELECTMARK, L"选择标注");
 	}
 	else
 	{
 		SetState(S5);
-		m_pPictureBox->SetEditType(CPictureBox::CHANGE_MARK);
-		SetDlgItemText(IDC_BUTTON_EDITMARK, L"保存信息");
+		m_pPictureBox->SetEditType(CPictureBox::SELECT_MARK);
+		SetDlgItemText(IDC_BUTTON_SELECTMARK, L"结束选择");
 	}
+}
+
+std::vector<FaceInfo> CVideoMarker2Dlg::GetUnsavedFacesInfo()
+{
+	return m_pPictureBox->GetUnsavedFrameInfo().facesInfo;
 }

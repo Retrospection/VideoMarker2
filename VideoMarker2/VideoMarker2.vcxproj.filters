@@ -168,9 +168,6 @@
     <ClInclude Include="DEditBox.h">
       <Filter>Drawable</Filter>
     </ClInclude>
-    <ClInclude Include="EditBox.h">
-      <Filter>Primitive</Filter>
-    </ClInclude>
     <ClInclude Include="NameInputDialog.h">
       <Filter>View</Filter>
     </ClInclude>
@@ -179,6 +176,9 @@
     </ClInclude>
     <ClInclude Include="DFaceInfo.h">
       <Filter>Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="RectEx.h">
+      <Filter>Primitive</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -241,9 +241,6 @@
     </ClCompile>
     <ClCompile Include="S5.cpp">
       <Filter>State\S5</Filter>
-    </ClCompile>
-    <ClCompile Include="EditBox.cpp">
-      <Filter>Primitive</Filter>
     </ClCompile>
     <ClCompile Include="NameInputDialog.cpp">
       <Filter>View</Filter>

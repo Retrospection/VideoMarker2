@@ -50,11 +50,11 @@ public:
 
 public:
 	virtual int GetCurrentFrameIndex() const override;
-	virtual std::vector<cv::Rect> GetUnsavedBox() override;
-	virtual std::vector<std::string> GetUnsavedName() override;
+	virtual std::vector<FaceInfo> GetUnsavedFacesInfo() override;
 	virtual std::vector<size_t> GetDeleteFrameInfo() override;
 	virtual void ClearDeleteFrameInfo() override;
 	virtual FrameInfo GetFrameInfo() const override;
+
 
 	bool GetUnsavedName2(std::string& unsavedName);
 	void OnPictureBoxLBtnDown();
@@ -154,11 +154,10 @@ public:
 	afx_msg void OnBnClickedPauseButton();
 	afx_msg void OnBnClickedAddMark();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
-	afx_msg void OnBnClickedButton4();
 	afx_msg void OnLbnDblclkList1();
 	afx_msg void OnBnClickedButtonRevoke();
 	afx_msg void OnBnClickedButtonRedo();
 	afx_msg void OnBnClickedButtonProject();
 	afx_msg void OnBnClickedButtonDeletemark();
-	afx_msg void OnBnClickedButtonSaveinfo();
+	afx_msg void OnBnClickedButtonSelectMark();
 };

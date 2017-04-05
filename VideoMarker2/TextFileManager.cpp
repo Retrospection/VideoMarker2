@@ -85,7 +85,7 @@ bool CTextFileManager::SaveOneFrameInfo(const std::string& buffer)
 	FrameInfo frameInfo;
 	for (int i = 1; i <= nPersons * 5; i += 5)
 	{
-		frameInfo.facesInfo.push_back({ strFrameInfo[i + 4],{ atoi(strFrameInfo[i].c_str()), atoi(strFrameInfo[i + 1].c_str()), atoi(strFrameInfo[i + 2].c_str()), atoi(strFrameInfo[i + 3].c_str())}});
+		frameInfo.facesInfo.push_back({ strFrameInfo[i + 4],*(reinterpret_cast<RectEx*>(&cv::Rect{ atoi(strFrameInfo[i].c_str()), atoi(strFrameInfo[i + 1].c_str()), atoi(strFrameInfo[i + 2].c_str()), atoi(strFrameInfo[i + 3].c_str())}))});
 	}
 	m_FrameInfos.push_back(frameInfo);
 	return true;
@@ -113,12 +113,12 @@ std::vector<std::string> CTextFileManager::Split(const std::string& str, const s
 
 void CTextFileManager::AddFaceInfo(int nPos, const std::string&  strPersonName, const cv::Point& p1, const cv::Point& p2)
 {
-	m_FrameInfos[nPos].facesInfo.push_back({ strPersonName, { p1, p2 } });
+	m_FrameInfos[nPos].facesInfo.push_back({ strPersonName, *reinterpret_cast<RectEx*>(&cv::Rect{ p1, p2 }) });
 }
 
 void CTextFileManager::AddFaceInfo(int nPos, const std::string&  strPersonName, const cv::Rect boxes)
 {
-	m_FrameInfos[nPos].facesInfo.push_back({ strPersonName, boxes });
+	m_FrameInfos[nPos].facesInfo.push_back({ strPersonName, *reinterpret_cast<const RectEx*>(&boxes) });
 }
 
 void CTextFileManager::AddFaceInfo(size_t nPos, const FrameInfo& newFrameInfo)

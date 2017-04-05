@@ -61,86 +61,92 @@ private:
 };
 
 
-class SelectItemManager
+// class SelectItemManager
+// {
+// public:
+// 	SelectItemManager(){}
+// 
+// public:
+// 	void Clear()
+// 	{
+// 		m_SelectedItems.clear();
+// 	}
+// 
+// 	void Select(cv::Rect& rc)
+// 	{
+// 		assert(m_SelectedItems.empty());
+// 		m_SelectedItems.emplace_back(rc);
+// 	}
+// 
+// 	void Select(std::vector<FaceInfo>& facesInfo, std::vector<cv::Rect>& m_UnsavedBoxes, const cv::Rect& square)
+// 	{
+// 		m_SelectedItems.clear();
+// 		for (auto iter = facesInfo.begin(); iter != facesInfo.end(); ++iter)
+// 		{
+// 			if ((iter->box & square).area() > 0)
+// 			{
+// 				m_SelectedItems.emplace_back(iter->box);
+// 			}
+// 		}
+// 		for (size_t i = 0; i < m_UnsavedBoxes.size(); ++i)
+// 		{
+// 			if ((m_UnsavedBoxes[i] & square).area() > 0)
+// 			{
+// 				m_SelectedItems.emplace_back(m_UnsavedBoxes[i]);
+// 			}
+// 		}
+// 	}
+// 
+// 	int SelectEditPoint(const cv::Point& point)
+// 	{
+// 		lastPos = point;
+// 		nEditType = -1;
+// 		for (const auto& box : m_SelectedItems)
+// 		{
+// 			if ((nEditType = box.Hit(point)) != -1)
+// 			{
+// 				break;
+// 			}
+// 		}
+// 
+// 		return nEditType;
+// 	}
+// 
+// 	void Move(const cv::Point& point)
+// 	{
+// 		cv::Point offset = point - lastPos;
+// 		for (auto& box : m_SelectedItems)
+// 		{
+// 			box.UpdateLocation(nEditType, offset);
+// 		}
+// 		lastPos = point;
+// 	}
+// 
+// 	std::vector<IDrawable*> GetIDrawable(const Transformer* pTrans) const
+// 	{
+// 		std::vector<IDrawable*> ret;
+// 		for (auto& item: m_SelectedItems)
+// 		{
+// 			std::vector<cv::Rect> roiRect;
+// 			for (auto& rc : item.GetEditRects())
+// 			{
+// 				roiRect.push_back(pTrans->Trans(rc, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi));
+// 			}
+// 			ret.push_back(new DEditBox(pTrans->Trans(item.GetBox(), Transformer::Coordinate::Raw, Transformer::Coordinate::Roi), roiRect, ColorIllegal));
+// 		}
+// 		return ret;
+// 	}
+// 
+// private:
+// 	cv::Point lastPos;
+// 	int nEditType = -1;
+// 	std::vector<CEditBox> m_SelectedItems;
+// };
+
+struct CEditBox
 {
-public:
-	SelectItemManager(){}
-
-public:
-	void Clear()
-	{
-		m_SelectedItems.clear();
-	}
-
-	void Select(cv::Rect& rc)
-	{
-		assert(m_SelectedItems.empty());
-		m_SelectedItems.emplace_back(rc);
-	}
-
-	void Select(std::vector<FaceInfo>& facesInfo, std::vector<cv::Rect>& m_UnsavedBoxes, const cv::Rect& square)
-	{
-		m_SelectedItems.clear();
-		for (auto iter = facesInfo.begin(); iter != facesInfo.end(); ++iter)
-		{
-			if ((iter->box & square).area() > 0)
-			{
-				m_SelectedItems.emplace_back(iter->box);
-			}
-		}
-		for (size_t i = 0; i < m_UnsavedBoxes.size(); ++i)
-		{
-			if ((m_UnsavedBoxes[i] & square).area() > 0)
-			{
-				m_SelectedItems.emplace_back(m_UnsavedBoxes[i]);
-			}
-		}
-	}
-
-	int SelectEditPoint(const cv::Point& point)
-	{
-		lastPos = point;
-		nEditType = -1;
-		for (const auto& box : m_SelectedItems)
-		{
-			if ((nEditType = box.Hit(point)) != -1)
-			{
-				break;
-			}
-		}
-
-		return nEditType;
-	}
-
-	void Move(const cv::Point& point)
-	{
-		cv::Point offset = point - lastPos;
-		for (auto& box : m_SelectedItems)
-		{
-			box.UpdateLocation(nEditType, offset);
-		}
-		lastPos = point;
-	}
-
-	std::vector<IDrawable*> GetIDrawable(const Transformer* pTrans) const
-	{
-		std::vector<IDrawable*> ret;
-		for (auto& item: m_SelectedItems)
-		{
-			std::vector<cv::Rect> roiRect;
-			for (auto& rc : item.GetEditRects())
-			{
-				roiRect.push_back(pTrans->Trans(rc, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi));
-			}
-			ret.push_back(new DEditBox(pTrans->Trans(item.GetBox(), Transformer::Coordinate::Raw, Transformer::Coordinate::Roi), roiRect, ColorIllegal));
-		}
-		return ret;
-	}
-
-private:
-	cv::Point lastPos;
-	int nEditType = -1;
-	std::vector<CEditBox> m_SelectedItems;
+	std::vector<cv::Rect> editMark;
+	RectEx rc;
 };
 
 // CPictureBox
@@ -153,22 +159,88 @@ const wchar_t* CPictureBox::m_AlertMessage[] = { L"", L"°üÎ§ºÐÃæ»ý¹ýÐ¡£¡", L"µ±Ç
 class FaceInfoEx
 {
 public:
+	FaceInfoEx()
+		:info()
+	{
+		UpdateEditRects();
+	}
+	FaceInfoEx(const FaceInfo& faceInfo)
+		: info(faceInfo)
+	{
+		UpdateEditRects();
+	}
+	FaceInfoEx(const std::string& strPersonName, const RectEx& rc, bool isSelected, bool isHighLight, bool isSaved)
+		: info({ strPersonName, rc})
+	{
+		UpdateEditRects();
+	}
+	FaceInfoEx(const FaceInfo& faceInfo, bool isSelected, bool isHighLight, bool isSaved)
+		: info(faceInfo), bIsSelected(isSelected), bIsHighLight(isHighLight), bSaved(isSaved)
+	{
+		UpdateEditRects();
+	}
 
-
-	int Hit(const cv::Point& pt) const { return -1; }
-	void UpdateLocation(int editType, const cv::Point& offset){}
-	FaceInfo GetFaceInfo() const{ return info; }
+	int Hit(const cv::Point& pt) const 
+	{
+		for (size_t i = 0; i < m_EditRects.size(); ++i)
+		{
+			if (m_EditRects[i].contains(pt))
+			{
+				return i;
+			}
+		}
+		return -1;
+	}
+	void UpdateLocation(int editType, const cv::Point& offset)
+	{
+		info.box.Move(editType, offset);
+		UpdateEditRects();
+	}
+	FaceInfo GetFaceInfo() const
+	{
+		return info; 
+	}
 	CEditBox GetEditBox() const  
 	{
 		cv::Rect box = info.box;
-		CEditBox ret(box);
+		CEditBox ret{m_EditRects, *reinterpret_cast<RectEx*>(&box)};
 		return ret; 
 	}
 
-	FaceInfo info;
-	bool bIsSelected;
-	//	bool bIsHighLight;
 
+	FaceInfo info;
+	std::vector<cv::Rect> m_EditRects;
+	bool bIsSelected;
+	bool bIsHighLight;
+	bool bSaved;
+
+private:
+	void UpdateEditRects()
+	{
+		m_EditRects.clear();
+		auto points = CalculateEditRects();
+		for (auto& pt : points)
+		{
+			m_EditRects.push_back(GetEditMarkRect(pt));
+		}
+	}
+
+	std::vector<cv::Point> CalculateEditRects()
+	{
+		return{ info.box.TopLeft(), info.box.TopMid(), info.box.TopRight(),
+			info.box.MidLeft(), info.box.MidRight(),
+			info.box.BottomLeft(), info.box.BottomMid(), info.box.BottomRight()
+		};
+	}
+
+	cv::Rect FaceInfoEx::GetEditMarkRect(const cv::Point& point)
+	{
+		int hw = 10;
+		int hh = hw;
+		cv::Point tl(point.x - hw, point.y - hh);
+		cv::Point br(point.x + hw, point.y + hh);
+		return{ tl, br };
+	}
 };
 
 class FaceInfoManager
@@ -182,52 +254,72 @@ public:
 
 	~FaceInfoManager(){}
 
-	void SetFacesInfo(const FrameInfo& frameInfo)
+	std::vector<FaceInfo> GetUnsavedFacesInfo() const
+	{
+		std::vector<FaceInfo> ret;
+		for (auto& faceInfo: m_FacesInfo[m_nPos])
+		{
+			if (!faceInfo.bSaved)
+			{
+				ret.push_back(faceInfo.GetFaceInfo());
+			}
+		}
+		return ret;
+	}
+	void ClearUnsavedFacesInfo()
+	{
+		SnapShot();
+		auto pred = [](const FaceInfoEx& fiex){ return !fiex.bSaved; };
+		m_FacesInfo[m_nPos].erase(std::remove_if(m_FacesInfo[m_nPos].begin(), m_FacesInfo[m_nPos].end(), pred), m_FacesInfo[m_nPos].end());
+	}
+
+	std::vector<FaceInfo> GetFacesInfo() const
+	{
+		std::vector<FaceInfo> ret(m_FacesInfo[m_nPos].size());
+		auto fn = [](const FaceInfoEx& fiex){ return fiex.GetFaceInfo(); };
+		std::transform(m_FacesInfo[m_nPos].begin(), m_FacesInfo[m_nPos].end(), ret.begin(), fn);
+		return ret;
+	}
+
+	std::vector<FaceInfoEx> GetFacesInfoEx() const
+	{
+		return m_FacesInfo[m_nPos];
+	}
+
+	void ResetSelected()
+	{
+		std::for_each(m_FacesInfo[m_nPos].begin(), m_FacesInfo[m_nPos].end(), [](FaceInfoEx& fiex){ fiex.bIsSelected = false; });
+	}
+
+	FrameInfo GetFrameInfo() const
+	{
+		FrameInfo ret;
+		ret.facesInfo = GetFacesInfo();
+		return std::move(ret);
+	}
+
+
+	void SetFrameInfo(const FrameInfo& frameInfo)
 	{
 		m_FacesInfo.clear();
 		m_nPos = 0;
 		std::vector<FaceInfoEx> temp(frameInfo.facesInfo.size());
-		std::transform(frameInfo.facesInfo.begin(), frameInfo.facesInfo.end(), temp.begin(), [](const FaceInfo& info){ return FaceInfoEx{  info , false }; });
+		std::transform(frameInfo.facesInfo.begin(), frameInfo.facesInfo.end(), temp.begin(), [](const FaceInfo& info){ return FaceInfoEx{ info, false, false, true }; });
 		m_FacesInfo.push_back(temp);
-
-	}
-
-	std::vector<IDrawable*> GetIDrawables() const
-	{
-		std::vector<IDrawable*> ret;
-		for (const auto& faceInfo : m_FacesInfo[m_nPos])
-		{
-			if (!faceInfo.bIsSelected /*&& !faceInfo.bIsHighLight*/ )
-			{
-				ret.push_back(new DFaceInfo(faceInfo.GetFaceInfo(), ColorSaved));
-			}
-			else if (faceInfo.bIsSelected /*&& !faceInfo.bIsHighLight*/)
-			{
-				ret.push_back(new DEditBox(faceInfo.GetEditBox().GetBox(), faceInfo.GetEditBox().GetEditRects(), ColorIllegal));
-			}
-			else
-			{
-				ret.push_back(new DFaceInfo(faceInfo.GetFaceInfo(), ColorHighLight));
-			}
-		}
-		return ret;
 	}
 
 	unsigned int Add(const FaceInfo& faceInfo)
 	{
 		SnapShot();
-		m_FacesInfo.rbegin()->push_back({ faceInfo });
+		m_FacesInfo.rbegin()->push_back({ faceInfo, false, false, false });
 		std::cout << ToString();
 		return 0;
 	}
-
-	void Delete()
+	void DeleteSelected()
 	{
 		SnapShot();
 		m_FacesInfo[m_nPos].erase(std::remove_if(m_FacesInfo[m_nPos].begin(), m_FacesInfo[m_nPos].end(), [](const FaceInfoEx& info){ return info.bIsSelected; }), m_FacesInfo[m_nPos].end());
 	}
-
-
 
 	void Select(const cv::Rect& rc)
 	{
@@ -243,7 +335,6 @@ public:
 			}
 		}
 	}
-
 	int SelectEditPoint(const cv::Point& point)
 	{
 		m_LastPos = point;
@@ -261,13 +352,10 @@ public:
 		}
 		return m_nEditType;
 	}
-
-
 	void MoveFinished(const cv::Point& point)
 	{
  		SnapShot();
 	}
-
 	void Move(const cv::Point& point)
 	{
 		cv::Point offset = point - m_LastPos;
@@ -280,7 +368,6 @@ public:
 		}
 		m_LastPos = point;
 	}
-
 	void Undo()
 	{
 		if (m_nPos == 0)
@@ -290,7 +377,6 @@ public:
 		--m_nPos;
 		std::cout << ToString();
 	}
-
 	void Redo()
 	{
 		if (m_nPos == m_FacesInfo.size() - 1)
@@ -325,7 +411,7 @@ private:
 
 	bool IsOverlapping(const cv::Rect& rc1, const cv::Rect& rc2)const
 	{
-		return true;
+		return ((rc1 & rc2).area() > 0);
 	}
 
 
@@ -347,13 +433,13 @@ CPictureBox::CPictureBox(CStateBase* pState)
 	m_ActivePoints[1] = INIT_POINT;
 	m_DeleteArea = {};
 	m_nModifiedFaceInfoIndex = -1;
-	m_pSelectItemManager = new SelectItemManager();
+//	m_pSelectItemManager = new SelectItemManager();
 	m_pFaceInfoManager = new FaceInfoManager();
 }
 
 CPictureBox::~CPictureBox()
 {
-	delete m_pSelectItemManager;
+//	delete m_pSelectItemManager;
 	delete m_pFaceInfoManager;
 }
 
@@ -382,11 +468,12 @@ void CPictureBox::OnLButtonDown(UINT nFlags, CPoint point)
 	else
 	{
 		m_bDrawing = true;
-		
-		// Ñ¡ÖÐEditPoint
 		cv::Point _point{ m_Trans.Trans({ point.x, point.y, 1, 1 }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw).tl() };
-		//m_nModifiedFaceInfoIndex = m_pSelectItemManager->SelectEditPoint(_point);
 		m_nModifiedFaceInfoIndex = m_pFaceInfoManager->SelectEditPoint(_point);
+		if (m_nModifiedFaceInfoIndex == -1)
+		{
+			m_pFaceInfoManager->ResetSelected();
+		}
 		std::cout << "EditBoxes Index: " << m_nModifiedFaceInfoIndex << std::endl;
 	
 		m_ActivePoints[0] = { point.x, point.y };
@@ -409,13 +496,12 @@ void CPictureBox::OnMouseMove(UINT nFlags, CPoint point)
 	cv::Rect RoiRect = m_Trans.GetRoiRect();
 
 
-	if (m_nEditType == CHANGE_MARK)
+	if (m_nEditType == SELECT_MARK)
 	{
 		// ¸Ä±äÑ¡ÖÐµÄbox
 		if (m_nModifiedFaceInfoIndex != -1)
 		{
 			cv::Point _point = m_Trans.Trans({ point.x, point.y, 1, 1 }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw).tl();
-			//m_pSelectItemManager->Move(_point);
 			m_pFaceInfoManager->Move(_point);
 		}
 	}
@@ -456,25 +542,23 @@ void CPictureBox::OnLButtonUp(UINT nFlags, CPoint point)
 	{
 		cv::Rect activeBox;
 		std::string strPersonName;
-
 // 		if (((CVideoMarker2Dlg*)GetParent())->GetUnsavedName2(strPersonName) && GetActiveBox(activeBox))
 // 		{
 // 			CacheUnsaveFaceInfo({ strPersonName, m_Trans.Trans(activeBox, Transformer::Coordinate::Roi, Transformer::Coordinate::Raw) });
 // 		}
 		((CVideoMarker2Dlg*)GetParent())->GetUnsavedName2(strPersonName);
 		GetActiveBox(activeBox);
-		m_pFaceInfoManager->Add({ strPersonName, activeBox });
+		activeBox = m_Trans.Trans(activeBox, Transformer::Coordinate::Roi, Transformer::Coordinate::Raw);
+		m_pFaceInfoManager->Add({ strPersonName, *reinterpret_cast<RectEx*>(&activeBox) });
 
 		break;
 	}
 	case DELETE_MAKR_TYPE:
 	{
-// 		CacheDeleteArea();
-// 		HighLightDeleteFaceInfo();
-		m_pFaceInfoManager->Delete();
+		m_pFaceInfoManager->DeleteSelected();
 		break;
 	}
-	case CHANGE_MARK:
+	case SELECT_MARK:
 	{
 		if (m_nModifiedFaceInfoIndex == -1)
 		{
@@ -500,21 +584,21 @@ void CPictureBox::OnLButtonUp(UINT nFlags, CPoint point)
 
 }
 
-std::vector<cv::Rect> CPictureBox::GetUnsavedBoxesInRaw()
-{
-	std::vector<cv::Rect> ret;
-	for (const auto& rect : m_UnsavedBoxes)
-	{
-		ret.push_back(m_Trans.Trans(rect,Transformer::Coordinate::Roi, Transformer::Coordinate::Raw));
-	}
-	return std::move(ret);
-}
-
-
-std::vector<std::string> CPictureBox::GetUnsavedNames() const
-{
-	return m_UnsavedNames;
-}
+// std::vector<cv::Rect> CPictureBox::GetUnsavedBoxesInRaw()
+// {
+// 	std::vector<cv::Rect> ret;
+// 	for (const auto& rect : m_UnsavedBoxes)
+// 	{
+// 		ret.push_back(m_Trans.Trans(rect,Transformer::Coordinate::Roi, Transformer::Coordinate::Raw));
+// 	}
+// 	return std::move(ret);
+// }
+// 
+// 
+// std::vector<std::string> CPictureBox::GetUnsavedNames() const
+// {
+// 	return m_UnsavedNames;
+// }
 
 void CPictureBox::DeleteUnsavedFaceInfo()
 {
@@ -529,37 +613,26 @@ void CPictureBox::DeleteUnsavedFaceInfo()
 FrameInfo CPictureBox::GetUnsavedFrameInfo() const
 {
 	FrameInfo ret;
-	for (size_t i = 0; i < m_UnsavedBoxes.size(); ++i)
-	{
-		ret.facesInfo.push_back({ m_UnsavedNames[i], m_UnsavedBoxes[i] });
-	}
+	ret.facesInfo = m_pFaceInfoManager->GetUnsavedFacesInfo();
 	return std::move(ret);
 }
 
-void CPictureBox::CacheUnsaveFaceInfo(const FaceInfo& faceInfo)
- {
-	unsigned int validateResult = ((CVideoMarker2Dlg*)GetParent())->ValidateFaceInfo(faceInfo);
-	assert(validateResult < NUMBER_OF_VALIDATOR_TYPES);
-	if (validateResult != 0)
-	{
-		MessageBox(m_AlertMessage[validateResult]);
-		return;
-	}
 
-	m_UnsavedBoxes.push_back(m_Trans.Trans(faceInfo.box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi));
-	m_UnsavedNames.push_back(faceInfo.strPersonName);
-
-}
-
-void CPictureBox::ClearUnsavedBoxes()
+void CPictureBox::ClearUnsavedFaceInfo()
 {
-	m_UnsavedBoxes.clear();
+	m_pFaceInfoManager->ClearUnsavedFacesInfo();
 }
 
-void CPictureBox::ClearUnsavedNames()
-{
-	m_UnsavedNames.clear();
-}
+
+// void CPictureBox::ClearUnsavedBoxes()
+// {
+// 	m_UnsavedBoxes.clear();
+// }
+// 
+// void CPictureBox::ClearUnsavedNames()
+// {
+// 	m_UnsavedNames.clear();
+// }
 
 void CPictureBox::DrawItem(LPDRAWITEMSTRUCT /*lpDrawItemStruct*/)
 {
@@ -581,7 +654,7 @@ void CPictureBox::DrawItem(LPDRAWITEMSTRUCT /*lpDrawItemStruct*/)
 
 void CPictureBox::SetFrameInfo(const FrameInfo& frameInfo)
 {
-	m_FrameInfo = frameInfo;
+	m_pFaceInfoManager->SetFrameInfo(frameInfo);
 	Invalidate(FALSE);
 }
 
@@ -647,41 +720,39 @@ void CPictureBox::PreSubclassWindow()
 
 void CPictureBox::DrawFrameInfo(cv::Mat& img)
 {
-	for (const auto& faceInfo : m_FrameInfo.facesInfo)
-	{
-		cv::Rect rc = m_Trans.Trans(faceInfo.box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi);
-		m_drawables.push_back(new DBox(rc, ColorSaved));
-		m_drawables.push_back(new DText(faceInfo.strPersonName, { rc.x, rc.y }, ColorSaved));
-	}
-
-	for (size_t i = 0; i < m_UnsavedBoxes.size(); ++i)
-	{
-		m_drawables.push_back(new DBox(m_UnsavedBoxes[i], ColorUnsaved));
-		m_drawables.push_back(new DText(m_UnsavedNames[i], { m_UnsavedBoxes[i].x, m_UnsavedBoxes[i].y }, ColorSaved));
-	}
-
+	std::vector<FaceInfoEx> facesInfo = m_pFaceInfoManager->GetFacesInfoEx();
 	if (m_nModifiedFaceInfoIndex == -1)
 	{
 		cv::Rect rc;
 		if (GetActiveBox(rc))
 		{
-			m_drawables.push_back(new DBox(rc, ColorUnsaved));
+			m_drawables.push_back(new DBox(rc/*m_Trans.Trans(rc,Transformer::Coordinate::Raw,Transformer::Coordinate::PictureBox)*/, ColorUnsaved));
 		}
 	}
-
-	std::vector<IDrawable*> drawables = m_pSelectItemManager->GetIDrawable(&m_Trans);
-	m_drawables.insert(m_drawables.end(), drawables.begin(), drawables.end());
-
-	for (auto& deleted: m_ToBeDeleteFaceInfo)
+	for (auto& faceInfo:facesInfo)
 	{
-		m_drawables.push_back(new DBox(m_Trans.Trans(deleted.box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi), ColorIllegal));
+		if (!faceInfo.bIsSelected && !faceInfo.bIsHighLight && faceInfo.bSaved)
+		{
+			m_drawables.push_back(new DFaceInfo(FaceInfo{ faceInfo.GetFaceInfo().strPersonName, *reinterpret_cast<RectEx*>(&m_Trans.Trans(faceInfo.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::PictureBox)) }, ColorSaved));
+		}
+		else if (!faceInfo.bIsSelected && !faceInfo.bIsHighLight && !faceInfo.bSaved)
+		{
+			m_drawables.push_back(new DFaceInfo(FaceInfo{ faceInfo.GetFaceInfo().strPersonName, *reinterpret_cast<RectEx*>(&m_Trans.Trans(faceInfo.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::PictureBox)) }, ColorUnsaved));
+		}
+		else if (faceInfo.bIsSelected && !faceInfo.bIsHighLight)
+		{
+			// FIX IT
+			FaceInfoEx ex{ faceInfo.GetFaceInfo().strPersonName, 
+				*reinterpret_cast<RectEx*>
+				(&m_Trans.Trans(faceInfo.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::PictureBox)),
+				true, false, true };
+			m_drawables.push_back(new DEditBox(ex.GetEditBox().rc, ex.GetEditBox().editMark, ColorIllegal));
+		}
+		else if (faceInfo.bIsHighLight)
+		{
+			m_drawables.push_back(new DFaceInfo(faceInfo.GetFaceInfo(), ColorHighLight));
+		}
 	}
-
-	for (auto& highlight:m_HighLights)
-	{
-		m_drawables.push_back(new DBox(m_Trans.Trans(highlight,Transformer::Coordinate::Raw, Transformer::Coordinate::Roi), ColorHighLight));
-	}
-
 	for (auto& drawable : m_drawables)
 	{
 		drawable->Draw(img);
@@ -737,15 +808,15 @@ void CPictureBox::SetEditType(size_t nEditType)
 
 void CPictureBox::HighLightDeleteFaceInfo()
 {
-	CalculateDeleteFrameInfoIndex();
-	for (auto index : m_DeleteFaceInfoIndexes)
-	{
-		m_ToBeDeleteFaceInfo.push_back(m_FrameInfo.facesInfo[index]);
-	}
-	for (auto index : m_DeleteUnsavedFaceInfoIndexes)
-	{
-		m_ToBeDeleteFaceInfo.push_back({ m_UnsavedNames[index], m_UnsavedBoxes[index] });
-	}
+// 	CalculateDeleteFrameInfoIndex();
+// 	for (auto index : m_DeleteFaceInfoIndexes)
+// 	{
+// 		m_ToBeDeleteFaceInfo.push_back(m_FrameInfo.facesInfo[index]);
+// 	}
+// 	for (auto index : m_DeleteUnsavedFaceInfoIndexes)
+// 	{
+// 		m_ToBeDeleteFaceInfo.push_back({ m_UnsavedNames[index], m_UnsavedBoxes[index] });
+// 	}
 }
 
 void CPictureBox::ClearDeleteFrameInfo()
@@ -768,13 +839,19 @@ void CPictureBox::SelectBox()
 	m_pFaceInfoManager->Select(square);
 }
 
-void CPictureBox::ClearSelectedBoxes()
+void CPictureBox::DeleteSelectedFacesInfo()
 {
-	m_pSelectItemManager->Clear();
+//	m_pSelectItemManager->Clear();
+	m_pFaceInfoManager->DeleteSelected();
 }
 
 unsigned int CPictureBox::ValidateFaceInfo(const FaceInfo& faceInfo)
 {
 	return ((CVideoMarker2Dlg*)GetParent())->ValidateFaceInfo(faceInfo);
+}
+
+FrameInfo CPictureBox::GetFrameInfo() const
+{
+	return m_pFaceInfoManager->GetFrameInfo();
 }
 

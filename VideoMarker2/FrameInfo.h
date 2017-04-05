@@ -5,10 +5,12 @@
 
 #include <opencv2/core/core.hpp>
 
+#include "RectEx.h"
+
 struct FaceInfo
 {
 	std::string strPersonName;
-	cv::Rect box;
+	RectEx box;
 
 	std::string toString()
 	{

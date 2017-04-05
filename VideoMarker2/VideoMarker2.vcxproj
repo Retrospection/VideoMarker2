@@ -116,7 +116,7 @@
     <ClInclude Include="DEditBox.h" />
     <ClInclude Include="DFaceInfo.h" />
     <ClInclude Include="DText.h" />
-    <ClInclude Include="EditBox.h" />
+    <ClInclude Include="RectEx.h" />
     <ClInclude Include="FrameInfo.h" />
     <ClInclude Include="IDrawable.h" />
     <ClInclude Include="InitState.h" />
@@ -148,7 +148,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CvvImage.cpp" />
-    <ClCompile Include="EditBox.cpp" />
     <ClCompile Include="InitState.cpp" />
     <ClCompile Include="NameInputDialog.cpp" />
     <ClCompile Include="PauseState.cpp" />

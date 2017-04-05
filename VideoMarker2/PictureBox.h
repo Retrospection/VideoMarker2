@@ -5,7 +5,7 @@
 #include "Transformer.h"
 
 #include "FrameInfo.h"
-#include "EditBox.h"
+#include "RectEx.h"
 
 
 class CS5;
@@ -29,21 +29,19 @@ public:
 
 	unsigned int ValidateFaceInfo(const FaceInfo& faceInfo);
 
+	FrameInfo GetFrameInfo() const;
+
 ///////////////////////// Unsaved ///////////////////////////////
 public:
-	std::vector<cv::Rect> GetUnsavedBoxesInRaw();
-	std::vector<std::string> GetUnsavedNames() const;
 	FrameInfo GetUnsavedFrameInfo() const;
-	void CacheUnsaveFaceInfo(const FaceInfo& faceInfo);
-	void ClearUnsavedBoxes();
-	void ClearUnsavedNames();
+	void ClearUnsavedFaceInfo();
+
 
 private:
 	std::vector<std::string> m_UnsavedNames;
 	std::vector<cv::Rect> m_UnsavedBoxes;
 	CUnsavedFrameInfo* m_pUnsavedFrameInfo;
 
-/////////////////////////////////////////////////////////////////
 
 /////////////////////// Deleted /////////////////////////////////
 public:
@@ -61,7 +59,6 @@ private:
 	std::vector<size_t> m_DeleteUnsavedFaceInfoIndexes;
 	std::vector<FaceInfo> m_ToBeDeleteFaceInfo;
 
-/////////////////////////////////////////////////////////////////
 
 
 /////////////////// ActiveBox ///////////////////////////////////
@@ -69,7 +66,6 @@ private:
 	bool GetActiveBox(cv::Rect& activeBox) const;
 	cv::Point m_ActivePoints[2];
 
-/////////////////////////////////////////////////////////////////
 
 /////////////////// HighLight ///////////////////////////////////
 public:
@@ -78,7 +74,6 @@ public:
 private:
 	std::vector<cv::Rect> m_HighLights;
 
-/////////////////////////////////////////////////////////////////
 
 /////////////////// HighLight ///////////////////////////////////
 
@@ -89,7 +84,6 @@ private:
 	FrameInfo m_FrameInfo;
 
 
-/////////////////////////////////////////////////////////////////
 
 //////////////////// Frame //////////////////////////////////////
 public:
@@ -100,19 +94,18 @@ private:
 	bool m_bDrawing;
 	cv::Mat m_image;
 
-/////////////////////////////////////////////////////////////////
 
 public:
 	void SetEditType(size_t nEditType);
 
 
 public:
-	void ClearSelectedBoxes();
+	void DeleteSelectedFacesInfo();
 	void Undo();
 	void Redo();
 	static const size_t ADD_MARK_TYPE = 1;
 	static const size_t DELETE_MAKR_TYPE = 2;
-	static const size_t CHANGE_MARK = 3;
+	static const size_t SELECT_MARK = 3;
 
 private:
 	void SelectBox();
@@ -124,7 +117,7 @@ private:
 	static const wchar_t* m_AlertMessage[4];
 	static const size_t NUMBER_OF_VALIDATOR_TYPES = sizeof(m_AlertMessage) / sizeof(m_AlertMessage[0]);
 	size_t m_nEditType;
-	SelectItemManager* m_pSelectItemManager;
+//	SelectItemManager* m_pSelectItemManager;
 	FaceInfoManager* m_pFaceInfoManager;
 
 protected:

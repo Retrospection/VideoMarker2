@@ -203,35 +203,29 @@ void CVideoMarkerPresenter::AddMark()
 
 void CVideoMarkerPresenter::SaveMark()
 {
-	std::vector<cv::Rect> unsavedBox = m_pDlg->GetUnsavedBox();
-	std::vector<std::string> unsavedName = m_pDlg->GetUnsavedName();
-	assert(unsavedName.size() == unsavedBox.size());
-	if (unsavedBox.empty())
-	{
-		return;
-	}
+// 	std::vector<cv::Rect> unsavedBox = m_pDlg->GetUnsavedBox();
+// 	std::vector<std::string> unsavedName = m_pDlg->GetUnsavedName();
+// 	assert(unsavedName.size() == unsavedBox.size());
+// 	if (unsavedBox.empty())
+// 	{
+// 		return;
+// 	}
+// 
+// 	FrameInfo newFrameInfo;
+// 
+// 	for (size_t i = 0; i < unsavedBox.size(); ++i)
+// 	{
+// 		newFrameInfo.facesInfo.push_back({ unsavedName[i], unsavedBox[i] });
+// 	}
+// 
+// 	assert(m_pVideoPlayer->m_nCurrentFrameIndex >= 0);
+// 	
+// 	m_pTextMgr->AddFaceInfo(frameIndex, newFrameInfo);
+// 	m_pDlg->ClearUnsavedFrameInfo();
 
-	FrameInfo newFrameInfo;
-//	newFrameInfo.facesInfo.resize(unsavedName.size());
-//	std::transform(unsavedBox.begin(), unsavedBox.end(), unsavedName.begin(), newFrameInfo.facesInfo.begin(), [&](const cv::Rect& rc, const std::string& name)->FaceInfo { ValidateFaceInfo({ name, rc }) ? return{ name, rc } : m_pDlg->m_pPictureBox->m_IllegalFaceInfo.push_back({ name, rc }), return{}; });
-
-	for (size_t i = 0; i < unsavedBox.size(); ++i)
-	{
-		//if (IsValidateFaceInfo({unsavedName[i],unsavedBox[i]}))
-		//{
-			newFrameInfo.facesInfo.push_back({ unsavedName[i], unsavedBox[i] });
-		//}
-		//else
-		//{
-		//	m_pDlg->m_pPictureBox->SetIllegal({ unsavedName[i], unsavedBox[i] }, i);
-		//	m_pDlg->m_pPictureBox->DecreaseEndIndex();
-		//}
-	}
-	assert(m_pVideoPlayer->m_nCurrentFrameIndex >= 0);
 	size_t frameIndex = static_cast<size_t>(m_pVideoPlayer->m_nCurrentFrameIndex);
-	m_pTextMgr->AddFaceInfo(frameIndex, newFrameInfo);
-	m_pDlg->ClearUnsavedFrameInfo();
-	FrameInfo frameInfo;
+	FrameInfo frameInfo = m_pDlg->GetFrameInfo();
+	m_pTextMgr->UpdateFrameInfo(frameIndex, frameInfo);
 	bool result = m_pTextMgr->GetFrameInfoByPos(frameInfo, frameIndex);
 	assert(result);
 	m_pDlg->SetFrameInfo(frameInfo);
@@ -256,9 +250,7 @@ unsigned int CVideoMarkerPresenter::ValidateFacesInfo(const std::vector<FaceInfo
 	{
 		return ret;
 	}
-
 	return CheckStage2(facesInfo);
-
 }
 
 bool CVideoMarkerPresenter::CheckNameExist(const std::vector<FaceInfo>& facesInfo)
