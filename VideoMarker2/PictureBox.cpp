@@ -61,87 +61,6 @@ private:
 };
 
 
-// class SelectItemManager
-// {
-// public:
-// 	SelectItemManager(){}
-// 
-// public:
-// 	void Clear()
-// 	{
-// 		m_SelectedItems.clear();
-// 	}
-// 
-// 	void Select(cv::Rect& rc)
-// 	{
-// 		assert(m_SelectedItems.empty());
-// 		m_SelectedItems.emplace_back(rc);
-// 	}
-// 
-// 	void Select(std::vector<FaceInfo>& facesInfo, std::vector<cv::Rect>& m_UnsavedBoxes, const cv::Rect& square)
-// 	{
-// 		m_SelectedItems.clear();
-// 		for (auto iter = facesInfo.begin(); iter != facesInfo.end(); ++iter)
-// 		{
-// 			if ((iter->box & square).area() > 0)
-// 			{
-// 				m_SelectedItems.emplace_back(iter->box);
-// 			}
-// 		}
-// 		for (size_t i = 0; i < m_UnsavedBoxes.size(); ++i)
-// 		{
-// 			if ((m_UnsavedBoxes[i] & square).area() > 0)
-// 			{
-// 				m_SelectedItems.emplace_back(m_UnsavedBoxes[i]);
-// 			}
-// 		}
-// 	}
-// 
-// 	int SelectEditPoint(const cv::Point& point)
-// 	{
-// 		lastPos = point;
-// 		nEditType = -1;
-// 		for (const auto& box : m_SelectedItems)
-// 		{
-// 			if ((nEditType = box.Hit(point)) != -1)
-// 			{
-// 				break;
-// 			}
-// 		}
-// 
-// 		return nEditType;
-// 	}
-// 
-// 	void Move(const cv::Point& point)
-// 	{
-// 		cv::Point offset = point - lastPos;
-// 		for (auto& box : m_SelectedItems)
-// 		{
-// 			box.UpdateLocation(nEditType, offset);
-// 		}
-// 		lastPos = point;
-// 	}
-// 
-// 	std::vector<IDrawable*> GetIDrawable(const Transformer* pTrans) const
-// 	{
-// 		std::vector<IDrawable*> ret;
-// 		for (auto& item: m_SelectedItems)
-// 		{
-// 			std::vector<cv::Rect> roiRect;
-// 			for (auto& rc : item.GetEditRects())
-// 			{
-// 				roiRect.push_back(pTrans->Trans(rc, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi));
-// 			}
-// 			ret.push_back(new DEditBox(pTrans->Trans(item.GetBox(), Transformer::Coordinate::Raw, Transformer::Coordinate::Roi), roiRect, ColorIllegal));
-// 		}
-// 		return ret;
-// 	}
-// 
-// private:
-// 	cv::Point lastPos;
-// 	int nEditType = -1;
-// 	std::vector<CEditBox> m_SelectedItems;
-// };
 
 struct CEditBox
 {
@@ -400,6 +319,20 @@ public:
 		std::cout << ToString();
 	}
 
+	void SetHighLight(size_t nIndex)
+	{
+		ClearHighLight();
+		m_FacesInfo[m_nPos][nIndex].bIsHighLight = true;
+	}
+
+	void ClearHighLight()
+	{
+		for (auto& faceinfoEx: m_FacesInfo[m_nPos])
+		{
+			faceinfoEx.bIsHighLight = false;
+		}
+	}
+
 private:
 	std::string ToString() const
 	{
@@ -409,6 +342,7 @@ private:
 	}
 	void SnapShot()
 	{
+		std::cout << "--------------------------------------------------" << std::endl;
 		if (m_nPos != m_FacesInfo.size() - 1)
 		{
 			m_FacesInfo.resize(1 + m_nPos);
@@ -626,9 +560,9 @@ void CPictureBox::SetFrameInfo(const FrameInfo& frameInfo)
 	Invalidate(FALSE);
 }
 
-void CPictureBox::SetHighLight(const std::vector<cv::Rect>& highLight)
+void CPictureBox::SetHighLight(size_t nIndex)
 {
-	m_HighLights = highLight;
+	m_pFaceInfoManager->SetHighLight(nIndex);
 	Invalidate(FALSE);
 }
 
@@ -701,15 +635,15 @@ void CPictureBox::DrawFrameInfo(cv::Mat& img)
 	{
 		if (!faceInfo.bIsSelected && !faceInfo.bIsHighLight && faceInfo.bSaved)
 		{
-			m_drawables.push_back(new DFaceInfo(FaceInfo{ faceInfo.GetFaceInfo().strPersonName, m_Trans.Trans(faceInfo.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::PictureBox) }, ColorSaved));
+			m_drawables.push_back(new DFaceInfo(FaceInfo{ faceInfo.GetFaceInfo().strPersonName, m_Trans.Trans(faceInfo.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi) }, ColorSaved));
 		}
 		else if (!faceInfo.bIsSelected && !faceInfo.bIsHighLight && !faceInfo.bSaved)
 		{
-			m_drawables.push_back(new DFaceInfo(FaceInfo{ faceInfo.GetFaceInfo().strPersonName, m_Trans.Trans(faceInfo.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::PictureBox) }, ColorUnsaved));
+			m_drawables.push_back(new DFaceInfo(FaceInfo{ faceInfo.GetFaceInfo().strPersonName, m_Trans.Trans(faceInfo.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi) }, ColorUnsaved));
 		}
 		else if (faceInfo.bIsSelected && !faceInfo.bIsHighLight)
 		{
-			FaceInfoEx ex{ faceInfo.GetFaceInfo().strPersonName, m_Trans.Trans(faceInfo.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::PictureBox), true, false, true };
+			FaceInfoEx ex{ faceInfo.GetFaceInfo().strPersonName, m_Trans.Trans(faceInfo.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi), true, false, true };
 			m_drawables.push_back(new DEditBox(ex.GetEditBox().rc, ex.GetEditBox().editMark,ex.GetFaceInfo().strPersonName,ex.GetFaceInfo().box.tl(), ColorIllegal));
 		}
 		else if (faceInfo.bIsHighLight)
@@ -777,5 +711,10 @@ unsigned int CPictureBox::ValidateFaceInfo(const FaceInfo& faceInfo)
 FrameInfo CPictureBox::GetFrameInfo() const
 {
 	return m_pFaceInfoManager->GetFrameInfo();
+}
+
+void CPictureBox::ClearHighLight()
+{
+	m_pFaceInfoManager->ClearHighLight();
 }
 

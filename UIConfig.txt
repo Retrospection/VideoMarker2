@@ -1,8 +1,8 @@
 init
 OpenProject
-AddMark Undo Redo StepBackward StepForward Slider DeleteMark SelectMark
+AddMark Undo Redo Slider DeleteMark SelectMark StepForward StepBackward
 S1
-OpenProject AddMark Slider SelectMark StepBackward StepForward
+OpenProject AddMark Slider SelectMark 
 Undo Redo DeleteMark
 S5
 OpenProject AddMark Undo Redo

@@ -84,7 +84,8 @@ public:
 	virtual void AddSaveMarkBtnClicked();
 	virtual void SelectMarkBtnClicked();
 	virtual void DeleteMarkBtnClicked();
-	
+
+	virtual void OnLbnSelchangeList1();
 
 
 protected:
@@ -93,8 +94,9 @@ protected:
 	bool IsTextFileOpened() const;
 	CVideoMarkerPresenter* GetPresenter();
 	CPictureBox* GetPictureBox() const;
-
-
+	CListBox* GetListBox() const;
+	int GetCurrentFrameIndex() const;
+	int GetTotalFrameCount() const;
 
 protected:
 	CVideoMarker2Dlg* _pDlg;

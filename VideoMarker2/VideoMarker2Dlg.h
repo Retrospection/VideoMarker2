@@ -160,4 +160,5 @@ public:
 	afx_msg void OnBnClickedButtonProject();
 	afx_msg void OnBnClickedButtonDeletemark();
 	afx_msg void OnBnClickedButtonSelectMark();
+	afx_msg void OnLbnSelchangeList1();
 };

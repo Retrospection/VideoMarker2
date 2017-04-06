@@ -45,7 +45,8 @@ private:
 
 /////////////////// HighLight ///////////////////////////////////
 public:
-	void SetHighLight(const std::vector<cv::Rect>& highLight);
+	void SetHighLight(size_t nIndex);
+	void ClearHighLight();
 	void HighLightDeleteFaceInfo();
 private:
 	std::vector<cv::Rect> m_HighLights;

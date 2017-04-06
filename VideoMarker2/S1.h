@@ -18,6 +18,7 @@ public:
 
 	virtual void SelectMarkBtnClicked() override;
 
+	virtual void OnLbnSelchangeList1() override;
 
 
 };

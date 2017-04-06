@@ -63,6 +63,7 @@ BEGIN_MESSAGE_MAP(CVideoMarker2Dlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_OPENPROJECT, &CVideoMarker2Dlg::OnBnClickedButtonProject)
 	ON_BN_CLICKED(IDC_BUTTON_DELETEMARK, &CVideoMarker2Dlg::OnBnClickedButtonDeletemark)
 	ON_BN_CLICKED(IDC_BUTTON_SELECTMARK, &CVideoMarker2Dlg::OnBnClickedButtonSelectMark)
+	ON_LBN_SELCHANGE(IDC_LIST1, &CVideoMarker2Dlg::OnLbnSelchangeList1)
 END_MESSAGE_MAP()
 
 // CVideoMarker2Dlg 消息处理程序
@@ -149,6 +150,7 @@ void CVideoMarker2Dlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar
 	//TODO:  在此添加消息处理程序代码和/或调用默认值
 	CSliderCtrl   *pSlidCtrl = (CSliderCtrl*)GetDlgItem(IDC_SLIDER_1);
 	m_pState->SeekTo(pSlidCtrl->GetPos());
+	m_pState->RefreshButton();
 	CDialogEx::OnHScroll(nSBCode, nPos, pScrollBar);
 }
 
@@ -191,9 +193,6 @@ void CVideoMarker2Dlg::SetCurrentFrameIndex(int nCurrentFrameIndex)
 	assert(nCurrentFrameIndex >= 0 && nCurrentFrameIndex < m_nTotalFrameCount);
 	m_nCurrentFrameIndex = nCurrentFrameIndex;
 	std::cout << "CurrentFrameIndex:" << m_nCurrentFrameIndex << std::endl;
-	GetDlgItem(IDC_BUTTON_STEPBACK)->EnableWindow(m_nCurrentFrameIndex != 0 ? TRUE : FALSE);
-	GetDlgItem(IDC_BUTTON_STEPFORWARD)->EnableWindow(m_nCurrentFrameIndex != m_nTotalFrameCount - 1 ? TRUE : FALSE);
-	
 }
 
 void CVideoMarker2Dlg::SetTextFileOpenedStatus(bool status)
@@ -231,7 +230,7 @@ void CVideoMarker2Dlg::SetState(const std::string& state)
 	UIConfig config;
 	bool bResult = GetUIConfig(config, state);
 	assert(bResult);
-	m_pState = CStateFactory::GetInstance().Create(state, this,config);
+	m_pState = CStateFactory::GetInstance().Create(state, this, config);
 	m_States.insert(std::make_pair(state, m_pState));
 	Refresh();
 	m_pState->RefreshButton();
@@ -262,7 +261,7 @@ void CVideoMarker2Dlg::OnBnClickedBackOneFrame()
 	m_pPictureBox->ClearUnsavedFaceInfo();
 	m_pState->Pause();
 	m_pState->BackOneFrame(m_nCurrentFrameIndex);
-
+	m_pState->RefreshButton();
 }
 
 void CVideoMarker2Dlg::OnBnClickedForwardOneFrame()
@@ -270,6 +269,7 @@ void CVideoMarker2Dlg::OnBnClickedForwardOneFrame()
 	m_pPictureBox->ClearUnsavedFaceInfo();
 	m_pState->Pause();
 	m_pState->ForwardOneFrame(m_nCurrentFrameIndex);
+	m_pState->RefreshButton();
 }
 
 void CVideoMarker2Dlg::OnBnClickedOpenTextFile()
@@ -321,25 +321,29 @@ void CVideoMarker2Dlg::ShowFrameInfoInListBox()
 {
 	DataExchange de(&m_FrameInfo, &m_ListBox);
 	de.Update(true);
-
 }
 
 
 void CVideoMarker2Dlg::OnLbnDblclkList1()
 {
-	int i = m_ListBox.GetCurSel();
-
-	CString item;
-	m_ListBox.GetText(i, item);
-
-	std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
-	std::string strItem = conv.to_bytes(item.GetBuffer());
-
-	std::vector<std::string> info = CStringHelper::Split(strItem, " ");
-
-	m_HighLight = { { atoi(info[1].c_str()), atoi(info[2].c_str()), atoi(info[3].c_str()), atoi(info[4].c_str()) } };
-
-	m_pPictureBox->SetHighLight(m_HighLight);
+// 	LB_ERR;
+// 	int result = m_ListBox.GetCurSel();
+// 	
+// 	size_t i = static_cast<size_t>(result);
+// 
+// 	std::cout << "ListBox: " << i << std::endl;
+// 
+// // 	CString item;
+// // 	m_ListBox.GetText(i, item);
+// // 
+// // 	std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
+// // 	std::string strItem = conv.to_bytes(item.GetBuffer());
+// // 
+// // 	std::vector<std::string> info = CStringHelper::Split(strItem, " ");
+// // 
+// // 	m_HighLight = { { atoi(info[1].c_str()), atoi(info[2].c_str()), atoi(info[3].c_str()), atoi(info[4].c_str()) } };
+// 
+// 	m_pPictureBox->SetHighLight(i);
 
 }
 
@@ -355,8 +359,9 @@ void CVideoMarker2Dlg::OnBnClickedButtonRedo()
 
 void CVideoMarker2Dlg::ClearHighLight()
 {
-	m_pPictureBox->SetHighLight({});
-	m_HighLight = {};
+// 	m_pPictureBox->SetHighLight({});
+// 	m_HighLight = {};
+	m_pPictureBox->ClearHighLight();
 }
 
 void CVideoMarker2Dlg::ClearUnsavedFrameInfo()
@@ -381,7 +386,6 @@ int CVideoMarker2Dlg::GetCurrentFrameIndex() const
 void CVideoMarker2Dlg::OnBnClickedButtonProject()
 {
 	// TODO:  在此添加控件通知处理程序代码
-
 	CFileDialog fileDlg(TRUE, L"*.txt", NULL, OFN_FILEMUSTEXIST | OFN_READONLY | OFN_PATHMUSTEXIST,
 		L"文本文件|*.txt||", NULL);
 	fileDlg.m_ofn.lpstrTitle = L"请选择工程文件";
@@ -485,4 +489,10 @@ void CVideoMarker2Dlg::OnBnClickedButtonSelectMark()
 std::vector<FaceInfo> CVideoMarker2Dlg::GetUnsavedFacesInfo()
 {
 	return m_pPictureBox->GetUnsavedFrameInfo().facesInfo;
+}
+
+
+void CVideoMarker2Dlg::OnLbnSelchangeList1()
+{
+	m_pState->OnLbnSelchangeList1();
 }

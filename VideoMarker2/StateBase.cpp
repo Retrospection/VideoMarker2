@@ -77,6 +77,7 @@ void CStateBase::SeekTo(int nPos)
 {
 	GetPresenter()->SeekTo(nPos);
 	_pDlg->ClearHighLight();
+
 }
 
 
@@ -128,7 +129,7 @@ void CStateBase::SetState(const std::string& state)
 {
 	std::cout << "set state " << state << std::endl;
 	_pDlg->SetState(state);
-	_pDlg->ClearHighLight();
+	_pDlg->ClearHighLight();  //  ????????????????????????????
 }
 
 CWnd* CStateBase::GetDlgItem(int nID)
@@ -175,7 +176,25 @@ void CStateBase::DeleteMarkBtnClicked()
 
 }
 
+int CStateBase::GetCurrentFrameIndex() const
+{
+	return _pDlg->m_nCurrentFrameIndex;
+}
 
+int CStateBase::GetTotalFrameCount() const
+{
+	return _pDlg->m_nTotalFrameCount;
+}
+
+void CStateBase::OnLbnSelchangeList1()
+{
+
+}
+
+CListBox* CStateBase::GetListBox() const
+{
+	return &_pDlg->m_ListBox;
+}
 
 
 
