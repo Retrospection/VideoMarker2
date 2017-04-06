@@ -318,6 +318,10 @@ public:
 	}
 	void DeleteSelected()
 	{
+		if (m_FacesInfo[m_nPos].end() == std::find_if(m_FacesInfo[m_nPos].begin(), m_FacesInfo[m_nPos].end(), [](const FaceInfoEx& info){ return info.bIsSelected; }))
+		{
+			return;
+		}
 		SnapShot();
 		m_FacesInfo[m_nPos].erase(std::remove_if(m_FacesInfo[m_nPos].begin(), m_FacesInfo[m_nPos].end(), [](const FaceInfoEx& info){ return info.bIsSelected; }), m_FacesInfo[m_nPos].end());
 	}
