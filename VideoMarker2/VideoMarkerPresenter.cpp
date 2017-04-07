@@ -343,19 +343,7 @@ bool CVideoMarkerPresenter::LoadProject(ProjectSetting& ret, const std::string& 
 	return true;
 }
 
-void CVideoMarkerPresenter::Delete()
-{
-	std::vector<size_t> indexes = m_pView->GetDeleteFrameInfo();
-//	std::cout << "presenter's deleteframeinfo is " << info.toString() << std::endl;
-	m_pView->ClearDeleteFrameInfo();
-	size_t frameIndex = m_pView->GetCurrentFrameIndex();
-	m_pTextMgr->DeleteFrameInfo(frameIndex, indexes);
-	FrameInfo newInfo;
-	bool result = m_pTextMgr->GetFrameInfoByPos(newInfo, frameIndex);
-	assert(result);
-	m_pView->SetFrameInfo(newInfo);
-	m_pView->Refresh();
-}
+
 
 void CVideoMarkerPresenter::UpdateFrameInfo()
 {

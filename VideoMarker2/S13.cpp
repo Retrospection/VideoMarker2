@@ -16,7 +16,7 @@ CS13::~CS13()
 void CS13::RefreshButton()
 {
 	m_ui.RefreshButton();
-	GetPictureBox()->SetDrawable(true);
+//	GetPictureBox()->SetDrawable(true);
 }
 
 void CS13::SelectMarkBtnClicked()

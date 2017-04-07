@@ -183,6 +183,21 @@
     <ClInclude Include="S13.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="PBStateBase.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PBInitState.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PBAddState.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PBSelectState.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FaceInfoManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -252,6 +267,18 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="S13.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PBStateBase.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PBInitState.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PBAddState.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PBSelectState.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

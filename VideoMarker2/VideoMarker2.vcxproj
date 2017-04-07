@@ -116,6 +116,11 @@
     <ClInclude Include="DEditBox.h" />
     <ClInclude Include="DFaceInfo.h" />
     <ClInclude Include="DText.h" />
+    <ClInclude Include="FaceInfoManager.h" />
+    <ClInclude Include="PBAddState.h" />
+    <ClInclude Include="PBInitState.h" />
+    <ClInclude Include="PBSelectState.h" />
+    <ClInclude Include="PBStateBase.h" />
     <ClInclude Include="RectEx.h" />
     <ClInclude Include="FrameInfo.h" />
     <ClInclude Include="IDrawable.h" />
@@ -152,6 +157,10 @@
     <ClCompile Include="InitState.cpp" />
     <ClCompile Include="NameInputDialog.cpp" />
     <ClCompile Include="PauseState.cpp" />
+    <ClCompile Include="PBAddState.cpp" />
+    <ClCompile Include="PBInitState.cpp" />
+    <ClCompile Include="PBSelectState.cpp" />
+    <ClCompile Include="PBStateBase.cpp" />
     <ClCompile Include="PictureBox.cpp" />
     <ClCompile Include="PlayState.cpp" />
     <ClCompile Include="S1.cpp" />

@@ -51,14 +51,12 @@ public:
 public:
 	virtual int GetCurrentFrameIndex() const override;
 	virtual std::vector<FaceInfo> GetUnsavedFacesInfo() override;
-	virtual std::vector<size_t> GetDeleteFrameInfo() override;
 	virtual void ClearDeleteFrameInfo() override;
 	virtual FrameInfo GetFrameInfo() const override;
 
 
 	bool GetUnsavedName2(std::string& unsavedName);
-// 	void OnPictureBoxLBtnDown();
-// 	void OnPictureBoxLBtnUp();
+
 
 public:
 	virtual void SetFrameInfo(const FrameInfo& frameInfo) override;
@@ -87,7 +85,7 @@ private:
 private:
  	int m_nTotalFrameCount;
 	FrameInfo m_FrameInfo;
-	std::vector<cv::Rect> m_HighLight;
+
 
 private:
 	std::string m_strTextFileName;
@@ -154,7 +152,6 @@ public:
 	afx_msg void OnBnClickedPauseButton();
 	afx_msg void OnBnClickedAddMark();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
-	afx_msg void OnLbnDblclkList1();
 	afx_msg void OnBnClickedButtonRevoke();
 	afx_msg void OnBnClickedButtonRedo();
 	afx_msg void OnBnClickedButtonProject();

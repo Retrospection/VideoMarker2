@@ -30,7 +30,7 @@ CVideoMarker2Dlg::CVideoMarker2Dlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CVideoMarker2Dlg::IDD, pParent), m_bUIConfigLoaded(false)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
-	m_pPictureBox = new CPictureBox(m_pState);
+	m_pPictureBox = new CPictureBox(/*m_pState*/);
 	m_pNameDlg = new CNameInputDialog(this);
 	m_pPresenter = new CVideoMarkerPresenter(this);
 }
@@ -57,7 +57,6 @@ BEGIN_MESSAGE_MAP(CVideoMarker2Dlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_PAUSE, &CVideoMarker2Dlg::OnBnClickedPauseButton)
 	ON_BN_CLICKED(IDC_BUTTON_ADDMARK, &CVideoMarker2Dlg::OnBnClickedAddMark)
 	ON_WM_TIMER()
-	ON_LBN_DBLCLK(IDC_LIST1, &CVideoMarker2Dlg::OnLbnDblclkList1)
 	ON_BN_CLICKED(IDC_BUTTON_UNDO, &CVideoMarker2Dlg::OnBnClickedButtonRevoke)
 	ON_BN_CLICKED(IDC_BUTTON_REDO, &CVideoMarker2Dlg::OnBnClickedButtonRedo)
 	ON_BN_CLICKED(IDC_BUTTON_OPENPROJECT, &CVideoMarker2Dlg::OnBnClickedButtonProject)
@@ -103,7 +102,6 @@ void CVideoMarker2Dlg::OnDestroy()
 	delete m_pPresenter;
 	delete m_pPictureBox;
 	delete m_pNameDlg;
-//	delete m_pTrans;
 	for (auto& p : m_States)
 	{
 		delete p.second;
@@ -324,29 +322,6 @@ void CVideoMarker2Dlg::ShowFrameInfoInListBox()
 }
 
 
-void CVideoMarker2Dlg::OnLbnDblclkList1()
-{
-// 	LB_ERR;
-// 	int result = m_ListBox.GetCurSel();
-// 	
-// 	size_t i = static_cast<size_t>(result);
-// 
-// 	std::cout << "ListBox: " << i << std::endl;
-// 
-// // 	CString item;
-// // 	m_ListBox.GetText(i, item);
-// // 
-// // 	std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
-// // 	std::string strItem = conv.to_bytes(item.GetBuffer());
-// // 
-// // 	std::vector<std::string> info = CStringHelper::Split(strItem, " ");
-// // 
-// // 	m_HighLight = { { atoi(info[1].c_str()), atoi(info[2].c_str()), atoi(info[3].c_str()), atoi(info[4].c_str()) } };
-// 
-// 	m_pPictureBox->SetHighLight(i);
-
-}
-
 void CVideoMarker2Dlg::OnBnClickedButtonRevoke()
 {
 	m_pPictureBox->Undo();
@@ -359,8 +334,6 @@ void CVideoMarker2Dlg::OnBnClickedButtonRedo()
 
 void CVideoMarker2Dlg::ClearHighLight()
 {
-// 	m_pPictureBox->SetHighLight({});
-// 	m_HighLight = {};
 	m_pPictureBox->ClearHighLight();
 }
 
@@ -459,11 +432,7 @@ bool CVideoMarker2Dlg::GetUnsavedName2(std::string& unsavedName)
 	return true;
 }
 
-std::vector<size_t> CVideoMarker2Dlg::GetDeleteFrameInfo()
-{
-	std::vector<size_t> indexes;
-	return indexes;
-}
+
 
 void CVideoMarker2Dlg::ClearDeleteFrameInfo()
 {

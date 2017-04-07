@@ -35,16 +35,12 @@ public:
 	void AddMark();
 	void SaveMark(); 
 
-	void Delete();
-
 	int OpenProject();
 
 	void UpdateFrameInfo();
 
 public:
 	int GetTotalFrameCount() const;
-
-	
 
 	unsigned int ValidateFaceInfo(const FaceInfo& info);
 	unsigned int ValidateFaceInfo(const FaceInfo& info, size_t index, std::vector<FaceInfo> infos);

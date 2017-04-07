@@ -16,19 +16,25 @@ class SelectItemManager;
 class CUnsavedFrameInfo;
 class FaceInfoManager;
 
+class CPBStateBase;
+
 class CPictureBox : public CStatic
 {
 
-	friend CS5;
-	friend CS12;
+	friend CPBStateBase;
 	DECLARE_DYNAMIC(CPictureBox)
 
 public:
-	CPictureBox(CStateBase* pState);
+	CPictureBox(/*CStateBase* pState*/);
 	virtual ~CPictureBox();
 
 	unsigned int ValidateFaceInfo();
 	FrameInfo GetFrameInfo() const;
+
+	void SetState(const std::string& state);
+
+	bool IsInRoi(const CPoint& pt);
+	void ClearSelectEditPoint();
 
 ///////////////////////// Unsaved ///////////////////////////////
 public:
@@ -40,6 +46,7 @@ public:
 /////////////////// ActiveBox ///////////////////////////////////
 private:
 	bool GetActiveBox(cv::Rect& activeBox) const;
+	bool GetActiveBoxEx(cv::Rect& activeBox) const;
 	cv::Point m_ActivePoints[2];
 
 
@@ -92,10 +99,14 @@ private:
 	size_t m_nEditType;
 	FaceInfoManager* m_pFaceInfoManager;
 
+	CPBStateBase* m_pState;
+
+
 protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	void OnLButtonDown2(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	virtual void PreSubclassWindow();

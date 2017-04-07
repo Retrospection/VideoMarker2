@@ -11,7 +11,6 @@ public:
 	
 public:
 	virtual std::vector<FaceInfo> GetUnsavedFacesInfo() = 0;
-	virtual std::vector<size_t> GetDeleteFrameInfo() = 0;
 	virtual FrameInfo GetFrameInfo() const = 0;
 	virtual void ClearDeleteFrameInfo() = 0;
 	virtual int GetCurrentFrameIndex() const = 0;
