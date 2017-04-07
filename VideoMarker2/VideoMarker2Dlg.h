@@ -71,7 +71,7 @@ public:
 	void ClearUnsavedFrameInfo();
 
 
-	unsigned int ValidateFaceInfo(const FaceInfo& info);
+	unsigned int ValidateFaceInfo();
 
 
 

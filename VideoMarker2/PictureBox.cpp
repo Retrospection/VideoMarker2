@@ -98,7 +98,6 @@ public:
 	{
 		UpdateEditRects();
 	}
-
 	int Hit(const cv::Point& pt) const 
 	{
 		for (size_t i = 0; i < m_EditRects.size(); ++i)
@@ -403,7 +402,6 @@ void CPictureBox::OnLButtonDown(UINT nFlags, CPoint point)
 	{
 		return;
 	}
-//	((CVideoMarker2Dlg*)GetParent())->OnPictureBoxLBtnDown();
 	if (m_bDrawing)
 	{
 		m_ActivePoints[1] = { point.x, point.y };
@@ -420,7 +418,7 @@ void CPictureBox::OnLButtonDown(UINT nFlags, CPoint point)
 			m_pFaceInfoManager->ResetSelected();
 		}
 		std::cout << "EditBoxes Index: " << m_nModifiedFaceInfoIndex << std::endl;
-	
+		m_pFaceInfoManager->MoveStart();
 		m_ActivePoints[0] = { point.x, point.y };
 		Invalidate(FALSE);
 		CStatic::OnLButtonDown(nFlags, point);
@@ -486,7 +484,12 @@ void CPictureBox::OnLButtonUp(UINT nFlags, CPoint point)
 		GetActiveBox(activeBox);
 		activeBox = m_Trans.Trans(activeBox, Transformer::Coordinate::Roi, Transformer::Coordinate::Raw);
 		m_pFaceInfoManager->Add({ strPersonName, *reinterpret_cast<RectEx*>(&activeBox) });
-
+		unsigned int result = ValidateFaceInfo();
+		if (result != 0)
+		{
+			MessageBox(m_AlertMessage[result]);
+			Undo();
+		}
 		break;
 	}
 	case DELETE_MAKR_TYPE:
@@ -504,7 +507,13 @@ void CPictureBox::OnLButtonUp(UINT nFlags, CPoint point)
 		else
 		{
 			// 鼠标点击区域不在 EditPoint 区域
-			m_pFaceInfoManager->MoveFinished({ point.x,point.y });
+//			m_pFaceInfoManager->MoveFinished({ point.x,point.y });
+			unsigned int result = ValidateFaceInfo();
+			if (result != 0)
+			{
+				MessageBox(m_AlertMessage[result]);
+				Undo();
+			}
 		}
 		break;
 	}
@@ -590,7 +599,6 @@ bool CPictureBox::GetActiveBox(cv::Rect& activeBox) const
 // {
 // 	m_DeleteFaceInfoIndexes = deletedFaceInfoIndex;
 // }
-
 // void CPictureBox::CacheDeleteArea()
 // {
 // 	m_DeleteArea = cv::Rect(m_Trans.Trans({ m_ActivePoints[0], m_ActivePoints[1] }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw));
@@ -703,9 +711,9 @@ void CPictureBox::DeleteSelectedFacesInfo()
 	m_pFaceInfoManager->DeleteSelected();
 }
 
-unsigned int CPictureBox::ValidateFaceInfo(const FaceInfo& faceInfo)
+unsigned int CPictureBox::ValidateFaceInfo()
 {
-	return ((CVideoMarker2Dlg*)GetParent())->ValidateFaceInfo(faceInfo);
+	return ((CVideoMarker2Dlg*)GetParent())->ValidateFaceInfo();
 }
 
 FrameInfo CPictureBox::GetFrameInfo() const

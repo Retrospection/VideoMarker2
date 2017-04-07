@@ -47,6 +47,7 @@ public:
 	
 
 	unsigned int ValidateFaceInfo(const FaceInfo& info);
+	unsigned int ValidateFaceInfo(const FaceInfo& info, size_t index, std::vector<FaceInfo> infos);
 	unsigned int ValidateFacesInfo(const std::vector<FaceInfo>& facesInfo);
 
 private:

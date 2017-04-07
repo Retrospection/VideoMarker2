@@ -26,7 +26,7 @@ CVideoMarkerPresenter::CVideoMarkerPresenter(CVideoMarker2Dlg* pDlg)
 
 	m_validator[0] =std::make_pair(BOX_SMALL_ERROR, [](const FaceInfo& info, const FrameInfo&)
 	{
-		return (info.box.width >= 100 && info.box.height >= 100);
+		return (info.box.width >= 20 && info.box.height >= 20);
 	});
 
 	m_validator[1] = std::make_pair(NAME_EXIST_ERROR, [](const FaceInfo& info, const FrameInfo& existed)
@@ -235,6 +235,8 @@ void CVideoMarkerPresenter::SaveMark()
 	m_pDlg->Refresh();
 }
 
+
+// 此函数验证新加入的 info 是否与现存的其余 FaceInfo 冲突
 unsigned int CVideoMarkerPresenter::ValidateFaceInfo(const FaceInfo& info)
 {
 	FrameInfo frameInfo;
@@ -242,6 +244,14 @@ unsigned int CVideoMarkerPresenter::ValidateFaceInfo(const FaceInfo& info)
 	bool result = m_pTextMgr->GetFrameInfoByPos(frameInfo, currentFrameIndex);
 	assert(result);
 	auto pos = std::find_if_not(std::begin(m_validator), std::end(m_validator), [&](const std::pair<int, std::function<bool(const FaceInfo&, const FrameInfo&)>>& p){ return p.second(info, frameInfo); });
+	return (pos == std::end(m_validator)) ? VALID : pos->first;
+}
+
+// 此函数验证位于 index 的 info 是否与其余 FrameInfo 冲突
+unsigned int CVideoMarkerPresenter::ValidateFaceInfo(const FaceInfo& info, size_t index, std::vector<FaceInfo> infos)
+{
+	infos.erase(infos.begin() + index);
+	auto pos = std::find_if_not(std::begin(m_validator), std::end(m_validator), [&](const std::pair<int, std::function<bool(const FaceInfo&, const FrameInfo&)>>& p){ return p.second(info, {infos}); });
 	return (pos == std::end(m_validator)) ? VALID : pos->first;
 }
 
@@ -271,9 +281,9 @@ bool CVideoMarkerPresenter::CheckNameExist(const std::vector<FaceInfo>& facesInf
 
 unsigned int CVideoMarkerPresenter::CheckStage1(const std::vector<FaceInfo>& facesInfo)
 {
-	for (auto& faceinfo: facesInfo)
+	for (size_t i = 0; i < facesInfo.size(); ++i)
 	{
-		unsigned int result = ValidateFaceInfo(faceinfo);
+		unsigned int result = ValidateFaceInfo(facesInfo[i], i, facesInfo);
 		if (result != VALID)
 		{
 			return result;

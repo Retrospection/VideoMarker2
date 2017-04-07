@@ -369,11 +369,11 @@ void CVideoMarker2Dlg::ClearUnsavedFrameInfo()
 	m_pPictureBox->ClearUnsavedFaceInfo();
 }
 
-unsigned int CVideoMarker2Dlg::ValidateFaceInfo(const FaceInfo& info)
+unsigned int CVideoMarker2Dlg::ValidateFaceInfo()
 {
-	FrameInfo frameInfo = m_pPictureBox->GetUnsavedFrameInfo();
-	std::vector<FaceInfo> allUnsavedFaceInfo = frameInfo.facesInfo;
-	return m_pPresenter->ValidateFacesInfo(allUnsavedFaceInfo);
+	FrameInfo frameInfo = m_pPictureBox->GetFrameInfo();
+	std::cout << "待验证的 facesinfo 为: " << frameInfo.toString() << std::endl;
+	return m_pPresenter->ValidateFacesInfo(frameInfo.facesInfo);
 }
 
 int CVideoMarker2Dlg::GetCurrentFrameIndex() const

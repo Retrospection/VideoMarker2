@@ -27,7 +27,7 @@ public:
 	CPictureBox(CStateBase* pState);
 	virtual ~CPictureBox();
 
-	unsigned int ValidateFaceInfo(const FaceInfo& faceInfo);
+	unsigned int ValidateFaceInfo();
 	FrameInfo GetFrameInfo() const;
 
 ///////////////////////// Unsaved ///////////////////////////////
