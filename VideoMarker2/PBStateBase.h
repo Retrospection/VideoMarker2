@@ -51,6 +51,11 @@ protected:
 
 	void ClearSelectEditPoint();
 
+	bool GetActiveBoxFromActiveBoxManager(cv::Rect& rc);		// Get ActiveBox From ActiveBox Manager
+
+	void SetStartActivePoint(const cv::Point& pt);
+	void SetEndActivePoint(const cv::Point& pt);
+
 
 	static const bool ACTIVE_POINT_BEGIN = true;
 	static const bool ACTIVE_POINT_END = false;

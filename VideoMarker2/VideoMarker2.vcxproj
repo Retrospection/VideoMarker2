@@ -109,6 +109,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ActiveBoxManager.h" />
     <ClInclude Include="constant.h" />
     <ClInclude Include="CvvImage.h" />
     <ClInclude Include="DataExchange.h" />
@@ -119,6 +120,7 @@
     <ClInclude Include="FaceInfoManager.h" />
     <ClInclude Include="PBAddState.h" />
     <ClInclude Include="PBInitState.h" />
+    <ClInclude Include="PBModifyState.h" />
     <ClInclude Include="PBSelectState.h" />
     <ClInclude Include="PBStateBase.h" />
     <ClInclude Include="RectEx.h" />
@@ -153,12 +155,14 @@
     <ClInclude Include="VideoPlayer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ActiveBoxManager.cpp" />
     <ClCompile Include="CvvImage.cpp" />
     <ClCompile Include="InitState.cpp" />
     <ClCompile Include="NameInputDialog.cpp" />
     <ClCompile Include="PauseState.cpp" />
     <ClCompile Include="PBAddState.cpp" />
     <ClCompile Include="PBInitState.cpp" />
+    <ClCompile Include="PBModifyState.cpp" />
     <ClCompile Include="PBSelectState.cpp" />
     <ClCompile Include="PBStateBase.cpp" />
     <ClCompile Include="PictureBox.cpp" />

@@ -3,6 +3,7 @@
 #include <core/core.hpp>
 #include "StateBase.h"
 #include "Transformer.h"
+#include "ActiveBoxManager.h"
 
 #include "FrameInfo.h"
 #include "RectEx.h"
@@ -54,7 +55,6 @@ private:
 public:
 	void SetHighLight(size_t nIndex);
 	void ClearHighLight();
-	void HighLightDeleteFaceInfo();
 private:
 	std::vector<cv::Rect> m_HighLights;
 
@@ -91,16 +91,20 @@ private:
 	void SelectBox();
 
 private:
+	int m_nModifiedFaceInfoIndex;
+	size_t m_nEditType;
+
 	Transformer m_Trans;
 	std::vector<IDrawable*> m_drawables;
-	int m_nModifiedFaceInfoIndex;
-	static const wchar_t* m_AlertMessage[4];
-	static const size_t NUMBER_OF_VALIDATOR_TYPES = sizeof(m_AlertMessage) / sizeof(m_AlertMessage[0]);
-	size_t m_nEditType;
 	FaceInfoManager* m_pFaceInfoManager;
-
 	CPBStateBase* m_pState;
 
+	CActiveBoxManager m_ActiveBoxManager;
+
+
+private:
+	static const wchar_t* m_AlertMessage[4];
+	static const size_t NUMBER_OF_VALIDATOR_TYPES = sizeof(m_AlertMessage) / sizeof(m_AlertMessage[0]);
 
 protected:
 	DECLARE_MESSAGE_MAP()

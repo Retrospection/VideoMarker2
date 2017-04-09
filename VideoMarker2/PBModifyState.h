@@ -2,15 +2,17 @@
 #include "PBStateBase.h"
 
 
-class CPBAddState :
+
+
+class CPBModifyState :
 	public CPBStateBase
 {
 public:
-	CPBAddState(CPictureBox* ptr);
-	~CPBAddState();
+	CPBModifyState(CPictureBox* ptr);
+	virtual ~CPBModifyState();
+
 	virtual void OnLButtonDown(UINT nFlags, CPoint point) override;
 	virtual void OnLButtonUp(UINT nFlags, CPoint point) override;
 	virtual void OnMouseMove(UINT nFlags, CPoint point) override;
-	virtual void DrawActiveBox() override;
 };
 

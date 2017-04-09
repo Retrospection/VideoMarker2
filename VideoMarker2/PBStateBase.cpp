@@ -148,4 +148,21 @@ void CPBStateBase::ClearSelectEditPoint()
 	m_pPictureBox->ClearSelectEditPoint();
 }
 
+bool CPBStateBase::GetActiveBoxFromActiveBoxManager(cv::Rect& rc)
+{
+	return m_pPictureBox->m_ActiveBoxManager.GetActiveBoxInRoi(rc);
+}
+
+void CPBStateBase::SetStartActivePoint(const cv::Point& pt)
+{
+	m_pPictureBox->m_ActiveBoxManager.SetStartActivePoint(pt);
+}
+
+void CPBStateBase::SetEndActivePoint(const cv::Point& pt)
+{
+	m_pPictureBox->m_ActiveBoxManager.SetEndActivePoint(pt);
+}
+
+
+
 

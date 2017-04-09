@@ -19,6 +19,7 @@
 #include "PBInitState.h"
 #include "PBAddState.h"
 #include "PBSelectState.h"
+#include "PBModifyState.h"
 
 #include "FaceInfoManager.h"
 
@@ -66,9 +67,6 @@ private:
 	bool m_bDismissed;
 };
 
-
-
-
 // CPictureBox
 
 IMPLEMENT_DYNAMIC(CPictureBox, CStatic)
@@ -77,16 +75,13 @@ IMPLEMENT_DYNAMIC(CPictureBox, CStatic)
 const wchar_t* CPictureBox::m_AlertMessage[] = { L"", L"包围盒面积过小！", L"当前帧存在同名标注！", L"IOU过大！" };
 
 
-
-
 CPictureBox::CPictureBox() 
-	:CStatic(), m_Trans(Transformer::Default()), m_bDrawable(false)
-
+	:CStatic(), m_Trans(Transformer::Default()), m_bDrawable(false), m_ActiveBoxManager(&m_Trans)
 {
 	m_bDrawing = false;
 	m_ActivePoints[0] = INIT_POINT;
 	m_ActivePoints[1] = INIT_POINT;
-
+	
 	m_nModifiedFaceInfoIndex = -1;
 	m_pFaceInfoManager = new FaceInfoManager();
 	m_pState = new CPBInitState(this);
@@ -134,25 +129,32 @@ void CPictureBox::OnLButtonDown(UINT nFlags, CPoint point)
 //		Invalidate(FALSE);
 //		CStatic::OnLButtonDown(nFlags, point);
 //	}
+	// TODO
 }
 
 void CPictureBox::OnLButtonDown2(UINT nFlags, CPoint point)
 {
 	assert(m_bDrawable);
+	m_bDrawing = true;
+	cv::Point _point{ m_Trans.Trans({ point.x, point.y, 1, 1 }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw).tl() };
+	m_nModifiedFaceInfoIndex = m_pFaceInfoManager->SelectEditPoint(_point);
+	if (m_nModifiedFaceInfoIndex != -1)
+	{
+		SetState("Modify");
+	}
 
-// 	if (m_bDrawing)
-// 	{
-// 		m_ActivePoints[1] = { point.x, point.y };
-// 	}
+	// TODO : FIX MODIFY SELECT ADD BUG;
+
 // 	else
 // 	{
-		m_bDrawing = true;
-		cv::Point _point{ m_Trans.Trans({ point.x, point.y, 1, 1 }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw).tl() };
-		m_nModifiedFaceInfoIndex = m_pFaceInfoManager->SelectEditPoint(_point);
+// 		SetState("Select");
+// 	}
 
-		std::cout << "EditBoxes Index: " << m_nModifiedFaceInfoIndex << std::endl;
-		m_ActivePoints[0] = { point.x, point.y };
-//	}
+
+
+	std::cout << "EditBoxes Index: " << m_nModifiedFaceInfoIndex << std::endl;
+//	m_ActivePoints[0] = { point.x, point.y };
+	m_ActiveBoxManager.SetStartActivePoint({ point.x, point.y });
 	Invalidate(FALSE);
 	CStatic::OnLButtonDown(nFlags, point);
 }
@@ -164,216 +166,15 @@ void CPictureBox::OnMouseMove(UINT nFlags, CPoint point)
 	m_pState->OnMouseMove(nFlags, point);
 	Invalidate(FALSE);
 	CStatic::OnMouseMove(nFlags, point);
-// 	if (!m_bDrawable)
-// 	{
-// 		return;
-// 	}
-// 	if (!m_bDrawing)
-// 	{
-// 		return;
-// 	}
-// 	cv::Rect RoiRect = m_Trans.GetRoiRect();
-// 	if (m_nEditType == SELECT_MARK)
-// 	{
-// 		// 改变选中的box
-// 		if (m_nModifiedFaceInfoIndex != -1)
-// 		{
-// 			cv::Point _point = m_Trans.Trans({ point.x, point.y, 1, 1 }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw).tl();
-// 			m_pFaceInfoManager->Move(_point);
-// 		}
-// 	}
-// 	else
-// 	{
-// 		if ((point.x > (RoiRect.x + RoiRect.width)) || (point.y > RoiRect.height))
-// 		{
-// 			m_bDrawing = false;
-// 			m_ActivePoints[0] = INIT_POINT;
-// 			m_ActivePoints[1] = INIT_POINT;
-// 			Invalidate(FALSE);
-// 			CStatic::OnMouseMove(nFlags, point);
-// 			return;
-// 		}
-// 	}
-// 	m_ActivePoints[1] = { point.x, point.y };
-// 	Invalidate(FALSE);
-// 	CStatic::OnMouseMove(nFlags, point);
 }
-
-// void CPictureBox::OnMouseMove2(UINT nFlags, CPoint point)
-// {
-// 	
-// // 	if (!m_bDrawing)
-// // 	{
-// // 		return;
-// // 	}
-// 	
-// 
-// //	assert(m_nEditType != SELECT_MARK);
-// // 	if (!IsInRoi(point))
-// // 	{
-// // 		m_bDrawing = false;
-// //		m_ActivePoints[0] = INIT_POINT;
-// //		m_ActivePoints[1] = INIT_POINT;
-// // 	}
-// // 	else
-// // 	{
-// // 		m_ActivePoints[1] = { point.x, point.y };
-// // 	}
-// 
-// }
-// void CPictureBox::OnMouseMoveSelect(UINT nFlags, CPoint point)
-// {
-// // 	std::cout << "select!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
-// // 	assert(m_bDrawable);
-// // 	if (!m_bDrawing)
-// // 	{
-// // 		return;
-// // 	}
-// //	cv::Rect RoiRect = m_Trans.GetRoiRect();
-// // 	assert(m_nEditType == SELECT_MARK);
-// // 	if (m_nModifiedFaceInfoIndex != -1)
-// // 	{
-// // 		cv::Point _point = m_Trans.Trans({ point.x, point.y, 1, 1 }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw).tl();
-// // 		m_pFaceInfoManager->Move(_point);
-// // 	}
-// // 	m_ActivePoints[1] = { point.x, point.y };
-// // 	Invalidate(FALSE);
-// // 	CStatic::OnMouseMove(nFlags, point);
-// }
 
 void CPictureBox::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	m_pState->OnLButtonUp(nFlags, point);
 	Invalidate(FALSE);
-	m_ActivePoints[0] = INIT_POINT;
-	m_ActivePoints[1] = INIT_POINT;
+	m_ActiveBoxManager.ResetActiveBox();
 	CStatic::OnLButtonUp(nFlags, point);
-
-// 	if (!m_bDrawable)
-// 	{
-// 		return;
-// 	}
-// 	if (!m_bDrawing)
-// 	{
-// 		return;
-// 	}
-// 	m_ActivePoints[1] = {point.x, point.y};
-// 	m_bDrawing = false;
-// 	switch (m_nEditType)
-// 	{
-// 	case ADD_MARK_TYPE:
-// 	{
-// 		cv::Rect activeBox;
-// 		std::string strPersonName;
-// 		((CVideoMarker2Dlg*)GetParent())->GetUnsavedName2(strPersonName);
-// 		GetActiveBox(activeBox);
-// 		activeBox = m_Trans.Trans(activeBox, Transformer::Coordinate::Roi, Transformer::Coordinate::Raw);
-// 		m_pFaceInfoManager->Add({ strPersonName, activeBox });
-// 		unsigned int result = ValidateFaceInfo();
-// 		if (result != 0)
-// 		{
-// 			MessageBox(m_AlertMessage[result]);
-// 			Undo();
-// 		}
-// 		break;
-// 	}
-// 	case DELETE_MAKR_TYPE:
-// 	{
-// 		m_pFaceInfoManager->DeleteSelected();
-// 		break;
-// 	}
-// 	case SELECT_MARK:
-// 	{
-// 		if (m_nModifiedFaceInfoIndex == -1)
-// 		{
-// 			// 当前为选择模式
-// 			SelectBox();
-// 		}
-// 		else
-// 		{
-// 			// 鼠标点击区域不在 EditPoint 区域
-// 			unsigned int result = ValidateFaceInfo();
-// 			if (result != 0)
-// 			{
-// 				MessageBox(m_AlertMessage[result]);
-// 				Undo();
-// 			}
-// 		}
-// 		break;
-// 	}
-// 	default:
-// 		break;
-// 	}
-// 
-// 	Invalidate(FALSE);
-// 	m_ActivePoints[0] = INIT_POINT;
-// 	m_ActivePoints[1] = INIT_POINT;
-// 
-// 	CStatic::OnLButtonUp(nFlags, point);
 }
-
-// void CPictureBox::OnLButtonUp2(UINT nFlags, CPoint point)
-// {
-// // 	assert(m_bDrawable);
-// // 	if (!m_bDrawing)
-// // 	{
-// // 		return;
-// // 	}
-// //	m_ActivePoints[1] = { point.x, point.y };
-// // 	m_bDrawing = false;
-// // 	cv::Rect activeBox;
-// // 	std::string strPersonName;
-// // 	((CVideoMarker2Dlg*)GetParent())->GetUnsavedName2(strPersonName);
-// // 	GetActiveBox(activeBox);
-// // 	activeBox = m_Trans.Trans(activeBox, Transformer::Coordinate::Roi, Transformer::Coordinate::Raw);
-// // 	m_pFaceInfoManager->Add({ strPersonName, activeBox }); 
-// // 	unsigned int result = ValidateFaceInfo();
-// // 	if (result != 0)
-// // 	{
-// // 		MessageBox(m_AlertMessage[result]);
-// // 		Undo();
-// // 	}
-// 
-// 
-// 
-// }
-
-
-// void CPictureBox::OnLButtonUpSelect(UINT nFlags, CPoint point)
-// {
-// // 	assert(m_bDrawable);
-// // 	if (!m_bDrawing)
-// // 	{
-// // 		return;
-// // 	}
-// // 	m_ActivePoints[1] = { point.x, point.y };
-// // 	m_bDrawing = false;
-// 
-// // 	if (m_nModifiedFaceInfoIndex == -1)
-// // 	{
-// // 		// 当前为选择模式
-// // 		SelectBox();
-// // 	}
-// // 	else
-// // 	{
-// // 		// 鼠标点击区域不在 EditPoint 区域
-// // 		unsigned int result = ValidateFaceInfo();
-// // 		if (result != 0)
-// // 		{
-// // 			MessageBox(m_AlertMessage[result]);
-// // 			Undo();
-// // 		}
-// // 	}
-// 
-// 
-// 
-// // 	Invalidate(FALSE);
-// // 	m_ActivePoints[0] = INIT_POINT;
-// // 	m_ActivePoints[1] = INIT_POINT;
-// // 
-// // 	CStatic::OnLButtonUp(nFlags, point);
-// 
-// }
 
 FrameInfo CPictureBox::GetUnsavedFrameInfo() const
 {
@@ -435,20 +236,6 @@ bool CPictureBox::GetActiveBox(cv::Rect& activeBox) const
 	return true;
 }
 
-// std::vector<size_t> CPictureBox::GetDeleteFrameInfo() const
-// {
-// 	return std::move(m_DeleteFaceInfoIndexes);
-// }
-// 
-// void CPictureBox::CacheDeleteFrameInfo(const std::vector<size_t>& deletedFaceInfoIndex)
-// {
-// 	m_DeleteFaceInfoIndexes = deletedFaceInfoIndex;
-// }
-// void CPictureBox::CacheDeleteArea()
-// {
-// 	m_DeleteArea = cv::Rect(m_Trans.Trans({ m_ActivePoints[0], m_ActivePoints[1] }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw));
-// 	std::cout << "Delete Area:" << m_DeleteArea << std::endl;
-// }
 
 void CPictureBox::SetImage(const cv::Mat& image)
 {
@@ -476,14 +263,6 @@ void CPictureBox::PreSubclassWindow()
 void CPictureBox::DrawFrameInfo(cv::Mat& img)
 {
 	std::vector<FaceInfoEx> facesInfo = m_pFaceInfoManager->GetFacesInfoEx();
-// 	if (m_nModifiedFaceInfoIndex == -1)
-// 	{
-// 		cv::Rect rc;
-// 		if (GetActiveBox(rc))
-// 		{
-// 			m_drawables.push_back(new DBox(rc, ColorUnsaved));
-// 		}
-// 	}
 	m_pState->DrawActiveBox();
 	for (auto& faceInfo:facesInfo)
 	{
@@ -554,18 +333,14 @@ void CPictureBox::SetEditType(size_t nEditType)
 	m_bDrawable = true;
 }
 
-void CPictureBox::HighLightDeleteFaceInfo()
-{
-
-}
-
-
-
-
 
 void CPictureBox::SelectBox()
 {
-	cv::Rect square = m_Trans.Trans({ m_ActivePoints[0], m_ActivePoints[1] }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw);
+	cv::Rect square;
+	if (m_ActiveBoxManager.GetActiveBoxInRoi(square))
+	{
+		square = m_Trans.Trans(square, Transformer::Coordinate::Roi, Transformer::Coordinate::Raw);
+	}
 	m_pFaceInfoManager->Select(square);
 }
 
@@ -602,6 +377,10 @@ void CPictureBox::SetState(const std::string& state)
 	else if (state == "Select")
 	{
 		m_pState = new CPBSelectState(this);
+	}
+	else if (state == "Modify")
+	{
+		m_pState = new CPBModifyState(this);
 	}
 
 	std::cout << "Current State::::::" << state << std::endl;

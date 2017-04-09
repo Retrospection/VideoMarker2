@@ -39,19 +39,23 @@ void CPBAddState::OnLButtonDown(UINT nFlags, CPoint point)
 void CPBAddState::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	assert(IsDrawable());
-// 	if (!IsDrawing())
-// 	{
-// 		return;
-// 	}
-	SetActivePoint({ point.x, point.y }, ACTIVE_POINT_END);
 
-//	SetDrawing(false);
+//	SetActivePoint({ point.x, point.y }, ACTIVE_POINT_END);
+
+	SetEndActivePoint({ point.x, point.y });
+
 	cv::Rect activeBox;
 	std::string strPersonName;
-	if (!GetActiveBoxEx(activeBox) || !GetUnsavedName(strPersonName))
+	// 	if (!GetActiveBoxEx(activeBox) || !GetUnsavedName(strPersonName))
+	// 	{
+	// 		return;
+	// 	}
+
+	if (!GetActiveBoxFromActiveBoxManager(activeBox) || !GetUnsavedName(strPersonName))
 	{
 		return;
 	}
+
 	activeBox = Trans(activeBox, Transformer::Coordinate::Roi, Transformer::Coordinate::Raw);
 	AddFaceInfo({ strPersonName, activeBox });
 	unsigned int result = ValidateFaceInfo();
@@ -65,26 +69,28 @@ void CPBAddState::OnLButtonUp(UINT nFlags, CPoint point)
 void CPBAddState::OnMouseMove(UINT nFlags, CPoint point)
 {
 	assert(IsDrawable());
-// 	if (!IsDrawing())
-// 	{
-// 		return;
-// 	}
 	assert(GetEditType() == CPictureBox::ADD_MARK_TYPE);
-	if (!IsInRoi(point))
-	{
-//		SetDrawing(false);
-		ResetActivePoints();
-	}
-	else
-	{
-		SetActivePoint({ point.x, point.y }, ACTIVE_POINT_END);
-	}
+// 	if (!IsInRoi(point))
+// 	{
+// 		ResetActivePoints();
+// 	}
+// 	else
+// 	{
+// 		SetActivePoint({ point.x, point.y }, ACTIVE_POINT_END);
+// 	}
+	SetEndActivePoint({ point.x, point.y });
 }
+
 
 void CPBAddState::DrawActiveBox()
 {
 	cv::Rect rc;
-	if (GetActiveBoxEx(rc))
+// 	if (GetActiveBoxEx(rc))
+// 	{
+// 		AddDrawables(new DBox(rc, ColorUnsaved));
+// 	}
+
+	if (GetActiveBoxFromActiveBoxManager(rc))
 	{
 		AddDrawables(new DBox(rc, ColorUnsaved));
 	}

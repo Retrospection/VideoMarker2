@@ -35,49 +35,24 @@ void CPBSelectState::OnLButtonDown(UINT nFlags, CPoint point)
 void CPBSelectState::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	assert(IsDrawable());
-
-
-	SetActivePoint({ point.x, point.y }, ACTIVE_POINT_END);
-//	SetDrawing(false);
-
-	if (!HasChosenEditPoint())
-	{
-		// 当前为选择模式
-		SelectBox();
-	}
-	else
-	{
-		unsigned int result = ValidateFaceInfo();
-		if (result != 0)
-		{
-			HandleInvalidFaceInfo(result);
-		}
-		ClearSelectEditPoint();
-	}
-	
-
+//	SetActivePoint({ point.x, point.y }, ACTIVE_POINT_END);
+	SetEndActivePoint({ point.x, point.y });
+	SelectBox();
 }
 
 void CPBSelectState::OnMouseMove(UINT nFlags, CPoint point)
 {
 	assert(IsDrawable());
-// 	if (!IsDrawing())
+	assert(GetEditType() == CPictureBox::SELECT_MARK);
+// 	if (!IsInRoi(point))
 // 	{
+// 		ResetActivePoints();
 // 		return;
 // 	}
-	assert(GetEditType() == CPictureBox::SELECT_MARK);
-	if (!IsInRoi(point))
-	{
-		ResetActivePoints();
-		return;
-	}
-	if (HasChosenEditPoint())
-	{
-		cv::Point _point = Trans({ point.x, point.y, 1, 1 }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw).tl();
-		MoveEditPoint(_point);
-	}
+// 
+// 	SetActivePoint({ point.x, point.y }, ACTIVE_POINT_END);
 
-	SetActivePoint({ point.x, point.y }, ACTIVE_POINT_END);
+	SetEndActivePoint({ point.x, point.y });
 }
 
 void CPBSelectState::DrawActiveBox()
@@ -85,7 +60,11 @@ void CPBSelectState::DrawActiveBox()
 	if (!HasChosenEditPoint())
 	{
 		cv::Rect rc;
-		if (GetActiveBoxEx(rc))
+// 		if (GetActiveBoxEx(rc))
+// 		{
+// 			AddDrawables(new DBox(rc, ColorUnsaved));
+// 		}
+		if (GetActiveBoxFromActiveBoxManager(rc))
 		{
 			AddDrawables(new DBox(rc, ColorUnsaved));
 		}

@@ -198,6 +198,12 @@
     <ClInclude Include="FaceInfoManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="PBModifyState.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ActiveBoxManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -279,6 +285,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="PBSelectState.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PBModifyState.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ActiveBoxManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
