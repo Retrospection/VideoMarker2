@@ -84,14 +84,13 @@ void CPBAddState::OnMouseMove(UINT nFlags, CPoint point)
 
 void CPBAddState::DrawActiveBox()
 {
-	cv::Rect rc;
-// 	if (GetActiveBoxEx(rc))
+// 	cv::Rect rc;
+// 	if (GetActiveBoxFromActiveBoxManager(rc))
 // 	{
 // 		AddDrawables(new DBox(rc, ColorUnsaved));
 // 	}
+	UpdateDrawableActiveBox();
 
-	if (GetActiveBoxFromActiveBoxManager(rc))
-	{
-		AddDrawables(new DBox(rc, ColorUnsaved));
-	}
 }
+
+

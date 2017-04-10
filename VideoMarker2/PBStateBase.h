@@ -8,7 +8,7 @@ class IDrawable;
 
 class CPBStateBase
 {
-public:
+public: 
 	CPBStateBase(CPictureBox* ptr);
 	virtual ~CPBStateBase();
 
@@ -18,6 +18,8 @@ public:
 	virtual void OnMouseMove(UINT nFlags, CPoint point);
 
 	virtual void DrawActiveBox();
+	
+	virtual void DrawSavedFacesInfo();
 
 protected:
 	void OnLButtonDown2(UINT nFlags, CPoint point);
@@ -56,6 +58,11 @@ protected:
 	void SetStartActivePoint(const cv::Point& pt);
 	void SetEndActivePoint(const cv::Point& pt);
 
+	void UpdateDrawableActiveBox();
+//	void DrawActiveBox2();
+
+
+	void UpdateDrawableSavedFacesInfo();
 
 	static const bool ACTIVE_POINT_BEGIN = true;
 	static const bool ACTIVE_POINT_END = false;

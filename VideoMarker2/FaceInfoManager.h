@@ -2,7 +2,9 @@
 
 #include "FrameInfo.h"
 #include "RectEx.h"
-
+#include "constant.h"
+#include "DFaceInfo.h"
+#include "Transformer.h"
 
 
 #include <string>
@@ -108,8 +110,8 @@ private:
 class FaceInfoManager
 {
 public:
-	FaceInfoManager()
-		:m_nPos(0), m_bFirstMove(true)
+	FaceInfoManager(Transformer* ptr)
+		:m_nPos(0), m_bFirstMove(true), m_pTrans(ptr)
 	{
 		m_FacesInfo.push_back({});
 	}
@@ -227,10 +229,6 @@ public:
 		m_nEditType = -1;
 	}
 
-	// 	void MoveFinished()
-	// 	{
-	// 		m_bFirstMove = true;
-	// 	}
 
 	void Move(const cv::Point& point)
 	{
@@ -250,10 +248,6 @@ public:
 		m_LastPos = point;
 	}
 
-	// 	void MoveStart()
-	// 	{
-	// 		SnapShot();
-	// 	}
 
 	void Undo()
 	{
@@ -287,6 +281,28 @@ public:
 			faceinfoEx.bIsHighLight = false;
 		}
 	}
+
+
+
+	void UpdateDrawableSavedFacesInfo(std::vector<IDrawable*>& toBeUpdated)
+	{
+		for (auto drawable : toBeUpdated)
+		{
+			delete drawable;
+		}
+		toBeUpdated.clear();
+		cv::Rect rc;
+		for (auto faceinfoex : m_FacesInfo[m_nPos])
+		{
+			if (faceinfoex.bSaved)
+			{
+				toBeUpdated.push_back(new DFaceInfo(FaceInfo{ faceinfoex.GetFaceInfo().strPersonName, m_pTrans->Trans(faceinfoex.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi) }, ColorSaved));
+			
+			}
+		}
+	}
+
+
 
 private:
 	std::string ToString() const
@@ -328,6 +344,11 @@ private:
 	bool m_bFirstMove;
 
 	std::vector<std::vector<FaceInfoEx>> m_FacesInfo;
+
+
+	
+	
+	Transformer* m_pTrans;
 	size_t m_nPos;
 
 };

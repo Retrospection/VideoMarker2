@@ -51,22 +51,25 @@ void CPBSelectState::OnMouseMove(UINT nFlags, CPoint point)
 // 	}
 // 
 // 	SetActivePoint({ point.x, point.y }, ACTIVE_POINT_END);
-
 	SetEndActivePoint({ point.x, point.y });
 }
 
 void CPBSelectState::DrawActiveBox()
 {
-	if (!HasChosenEditPoint())
-	{
-		cv::Rect rc;
-// 		if (GetActiveBoxEx(rc))
+// 	if (!HasChosenEditPoint())
+// 	{
+// 		cv::Rect rc;
+// // 		if (GetActiveBoxEx(rc))
+// // 		{
+// // 			AddDrawables(new DBox(rc, ColorUnsaved));
+// // 		}
+// 		if (GetActiveBoxFromActiveBoxManager(rc))
 // 		{
 // 			AddDrawables(new DBox(rc, ColorUnsaved));
 // 		}
-		if (GetActiveBoxFromActiveBoxManager(rc))
-		{
-			AddDrawables(new DBox(rc, ColorUnsaved));
-		}
-	}
+// 	}
+
+	assert(!HasChosenEditPoint());
+	UpdateDrawableActiveBox();
+
 }

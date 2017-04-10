@@ -101,6 +101,10 @@ private:
 
 	CActiveBoxManager m_ActiveBoxManager;
 
+	std::vector<IDrawable*> m_DrawableActiveBox;
+	std::vector<IDrawable*> m_DrawableSavedFacesInfo;
+
+
 
 private:
 	static const wchar_t* m_AlertMessage[4];

@@ -32,15 +32,7 @@
 
 const cv::Point INIT_POINT = { -1, -1 };
 
-const cv::Scalar Green{ 0, 255, 0 };
-const cv::Scalar Red{ 0, 0, 255 };
-const cv::Scalar Black{ 0, 0, 0 };
-const cv::Scalar Blue{ 255, 0, 0 };
 
-const cv::Scalar ColorUnsaved = Red;
-const cv::Scalar ColorSaved = Red;
-const cv::Scalar ColorHighLight = Green;
-const cv::Scalar ColorIllegal = Blue;
 
 class ScopeGuard
 {
@@ -83,7 +75,7 @@ CPictureBox::CPictureBox()
 	m_ActivePoints[1] = INIT_POINT;
 	
 	m_nModifiedFaceInfoIndex = -1;
-	m_pFaceInfoManager = new FaceInfoManager();
+	m_pFaceInfoManager = new FaceInfoManager(&m_Trans);
 	m_pState = new CPBInitState(this);
 }
 
@@ -264,13 +256,15 @@ void CPictureBox::DrawFrameInfo(cv::Mat& img)
 {
 	std::vector<FaceInfoEx> facesInfo = m_pFaceInfoManager->GetFacesInfoEx();
 	m_pState->DrawActiveBox();
+	m_pState->DrawSavedFacesInfo();
 	for (auto& faceInfo:facesInfo)
 	{
-		if (!faceInfo.bIsSelected && !faceInfo.bIsHighLight && faceInfo.bSaved)
-		{
-			m_drawables.push_back(new DFaceInfo(FaceInfo{ faceInfo.GetFaceInfo().strPersonName, m_Trans.Trans(faceInfo.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi) }, ColorSaved));
-		}
-		else if (!faceInfo.bIsSelected && !faceInfo.bIsHighLight && !faceInfo.bSaved)
+/* 		if (!faceInfo.bIsSelected && !faceInfo.bIsHighLight && faceInfo.bSaved)
+// 		{
+// 			m_drawables.push_back(new DFaceInfo(FaceInfo{ faceInfo.GetFaceInfo().strPersonName, m_Trans.Trans(faceInfo.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi) }, ColorSaved));
+// 		}
+// 		else */
+		if (!faceInfo.bIsSelected && !faceInfo.bIsHighLight && !faceInfo.bSaved)
 		{
 			m_drawables.push_back(new DFaceInfo(FaceInfo{ faceInfo.GetFaceInfo().strPersonName, m_Trans.Trans(faceInfo.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi) }, ColorUnsaved));
 		}
@@ -290,6 +284,19 @@ void CPictureBox::DrawFrameInfo(cv::Mat& img)
 		delete drawable;
 	}
 	m_drawables.clear();
+
+	std::cout << "DrawableActiveBox: " << m_DrawableActiveBox.size() << std::endl;
+	for (auto& drawable : m_DrawableActiveBox)
+	{
+		drawable->Draw(img);
+	}
+
+	for (auto& drawable : m_DrawableSavedFacesInfo)
+	{
+		drawable->Draw(img);
+	}
+
+
 }
 
 void CPictureBox::Undo()

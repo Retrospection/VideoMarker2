@@ -20,3 +20,12 @@ enum OPEN_PROJECT_ERROR
 };
 
 
+const cv::Scalar Green{ 0, 255, 0 };
+const cv::Scalar Red{ 0, 0, 255 };
+const cv::Scalar Black{ 0, 0, 0 };
+const cv::Scalar Blue{ 255, 0, 0 };
+
+const cv::Scalar ColorUnsaved = Red;
+const cv::Scalar ColorSaved = Red;
+const cv::Scalar ColorHighLight = Green;
+const cv::Scalar ColorIllegal = Blue;

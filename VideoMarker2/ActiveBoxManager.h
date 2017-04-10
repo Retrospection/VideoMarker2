@@ -2,7 +2,10 @@
 
 #include <opencv2/core/core.hpp>
 
+#include <vector>
+
 class Transformer;
+class IDrawable;
 
 class CActiveBoxManager
 {
@@ -17,11 +20,14 @@ public:
 
 	void ResetActiveBox();
 
+	void UpdateDrawableActiveBox(std::vector<IDrawable*>& toBeUpdated);
+
 public:
 	static const cv::Point INIT_POINT;
 
 
 private:
+	bool m_bChanged;
 	cv::Point m_ActivePoints[2];
 	Transformer* m_pTrans;
 };

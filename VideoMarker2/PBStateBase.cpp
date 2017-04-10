@@ -7,6 +7,8 @@
 
 #include "VideoMarker2Dlg.h"
 
+#include "IDrawable.h"
+
 
 class FaceInfoManager;
 
@@ -47,6 +49,13 @@ void CPBStateBase::OnMouseMove(UINT nFlags, CPoint point)
 void CPBStateBase::DrawActiveBox()
 {
 
+}
+
+
+
+void CPBStateBase::DrawSavedFacesInfo()
+{
+	UpdateDrawableSavedFacesInfo();
 }
 
 
@@ -162,6 +171,24 @@ void CPBStateBase::SetEndActivePoint(const cv::Point& pt)
 {
 	m_pPictureBox->m_ActiveBoxManager.SetEndActivePoint(pt);
 }
+
+void CPBStateBase::UpdateDrawableActiveBox()
+{
+	m_pPictureBox->m_ActiveBoxManager.UpdateDrawableActiveBox(m_pPictureBox->m_DrawableActiveBox);
+}
+
+void CPBStateBase::UpdateDrawableSavedFacesInfo()
+{
+	m_pPictureBox->m_pFaceInfoManager->UpdateDrawableSavedFacesInfo(m_pPictureBox->m_DrawableSavedFacesInfo);
+}
+
+// void CPBStateBase::DrawActiveBox2()
+// {
+// 	for (auto drawable : m_pPictureBox->m_DrawableActiveBox)
+// 	{
+// 		drawable->Draw(m_pPictureBox->m_image);
+// 	}
+// }
 
 
 

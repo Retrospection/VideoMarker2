@@ -35,3 +35,5 @@ void CPBModifyState::OnMouseMove(UINT nFlags, CPoint point)
 	cv::Point _point = Trans({ point.x, point.y, 1, 1 }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw).tl();
 	MoveEditPoint(_point);
 }
+
+
