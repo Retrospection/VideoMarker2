@@ -4,6 +4,7 @@
 #include "RectEx.h"
 #include "constant.h"
 #include "DFaceInfo.h"
+#include "DEditBox.h "
 #include "Transformer.h"
 
 
@@ -111,7 +112,7 @@ class FaceInfoManager
 {
 public:
 	FaceInfoManager(Transformer* ptr)
-		:m_nPos(0), m_bFirstMove(true), m_pTrans(ptr)
+		:m_nPos(0), m_bFirstMove(true), m_pTrans(ptr), m_bSavedChanged(true), m_bSelectedChanged(true), m_bHighlightChanged(true)
 	{
 		m_FacesInfo.push_back({});
 	}
@@ -164,6 +165,7 @@ public:
 	{
 		m_FacesInfo.clear();
 		m_nPos = 0;
+		m_bSavedChanged = true;
 		std::vector<FaceInfoEx> temp(frameInfo.facesInfo.size());
 		std::transform(frameInfo.facesInfo.begin(), frameInfo.facesInfo.end(), temp.begin(), [](const FaceInfo& info){ return FaceInfoEx{ info, false, false, true }; });
 		m_FacesInfo.push_back(temp);
@@ -243,6 +245,7 @@ public:
 			if (box.bIsSelected)
 			{
 				box.UpdateLocation(m_nEditType, offset);
+				m_bSavedChanged = true;
 			}
 		}
 		m_LastPos = point;
@@ -286,6 +289,10 @@ public:
 
 	void UpdateDrawableSavedFacesInfo(std::vector<IDrawable*>& toBeUpdated)
 	{
+// 		if (!m_bSavedChanged)
+// 		{
+// 			return;
+// 		}
 		for (auto drawable : toBeUpdated)
 		{
 			delete drawable;
@@ -294,15 +301,56 @@ public:
 		cv::Rect rc;
 		for (auto faceinfoex : m_FacesInfo[m_nPos])
 		{
-			if (faceinfoex.bSaved)
+			toBeUpdated.push_back(new DFaceInfo(FaceInfo{ faceinfoex.GetFaceInfo().strPersonName, m_pTrans->Trans(faceinfoex.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi) }, ColorSaved));
+		}
+		m_bSavedChanged = false;
+	}
+
+	void UpdateDrawableSelectedFacesInfo(std::vector<IDrawable*>& toBeUpdated)
+	{
+		if (!m_bSelectedChanged)
+		{
+			return;
+		}
+		for (auto drawable : toBeUpdated)
+		{
+			delete drawable;
+		}
+		toBeUpdated.clear();
+		cv::Rect rc;
+		for (auto faceinfoex : m_FacesInfo[m_nPos])
+		{
+			if (faceinfoex.bIsSelected)
 			{
-				toBeUpdated.push_back(new DFaceInfo(FaceInfo{ faceinfoex.GetFaceInfo().strPersonName, m_pTrans->Trans(faceinfoex.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi) }, ColorSaved));
-			
+				FaceInfoEx ex{ faceinfoex.GetFaceInfo().strPersonName, m_pTrans->Trans(faceinfoex.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi), true, false, true };
+				toBeUpdated.push_back(new DEditBox(ex.GetEditBox().rc, ex.GetEditBox().editMark, ex.GetFaceInfo().strPersonName, ex.GetFaceInfo().box.tl(), ColorSelected));
 			}
 		}
+		m_bSelectedChanged = false;
 	}
 
 
+	void UpdateDrawableHighlightFacesInfo(std::vector<IDrawable*>& toBeUpdated)
+	{
+		if (!m_bHighlightChanged)
+		{
+			return;
+		}
+		for (auto drawable : toBeUpdated)
+		{
+			delete drawable;
+		}
+		toBeUpdated.clear();
+		cv::Rect rc;
+		for (auto faceinfoex : m_FacesInfo[m_nPos])
+		{
+			if (faceinfoex.bIsHighLight)
+			{
+				toBeUpdated.push_back(new DFaceInfo(FaceInfo{ faceinfoex.GetFaceInfo().strPersonName, m_pTrans->Trans(faceinfoex.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi) }, ColorHighLight));
+			}
+		}
+		m_bHighlightChanged = false;
+	}
 
 private:
 	std::string ToString() const
@@ -345,7 +393,9 @@ private:
 
 	std::vector<std::vector<FaceInfoEx>> m_FacesInfo;
 
-
+	bool m_bSavedChanged;
+	bool m_bSelectedChanged;
+	bool m_bHighlightChanged;
 	
 	
 	Transformer* m_pTrans;

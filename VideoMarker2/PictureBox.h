@@ -103,8 +103,8 @@ private:
 
 	std::vector<IDrawable*> m_DrawableActiveBox;
 	std::vector<IDrawable*> m_DrawableSavedFacesInfo;
-
-
+	std::vector<IDrawable*> m_DrawableSelectedFacesInfo;
+	std::vector<IDrawable*> m_DrawableHighlightFacesInfo;
 
 private:
 	static const wchar_t* m_AlertMessage[4];

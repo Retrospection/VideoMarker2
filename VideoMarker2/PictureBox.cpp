@@ -257,33 +257,35 @@ void CPictureBox::DrawFrameInfo(cv::Mat& img)
 	std::vector<FaceInfoEx> facesInfo = m_pFaceInfoManager->GetFacesInfoEx();
 	m_pState->DrawActiveBox();
 	m_pState->DrawSavedFacesInfo();
-	for (auto& faceInfo:facesInfo)
-	{
-/* 		if (!faceInfo.bIsSelected && !faceInfo.bIsHighLight && faceInfo.bSaved)
+	m_pState->DrawSelectedFacesInfo();
+	m_pState->DrawHighlightFacesInfo();
+// 	for (auto& faceInfo:facesInfo)
+// 	{
+// /* 		if (!faceInfo.bIsSelected && !faceInfo.bIsHighLight && faceInfo.bSaved)
+// // 		{
+// // 			m_drawables.push_back(new DFaceInfo(FaceInfo{ faceInfo.GetFaceInfo().strPersonName, m_Trans.Trans(faceInfo.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi) }, ColorSaved));
+// // 		}
+// // 		else */
+// 		if (!faceInfo.bIsSelected && !faceInfo.bIsHighLight && !faceInfo.bSaved)
 // 		{
-// 			m_drawables.push_back(new DFaceInfo(FaceInfo{ faceInfo.GetFaceInfo().strPersonName, m_Trans.Trans(faceInfo.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi) }, ColorSaved));
+// 			m_drawables.push_back(new DFaceInfo(FaceInfo{ faceInfo.GetFaceInfo().strPersonName, m_Trans.Trans(faceInfo.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi) }, ColorUnsaved));
 // 		}
-// 		else */
-		if (!faceInfo.bIsSelected && !faceInfo.bIsHighLight && !faceInfo.bSaved)
-		{
-			m_drawables.push_back(new DFaceInfo(FaceInfo{ faceInfo.GetFaceInfo().strPersonName, m_Trans.Trans(faceInfo.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi) }, ColorUnsaved));
-		}
-		else if (faceInfo.bIsSelected && !faceInfo.bIsHighLight)
-		{
-			FaceInfoEx ex{ faceInfo.GetFaceInfo().strPersonName, m_Trans.Trans(faceInfo.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi), true, false, true };
-			m_drawables.push_back(new DEditBox(ex.GetEditBox().rc, ex.GetEditBox().editMark,ex.GetFaceInfo().strPersonName,ex.GetFaceInfo().box.tl(), ColorIllegal));
-		}
-		else if (faceInfo.bIsHighLight)
-		{
-			m_drawables.push_back(new DFaceInfo(faceInfo.GetFaceInfo(), ColorHighLight));
-		}
-	}
-	for (auto& drawable : m_drawables)
-	{
-		drawable->Draw(img);
-		delete drawable;
-	}
-	m_drawables.clear();
+// 		else if (faceInfo.bIsSelected && !faceInfo.bIsHighLight)
+// 		{
+// 			FaceInfoEx ex{ faceInfo.GetFaceInfo().strPersonName, m_Trans.Trans(faceInfo.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi), true, false, true };
+// 			m_drawables.push_back(new DEditBox(ex.GetEditBox().rc, ex.GetEditBox().editMark,ex.GetFaceInfo().strPersonName,ex.GetFaceInfo().box.tl(), ColorSelected));
+// 		}
+// 		else if (faceInfo.bIsHighLight)
+// 		{
+// 			m_drawables.push_back(new DFaceInfo(faceInfo.GetFaceInfo(), ColorHighLight));
+// 		}
+// 	}
+// 	for (auto& drawable : m_drawables)
+// 	{
+// 		drawable->Draw(img);
+// 		delete drawable;
+// 	}
+// 	m_drawables.clear();
 
 	std::cout << "DrawableActiveBox: " << m_DrawableActiveBox.size() << std::endl;
 	for (auto& drawable : m_DrawableActiveBox)
@@ -296,6 +298,15 @@ void CPictureBox::DrawFrameInfo(cv::Mat& img)
 		drawable->Draw(img);
 	}
 
+	for (auto& drawable : m_DrawableSelectedFacesInfo)
+	{
+		drawable->Draw(img);
+	}
+
+	for (auto& drawable : m_DrawableHighlightFacesInfo)
+	{
+		drawable->Draw(img);
+	}
 
 }
 

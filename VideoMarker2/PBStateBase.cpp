@@ -59,6 +59,16 @@ void CPBStateBase::DrawSavedFacesInfo()
 }
 
 
+void CPBStateBase::DrawSelectedFacesInfo()
+{
+	UpdateDrawableSelectedFacesInfo();
+}
+
+void CPBStateBase::DrawHighlightFacesInfo()
+{
+	UpdateDrawableHighlightFacesInfo();
+}
+
 
 bool CPBStateBase::IsDrawing() const
 {
@@ -180,6 +190,17 @@ void CPBStateBase::UpdateDrawableActiveBox()
 void CPBStateBase::UpdateDrawableSavedFacesInfo()
 {
 	m_pPictureBox->m_pFaceInfoManager->UpdateDrawableSavedFacesInfo(m_pPictureBox->m_DrawableSavedFacesInfo);
+}
+
+void CPBStateBase::UpdateDrawableSelectedFacesInfo()
+{
+	m_pPictureBox->m_pFaceInfoManager->UpdateDrawableSelectedFacesInfo(m_pPictureBox->m_DrawableSelectedFacesInfo);
+}
+
+void CPBStateBase::UpdateDrawableHighlightFacesInfo()
+{
+	m_pPictureBox->m_pFaceInfoManager->UpdateDrawableHighlightFacesInfo(m_pPictureBox->m_DrawableHighlightFacesInfo);
+
 }
 
 // void CPBStateBase::DrawActiveBox2()

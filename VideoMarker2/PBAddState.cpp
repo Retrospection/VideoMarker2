@@ -16,7 +16,7 @@ const cv::Scalar Blue{ 255, 0, 0 };
 const cv::Scalar ColorUnsaved = Red;
 const cv::Scalar ColorSaved = Red;
 const cv::Scalar ColorHighLight = Green;
-const cv::Scalar ColorIllegal = Blue;
+const cv::Scalar ColorSelected = Blue;
 
 
 

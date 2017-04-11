@@ -20,6 +20,8 @@ public:
 	virtual void DrawActiveBox();
 	
 	virtual void DrawSavedFacesInfo();
+	virtual void DrawSelectedFacesInfo();
+	virtual void DrawHighlightFacesInfo();
 
 protected:
 	void OnLButtonDown2(UINT nFlags, CPoint point);
@@ -63,6 +65,8 @@ protected:
 
 
 	void UpdateDrawableSavedFacesInfo();
+	void UpdateDrawableSelectedFacesInfo();
+	void UpdateDrawableHighlightFacesInfo();
 
 	static const bool ACTIVE_POINT_BEGIN = true;
 	static const bool ACTIVE_POINT_END = false;
