@@ -304,12 +304,14 @@ void CVideoMarker2Dlg::OnTimer(UINT_PTR nIDEvent)
 {
 	if (m_nCurrentFrameIndex+1 >= m_nTotalFrameCount)
 	{
+		KillTimer(PLAY_TIMER);
 		CDialogEx::OnTimer(nIDEvent);
 		return;
 	}
 	if (nIDEvent == PLAY_TIMER)
 	{
-		m_pState->Play();   // 
+		m_pState->ForwardOneFrame(m_nCurrentFrameIndex);
+		m_pState->RefreshButton();
 	}
 
 	CDialogEx::OnTimer(nIDEvent);

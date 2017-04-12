@@ -187,6 +187,8 @@ public:
 		}
 		SnapShot();
 		m_FacesInfo[m_nPos].erase(std::remove_if(m_FacesInfo[m_nPos].begin(), m_FacesInfo[m_nPos].end(), [](const FaceInfoEx& info){ return info.bIsSelected; }), m_FacesInfo[m_nPos].end());
+		m_bSelectedChanged = true;
+		m_bSavedChanged = true;
 	}
 
 	void Select(const cv::Rect& rc)
@@ -195,11 +197,19 @@ public:
 		{
 			if (IsOverlapping(rc, faceInfo.GetFaceInfo().box))
 			{
-				faceInfo.bIsSelected = true;
+				if (!faceInfo.bIsSelected)
+				{
+					faceInfo.bIsSelected = true;
+					m_bSelectedChanged = true;
+				}
 			}
 			else
 			{
-				faceInfo.bIsSelected = false;
+				if (faceInfo.bIsSelected)
+				{
+					faceInfo.bIsSelected = false;
+					m_bSelectedChanged = true;
+				}
 			}
 		}
 	}
@@ -246,6 +256,7 @@ public:
 			{
 				box.UpdateLocation(m_nEditType, offset);
 				m_bSavedChanged = true;
+				m_bSelectedChanged = true;
 			}
 		}
 		m_LastPos = point;
@@ -274,6 +285,7 @@ public:
 	void SetHighLight(size_t nIndex)
 	{
 		ClearHighLight();
+		m_bHighlightChanged = true;
 		m_FacesInfo[m_nPos][nIndex].bIsHighLight = true;
 	}
 
@@ -282,17 +294,19 @@ public:
 		for (auto& faceinfoEx : m_FacesInfo[m_nPos])
 		{
 			faceinfoEx.bIsHighLight = false;
+			m_bHighlightChanged = true;
 		}
+		
 	}
 
 
 
 	void UpdateDrawableSavedFacesInfo(std::vector<IDrawable*>& toBeUpdated)
 	{
-// 		if (!m_bSavedChanged)
-// 		{
-// 			return;
-// 		}
+		if (!m_bSavedChanged)
+		{
+			return;
+		}
 		for (auto drawable : toBeUpdated)
 		{
 			delete drawable;
@@ -308,11 +322,12 @@ public:
 
 	void UpdateDrawableSelectedFacesInfo(std::vector<IDrawable*>& toBeUpdated)
 	{
-// 		if (!m_bSelectedChanged)
-// 		{
-// 			return;
-// 		}
+		if (!m_bSelectedChanged)
+		{
+			return;
+		}
 		for (auto drawable : toBeUpdated)
+
 		{
 			delete drawable;
 		}
@@ -332,10 +347,10 @@ public:
 
 	void UpdateDrawableHighlightFacesInfo(std::vector<IDrawable*>& toBeUpdated)
 	{
-// 		if (!m_bHighlightChanged)
-// 		{
-// 			return;
-// 		}
+		if (!m_bHighlightChanged)
+		{
+			return;
+		}
 		for (auto drawable : toBeUpdated)
 		{
 			delete drawable;

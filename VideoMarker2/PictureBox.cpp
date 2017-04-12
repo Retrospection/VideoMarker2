@@ -274,7 +274,6 @@ void CPictureBox::DrawFrameInfo(cv::Mat& img)
 	{
 		drawable->Draw(img);
 	}
-
 }
 
 void CPictureBox::Undo()
