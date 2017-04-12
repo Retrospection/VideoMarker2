@@ -29,12 +29,19 @@ CPBSelectState::~CPBSelectState()
 
 void CPBSelectState::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	OnLButtonDown2(nFlags,point);
+	SetDrawing(true);
+	cv::Point _point{ Trans({ point.x, point.y, 1, 1 }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw).tl() };
+	if (SelectEditPoint(_point))
+	{
+		SetState(CPictureBox::MODIFY_MARK_STATE);
+	}
+	SetStartActivePoint(_point);
+	
+
 }
 
 void CPBSelectState::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	assert(IsDrawable());
 //	SetActivePoint({ point.x, point.y }, ACTIVE_POINT_END);
 	SetEndActivePoint({ point.x, point.y });
 	SelectBox();
@@ -42,8 +49,7 @@ void CPBSelectState::OnLButtonUp(UINT nFlags, CPoint point)
 
 void CPBSelectState::OnMouseMove(UINT nFlags, CPoint point)
 {
-	assert(IsDrawable());
-	assert(GetEditType() == CPictureBox::SELECT_MARK);
+//	assert(GetEditType() == CPictureBox::SELECT_MARK_STATE);
 // 	if (!IsInRoi(point))
 // 	{
 // 		ResetActivePoints();

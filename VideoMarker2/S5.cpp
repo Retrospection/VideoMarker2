@@ -17,7 +17,6 @@ CS5::~CS5()
 void CS5::RefreshButton()
 {
 	m_ui.RefreshButton();
-	GetPictureBox()->SetDrawable(true);
 }
 
 bool CS5::CanDraw() const
@@ -29,6 +28,7 @@ void CS5::AddSaveMarkBtnClicked()
 {
 	GetPresenter()->SaveMark();
 	_pDlg->SetDlgItemText(IDC_BUTTON_ADDMARK, L"Ìí¼Ó±ê×¢");
+	GetPictureBox()->SetEditType(CPictureBox::INIT_STATE);
 	SetState(S1);
 }
 

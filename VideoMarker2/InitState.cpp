@@ -16,7 +16,6 @@ CInitState::~CInitState()
 void CInitState::RefreshButton()
 {
 	m_ui.RefreshButton();
-	GetPictureBox()->SetDrawable(false);
 }
 
 

@@ -15,12 +15,14 @@ CPBModifyState::~CPBModifyState()
 
 void CPBModifyState::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	OnLButtonDown2(nFlags, point);
+	SetDrawing(true);
+	cv::Point _point{ Trans({ point.x, point.y, 1, 1 }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw).tl() };
+	SetStartActivePoint(_point);
+
 }
 
 void CPBModifyState::OnLButtonUp(UINT nFlags, CPoint point)
 {
-//	SetActivePoint({ point.x, point.y }, ACTIVE_POINT_END);
 	SetEndActivePoint({ point.x, point.y });
 	unsigned int result = ValidateFaceInfo();
 	if (result != 0)
@@ -28,6 +30,7 @@ void CPBModifyState::OnLButtonUp(UINT nFlags, CPoint point)
 		HandleInvalidFaceInfo(result);
 	}
 	ClearSelectEditPoint();
+	SetState(CPictureBox::SELECT_MARK_STATE);
 }
 
 void CPBModifyState::OnMouseMove(UINT nFlags, CPoint point)

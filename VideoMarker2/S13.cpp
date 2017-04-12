@@ -23,6 +23,7 @@ void CS13::SelectMarkBtnClicked()
 {
 	GetPresenter()->SaveMark();
 	_pDlg->SetDlgItemText(IDC_BUTTON_SELECTMARK, L"Ñ¡Ôñ±ê×¢");
+	GetPictureBox()->SetEditType(CPictureBox::INIT_STATE);
 	SetState(S1);
 }
 

@@ -75,10 +75,10 @@ bool CPBStateBase::IsDrawing() const
 	return m_pPictureBox->m_bDrawing;
 }
 
-int CPBStateBase::GetEditType() const
-{
-	return m_pPictureBox->m_nEditType;
-}
+// int CPBStateBase::GetEditType() const
+// {
+// 	return m_pPictureBox->m_nEditType;
+// }
 
 bool CPBStateBase::IsInRoi(const CPoint& pt) const
 {
@@ -99,11 +99,6 @@ void CPBStateBase::ResetActivePoints()
 {
 	SetActivePoint(INIT_POINT, ACTIVE_POINT_BEGIN);
 	SetActivePoint(INIT_POINT, ACTIVE_POINT_END);
-}
-
-bool CPBStateBase::IsDrawable() const
-{
-	return m_pPictureBox->m_bDrawable;
 }
 
 bool CPBStateBase::HasChosenEditPoint() const
@@ -201,6 +196,32 @@ void CPBStateBase::UpdateDrawableHighlightFacesInfo()
 {
 	m_pPictureBox->m_pFaceInfoManager->UpdateDrawableHighlightFacesInfo(m_pPictureBox->m_DrawableHighlightFacesInfo);
 
+}
+
+void CPBStateBase::SetState(size_t nEditType)
+{
+	std::cout << nEditType << std::endl;
+	if (nEditType == CPictureBox::ADD_MARK_STATE)
+	{
+		m_pPictureBox->SetState("AddType");
+	}
+	else if (nEditType == CPictureBox::SELECT_MARK_STATE)
+	{
+		m_pPictureBox->SetState("Select");
+	}
+	else if (nEditType == CPictureBox::INIT_STATE)
+	{
+		m_pPictureBox->SetState("INIT");
+	}
+	else if (nEditType == CPictureBox::MODIFY_MARK_STATE)
+	{
+		m_pPictureBox->SetState("Modify");
+	}
+}
+
+bool CPBStateBase::SelectEditPoint(const cv::Point& pt)
+{
+	return m_pPictureBox->m_pFaceInfoManager->SelectEditPoint(pt) != -1;
 }
 
 // void CPBStateBase::DrawActiveBox2()

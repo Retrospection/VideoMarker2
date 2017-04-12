@@ -34,6 +34,11 @@
 #include <afxcontrolbars.h>     // 功能区和控件条的 MFC 支持
 
 
+#ifndef SAFE_DELETE
+#define SAFE_DELETE(p) { if(p){delete(p);  (p)=NULL;} }
+#endif
+
+
 
 
 

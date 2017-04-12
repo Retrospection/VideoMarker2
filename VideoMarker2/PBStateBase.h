@@ -22,16 +22,15 @@ public:
 	virtual void DrawSavedFacesInfo();
 	virtual void DrawSelectedFacesInfo();
 	virtual void DrawHighlightFacesInfo();
+	virtual void SetState(size_t nEditType);
 
 protected:
 	void OnLButtonDown2(UINT nFlags, CPoint point);
 
 
 	bool IsDrawing() const;
-	bool IsDrawable() const;
 	void SetDrawing(bool bDrawing);
 	bool IsInRoi(const CPoint& pt) const;
-	int GetEditType() const;
 	
 	void SetActivePoint(const cv::Point& pt, bool bBegin);
 	void ResetActivePoints();
@@ -61,12 +60,14 @@ protected:
 	void SetEndActivePoint(const cv::Point& pt);
 
 	void UpdateDrawableActiveBox();
-//	void DrawActiveBox2();
 
 
 	void UpdateDrawableSavedFacesInfo();
 	void UpdateDrawableSelectedFacesInfo();
 	void UpdateDrawableHighlightFacesInfo();
+
+
+	bool SelectEditPoint(const cv::Point& pt);
 
 	static const bool ACTIVE_POINT_BEGIN = true;
 	static const bool ACTIVE_POINT_END = false;

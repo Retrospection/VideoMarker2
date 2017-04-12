@@ -308,10 +308,10 @@ public:
 
 	void UpdateDrawableSelectedFacesInfo(std::vector<IDrawable*>& toBeUpdated)
 	{
-		if (!m_bSelectedChanged)
-		{
-			return;
-		}
+// 		if (!m_bSelectedChanged)
+// 		{
+// 			return;
+// 		}
 		for (auto drawable : toBeUpdated)
 		{
 			delete drawable;
@@ -332,10 +332,10 @@ public:
 
 	void UpdateDrawableHighlightFacesInfo(std::vector<IDrawable*>& toBeUpdated)
 	{
-		if (!m_bHighlightChanged)
-		{
-			return;
-		}
+// 		if (!m_bHighlightChanged)
+// 		{
+// 			return;
+// 		}
 		for (auto drawable : toBeUpdated)
 		{
 			delete drawable;

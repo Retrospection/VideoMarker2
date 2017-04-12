@@ -68,7 +68,7 @@ const wchar_t* CPictureBox::m_AlertMessage[] = { L"", L"°üÎ§ºÐÃæ»ý¹ýÐ¡£¡", L"µ±Ç
 
 
 CPictureBox::CPictureBox() 
-	:CStatic(), m_Trans(Transformer::Default()), m_bDrawable(false), m_ActiveBoxManager(&m_Trans)
+	:CStatic(), m_Trans(Transformer::Default()), m_ActiveBoxManager(&m_Trans), m_pState(nullptr)
 {
 	m_bDrawing = false;
 	m_ActivePoints[0] = INIT_POINT;
@@ -76,7 +76,7 @@ CPictureBox::CPictureBox()
 	
 	m_nModifiedFaceInfoIndex = -1;
 	m_pFaceInfoManager = new FaceInfoManager(&m_Trans);
-	m_pState = new CPBInitState(this);
+	SetState("INIT");
 }
 
 CPictureBox::~CPictureBox()
@@ -97,58 +97,25 @@ END_MESSAGE_MAP()
 void CPictureBox::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	m_pState->OnLButtonDown(nFlags, point);
-//	if (!m_bDrawable)
-//	{
-//		return;
-//	}
-//	if (m_bDrawing)
-//	{
-//		m_ActivePoints[1] = { point.x, point.y };
-//		Invalidate(FALSE); 
-//		CStatic::OnLButtonDown(nFlags, point);
-//	}
-//	else
-//	{
-//		m_bDrawing = true;
-//		cv::Point _point{ m_Trans.Trans({ point.x, point.y, 1, 1 }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw).tl() };
-//		m_nModifiedFaceInfoIndex = m_pFaceInfoManager->SelectEditPoint(_point);
-//// 		if (m_nModifiedFaceInfoIndex == -1)
-//// 		{
-//// 			m_pFaceInfoManager->ResetSelected();
-//// 		}
-//		std::cout << "EditBoxes Index: " << m_nModifiedFaceInfoIndex << std::endl;
-//		m_ActivePoints[0] = { point.x, point.y };
-//		Invalidate(FALSE);
-//		CStatic::OnLButtonDown(nFlags, point);
-//	}
-	// TODO
+	Invalidate(FALSE);
+	CStatic::OnLButtonDown(nFlags, point);
 }
 
 void CPictureBox::OnLButtonDown2(UINT nFlags, CPoint point)
 {
-	assert(m_bDrawable);
-	m_bDrawing = true;
-	cv::Point _point{ m_Trans.Trans({ point.x, point.y, 1, 1 }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw).tl() };
-	m_nModifiedFaceInfoIndex = m_pFaceInfoManager->SelectEditPoint(_point);
-	if (m_nModifiedFaceInfoIndex != -1)
-	{
-		SetState("Modify");
-	}
-
-	// TODO : FIX MODIFY SELECT ADD BUG;
-
-// 	else
+// 	m_bDrawing = true;
+// 	cv::Point _point{ m_Trans.Trans({ point.x, point.y, 1, 1 }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw).tl() };
+// 	m_nModifiedFaceInfoIndex = m_pFaceInfoManager->SelectEditPoint(_point);
+// 	if (m_nModifiedFaceInfoIndex != -1)
 // 	{
-// 		SetState("Select");
+// 		SetState("Modify");
 // 	}
-
-
-
-	std::cout << "EditBoxes Index: " << m_nModifiedFaceInfoIndex << std::endl;
-//	m_ActivePoints[0] = { point.x, point.y };
-	m_ActiveBoxManager.SetStartActivePoint({ point.x, point.y });
-	Invalidate(FALSE);
-	CStatic::OnLButtonDown(nFlags, point);
+// 
+// 	std::cout << "EditBoxes Index: " << m_nModifiedFaceInfoIndex << std::endl;
+// 	m_ActiveBoxManager.SetStartActivePoint({ point.x, point.y });
+// 
+// 	Invalidate(FALSE);
+// 	CStatic::OnLButtonDown(nFlags, point);
 }
 
 
@@ -323,32 +290,10 @@ void CPictureBox::Redo()
 
 }
 
-void CPictureBox::SetDrawable(bool drawable)
-{
-	m_bDrawable = drawable;
-	if (!m_bDrawable)
-	{
-		SetState("INIT");
-	}
-	else
-	{
-		SetState("AddType");
-	}
-	std::cout << "drawable? " << m_bDrawable << std::endl;
-}
 
 void CPictureBox::SetEditType(size_t nEditType)
-{ 
-	m_nEditType = nEditType;
-	if (m_nEditType == SELECT_MARK)
-	{
-		SetState("Select");
-	}
-	else
-	{
-		SetState("AddType");
-	}
-	m_bDrawable = true;
+{
+	m_pState->SetState(nEditType);
 }
 
 
@@ -384,6 +329,8 @@ void CPictureBox::ClearHighLight()
 
 void CPictureBox::SetState(const std::string& state)
 {
+	std::cout << "set state to " << state << std::endl;
+	SAFE_DELETE(m_pState);
 	if (state == "INIT")
 	{
 		m_pState = new CPBInitState(this);

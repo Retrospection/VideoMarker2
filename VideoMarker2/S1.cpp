@@ -20,13 +20,12 @@ void CS1::RefreshButton()
 	m_ui.RefreshButton();
 	GetDlgItem(IDC_BUTTON_STEPBACK)->EnableWindow((GetCurrentFrameIndex() != 0) ? TRUE : FALSE);
 	GetDlgItem(IDC_BUTTON_STEPFORWARD)->EnableWindow((GetCurrentFrameIndex() < (GetTotalFrameCount() - 1)) ? TRUE : FALSE);
-	GetPictureBox()->SetDrawable(false);
 }
 
 void CS1::AddSaveMarkBtnClicked()
 {
 	_pDlg->SetDlgItemText(IDC_BUTTON_ADDMARK, L"完成编辑");
-	GetPictureBox()->SetEditType(CPictureBox::ADD_MARK_TYPE);
+	GetPictureBox()->SetEditType(CPictureBox::ADD_MARK_STATE);
 	SetState(S5);
 }
 
@@ -43,7 +42,7 @@ void CS1::Redo()
 
 void CS1::SelectMarkBtnClicked()
 {
-	GetPictureBox()->SetEditType(CPictureBox::SELECT_MARK);
+	GetPictureBox()->SetEditType(CPictureBox::SELECT_MARK_STATE);
 	_pDlg->SetDlgItemText(IDC_BUTTON_SELECTMARK, L"保存修改");
 	SetState(S13);
 }

@@ -69,10 +69,8 @@ private:
 
 //////////////////// Frame //////////////////////////////////////
 public:
-	void SetDrawable(bool drawable);
 	void SetImage(const cv::Mat& image);
 private:
-	bool m_bDrawable;
 	bool m_bDrawing;
 	cv::Mat m_image;
 
@@ -83,16 +81,17 @@ public:
 	void DeleteSelectedFacesInfo();
 	void Undo();
 	void Redo();
-	static const size_t ADD_MARK_TYPE = 1;
-	static const size_t DELETE_MAKR_TYPE = 2;
-	static const size_t SELECT_MARK = 3;
+	static const size_t INIT_STATE = 1;
+	static const size_t ADD_MARK_STATE = 2;
+	static const size_t SELECT_MARK_STATE = 3;
+	static const size_t MODIFY_MARK_STATE = 4;
 
 private:
 	void SelectBox();
 
 private:
 	int m_nModifiedFaceInfoIndex;
-	size_t m_nEditType;
+//	size_t m_nEditType;
 
 	Transformer m_Trans;
 	std::vector<IDrawable*> m_drawables;
