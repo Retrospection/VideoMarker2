@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include <mutex>
 
 #include "afxcmn.h"
 #include "afxwin.h"
@@ -22,6 +23,8 @@
 #include "PictureBox.h"
 #include "NameInputDialog.h"
 #include "IVideoMarker2.h"
+
+#include "MyTimer.h"
 
 class CVideoMarkerPresenter;
 class CStateBase;
@@ -66,10 +69,14 @@ public:
 	void SetTotalFrameCount(int nTotalFrameCount);
 	void SetCurrentFrameIndex(int nCurrentFrameIndex);
 	void SetFileOpenedStatus(bool status);
+	void SetFrameRate(size_t frameRate);
 	void ClearUnsavedFrameInfo();
 
 
 	unsigned int ValidateFaceInfo();
+
+
+	void Play();
 
 
 
@@ -77,6 +84,12 @@ public:
 private:
 	CVideoMarkerPresenter* m_pPresenter;
 	CNameInputDialog* m_pNameDlg;
+
+// 	CMyTimer<> m_Timer;
+// 	std::mutex m_Mutex;
+
+	std::thread m_PlayThread;
+	bool m_bPlaying = false;
 
 private:
 	bool m_bStatus;

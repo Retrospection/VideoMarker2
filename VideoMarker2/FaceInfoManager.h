@@ -8,6 +8,8 @@
 #include "Transformer.h"
 
 
+#include <mutex>
+
 #include <string>
 #include <vector>
 #include <iostream>
@@ -138,12 +140,17 @@ public:
 		m_FacesInfo[m_nPos].erase(std::remove_if(m_FacesInfo[m_nPos].begin(), m_FacesInfo[m_nPos].end(), pred), m_FacesInfo[m_nPos].end());
 	}
 
-	std::vector<FaceInfo> GetFacesInfo() const
+	std::vector<FaceInfo> GetFacesInfo()
 	{
+		
 		std::vector<FaceInfo> ret(m_FacesInfo[m_nPos].size());
-		auto fn = [](const FaceInfoEx& fiex){ return fiex.GetFaceInfo(); };
-		std::transform(m_FacesInfo[m_nPos].begin(), m_FacesInfo[m_nPos].end(), ret.begin(), fn);
+		{
+			std::unique_lock<std::mutex> FrameInfoLock(m_Mutex);
+			auto fn = [](const FaceInfoEx& fiex){ return fiex.GetFaceInfo(); };
+			std::transform(m_FacesInfo[m_nPos].begin(), m_FacesInfo[m_nPos].end(), ret.begin(), fn);
+		}
 		return ret;
+
 	}
 
 	std::vector<FaceInfoEx> GetFacesInfoEx() const
@@ -153,23 +160,26 @@ public:
 
 
 
-	FrameInfo GetFrameInfo() const
+	FrameInfo GetFrameInfo()
 	{
 		FrameInfo ret;
 		ret.facesInfo = GetFacesInfo();
 		return std::move(ret);
-	}
+	} 
 
 
 	void SetFrameInfo(const FrameInfo& frameInfo)
 	{
-		m_FacesInfo.clear();
-		m_nPos = 0;
-		m_bSavedChanged = true;
-		std::vector<FaceInfoEx> temp(frameInfo.facesInfo.size());
-		std::transform(frameInfo.facesInfo.begin(), frameInfo.facesInfo.end(), temp.begin(), [](const FaceInfo& info){ return FaceInfoEx{ info, false, false, true }; });
-		m_FacesInfo.push_back(temp);
-		SnapShot();
+		{
+			std::unique_lock<std::mutex> FrameInfoLock(m_Mutex);
+			m_FacesInfo.clear();
+			m_nPos = 0;
+			m_bSavedChanged = true;
+			std::vector<FaceInfoEx> temp(frameInfo.facesInfo.size());
+			std::transform(frameInfo.facesInfo.begin(), frameInfo.facesInfo.end(), temp.begin(), [](const FaceInfo& info){ return FaceInfoEx{ info, false, false, true }; });
+			m_FacesInfo.push_back(temp);
+			SnapShot();
+		}
 	}
 
 	unsigned int Add(const FaceInfo& faceInfo)
@@ -415,5 +425,7 @@ private:
 	
 	Transformer* m_pTrans;
 	size_t m_nPos;
+
+	std::mutex m_Mutex;
 
 };

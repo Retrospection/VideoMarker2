@@ -27,7 +27,7 @@
 // CVideoMarker2Dlg 对话框
 
 CVideoMarker2Dlg::CVideoMarker2Dlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(CVideoMarker2Dlg::IDD, pParent), m_bUIConfigLoaded(false)
+	: CDialogEx(CVideoMarker2Dlg::IDD, pParent), m_bUIConfigLoaded(false)/*, m_Timer(40, std::bind(&CVideoMarker2Dlg::OnTimer2, this))*/
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	m_pPictureBox = new CPictureBox(/*m_pState*/);
@@ -81,6 +81,8 @@ BOOL CVideoMarker2Dlg::OnInitDialog()
 	freopen("CONIN$", "r+t", stdin); // 重定向 STDIN
 	freopen("CONOUT$", "w+t", stdout); // 重定向STDOUT
 
+
+	std::cout << "Hello,world!" << std::endl;
 
 
 	// 滑条初始化
@@ -145,11 +147,14 @@ HCURSOR CVideoMarker2Dlg::OnQueryDragIcon()
 
 void CVideoMarker2Dlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
-	//TODO:  在此添加消息处理程序代码和/或调用默认值
 	CSliderCtrl   *pSlidCtrl = (CSliderCtrl*)GetDlgItem(IDC_SLIDER_1);
-	m_pState->SeekTo(pSlidCtrl->GetPos());
+	{
+//		std::unique_lock<std::mutex> frameIndexLock(m_Mutex);
+		m_pState->SeekTo(pSlidCtrl->GetPos());
+	}
 	m_pState->RefreshButton();
 	CDialogEx::OnHScroll(nSBCode, nPos, pScrollBar);
+
 }
 
 void CVideoMarker2Dlg::Refresh()
@@ -251,7 +256,10 @@ void CVideoMarker2Dlg::OnBnClickedOpenFileButton()
 
 void CVideoMarker2Dlg::OnBnClickedPlayVideoButton()
 {
-	SetTimer(PLAY_TIMER, 40, NULL);
+	//SetTimer(PLAY_TIMER, 40, NULL);
+//	m_Timer.StartTimer();
+	assert(!m_bPlaying);
+	m_PlayThread = std::thread(std::bind(&CVideoMarker2Dlg::Play, this));
 }
 
 void CVideoMarker2Dlg::OnBnClickedBackOneFrame()
@@ -285,14 +293,14 @@ void CVideoMarker2Dlg::OnBnClickedOpenTextFile()
 
 void CVideoMarker2Dlg::OnBnClickedStopButton()
 {
-	KillTimer(PLAY_TIMER);
-	m_pState->Stop();
+//	m_Timer.KillTimer();
+	m_pPresenter->Stop();
 }
 
 void CVideoMarker2Dlg::OnBnClickedPauseButton()
 {
-	KillTimer(PLAY_TIMER);
-	m_pState->Pause();
+//	m_Timer.KillTimer();
+	m_pPresenter->Pause();
 }
 
 void CVideoMarker2Dlg::OnBnClickedAddMark()
@@ -315,6 +323,30 @@ void CVideoMarker2Dlg::OnTimer(UINT_PTR nIDEvent)
 	}
 
 	CDialogEx::OnTimer(nIDEvent);
+}
+
+void CVideoMarker2Dlg::Play()
+{
+// 	{
+// 		std::unique_lock<std::mutex> frameIndexLock(m_Mutex);
+// 		if (m_nCurrentFrameIndex + 1 >= m_nTotalFrameCount)
+// 		{
+// 			m_Timer.KillTimer();
+// 			return;
+// 		}
+// 		m_pState->ForwardOneFrame(m_nCurrentFrameIndex);
+// 		m_pState->RefreshButton();
+// 	}
+	m_bPlaying = true;
+	
+	while ((m_nCurrentFrameIndex + 1 <= m_nTotalFrameCount) && m_bPlaying)
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(40));
+		//m_pPresenter->BackOneFrame();
+
+	}
+	m_bPlaying = false;
+	m_pPresenter->Stop();
 }
 
 void CVideoMarker2Dlg::ShowFrameInfoInListBox()
@@ -446,7 +478,7 @@ void CVideoMarker2Dlg::OnBnClickedButtonDeletemark()
 	m_pState->DeleteMarkBtnClicked();
 }
 
-FrameInfo CVideoMarker2Dlg::GetFrameInfo() const
+FrameInfo CVideoMarker2Dlg::GetFrameInfo() const 
 {
 	return m_pPictureBox->GetFrameInfo();
 }
@@ -466,4 +498,10 @@ std::vector<FaceInfo> CVideoMarker2Dlg::GetUnsavedFacesInfo()
 void CVideoMarker2Dlg::OnLbnSelchangeList1()
 {
 	m_pState->OnLbnSelchangeList1();
+}
+
+void CVideoMarker2Dlg::SetFrameRate(size_t frameRate)
+{
+//	size_t interval = 1000 / frameRate;
+//	m_Timer.SetInterval(interval);
 }

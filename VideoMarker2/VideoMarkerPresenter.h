@@ -6,6 +6,7 @@
 #include "FrameInfo.h"
 
 #include <functional>
+#include <mutex>
 
 class CVideoMarker2Dlg;
 

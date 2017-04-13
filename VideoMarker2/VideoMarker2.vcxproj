@@ -118,6 +118,7 @@
     <ClInclude Include="DFaceInfo.h" />
     <ClInclude Include="DText.h" />
     <ClInclude Include="FaceInfoManager.h" />
+    <ClInclude Include="MyTimer.h" />
     <ClInclude Include="PBAddState.h" />
     <ClInclude Include="PBInitState.h" />
     <ClInclude Include="PBModifyState.h" />

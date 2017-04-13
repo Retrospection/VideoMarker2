@@ -90,6 +90,7 @@ bool CVideoMarkerPresenter::OpenVideo(const std::string& strVideoFileName)
 	m_pDlg->SetRawFrame(frame);
 	m_pDlg->SetTotalFrameCount(m_pVideoPlayer->m_nTotalFrames);
 	m_pDlg->SetCurrentFrameIndex(0);
+	m_pDlg->SetFrameRate(m_pVideoPlayer->m_nFrameRate);
 	m_pDlg->Refresh();
 	return true;
 }
@@ -100,9 +101,11 @@ void CVideoMarkerPresenter::Play()
 	assert(m_pVideoPlayer->IsOpened());
 
 	cv::Mat frame;
-	m_pVideoPlayer->GetNextFrame(frame);
 	FrameInfo frameInfo;
+
+	m_pVideoPlayer->GetNextFrame(frame);
 	m_pTextMgr->GetFrameInfoByPos(frameInfo, m_pVideoPlayer->m_nCurrentFrameIndex);
+
 	std::cout << "总帧数为:" << m_pVideoPlayer->m_nTotalFrames << "当前帧号：" << m_pVideoPlayer->m_nCurrentFrameIndex << std::endl;
 	m_pDlg->SetRawFrame(frame);
 	m_pDlg->SetTotalFrameCount(m_pVideoPlayer->m_nTotalFrames);
@@ -136,16 +139,18 @@ int CVideoMarkerPresenter::GetTotalFrameCount() const
 
 void CVideoMarkerPresenter::SeekTo(int nPos)
 {
+	FrameInfo frameInfo;
+	cv::Mat rawFrame;
+
 	if (!m_pVideoPlayer->SeekTo(nPos))
 	{
 		m_pDlg->MessageBox(L"跳转错误!");
 		m_pDlg->Refresh();
 		return;
 	}
-	cv::Mat rawFrame;
 	m_pVideoPlayer->GetNextFrame(rawFrame);
-	FrameInfo frameInfo;
 	m_pTextMgr->GetFrameInfoByPos(frameInfo, m_pVideoPlayer->m_nCurrentFrameIndex);
+
 	std::cout << "总帧数为:" << m_pVideoPlayer->m_nTotalFrames << "当前帧号：" << m_pVideoPlayer->m_nCurrentFrameIndex << std::endl;
 	m_pDlg->SetCurrentFrameIndex(nPos);
 	m_pDlg->SetRawFrame(rawFrame);
