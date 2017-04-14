@@ -78,6 +78,8 @@ public:
 
 	void Play();
 
+	void Stop();
+
 
 
 //////////////////////////////////////////////////////  й╣ож  ////////////////////////////////////////////////
@@ -85,8 +87,7 @@ private:
 	CVideoMarkerPresenter* m_pPresenter;
 	CNameInputDialog* m_pNameDlg;
 
-// 	CMyTimer<> m_Timer;
-// 	std::mutex m_Mutex;
+
 
 	std::thread m_PlayThread;
 	bool m_bPlaying = false;

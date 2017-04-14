@@ -59,5 +59,18 @@ void CS1::OnLbnSelchangeList1()
 	GetPictureBox()->SetHighLight(i);
 }
 
+void CS1::Play()
+{
+	SetPlaying(true);
+	while ((GetCurrentFrameIndex() + 1 < GetTotalFrameCount()) && IsPlaying())
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(20));
+		GetPresenter()->ForwardOneFrame(GetCurrentFrameIndex());
+	}
+	SetPlaying(false);
+	GetPresenter()->Stop();
+	SetState(PLAY);
+}
+
 
 

@@ -196,6 +196,16 @@ CListBox* CStateBase::GetListBox() const
 	return &_pDlg->m_ListBox;
 }
 
+void CStateBase::SetPlaying(bool bPlaying)
+{
+	_pDlg->m_bPlaying = bPlaying;
+}
+
+bool CStateBase::IsPlaying() const
+{
+	return _pDlg->m_bPlaying;
+}
+
 
 
 
@@ -238,6 +248,9 @@ CUI::CUI(CVideoMarker2Dlg* pDlg, const UIConfig& config) :m_pDlg(pDlg), m_Config
 	m_IDByName.insert(std::make_pair("Slider", IDC_SLIDER_1));
 	m_IDByName.insert(std::make_pair("Undo", IDC_BUTTON_UNDO));
 	m_IDByName.insert(std::make_pair("Redo", IDC_BUTTON_REDO));
+	m_IDByName.insert(std::make_pair("Play", IDC_BUTTON_PLAY));
+	m_IDByName.insert(std::make_pair("Pause", IDC_BUTTON_PAUSE));
+	m_IDByName.insert(std::make_pair("Stop", IDC_BUTTON_STOP));
 }
 
 CUI::CUI()

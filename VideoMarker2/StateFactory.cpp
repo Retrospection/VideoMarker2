@@ -29,15 +29,15 @@ CStateFactory& CStateFactory::GetInstance()
 CStateBase* CStateFactory::Create(const std::string& state, CVideoMarker2Dlg* pDlg, const UIConfig& config)
 {
 
-// 	if (state == PLAY)
-// 	{
-// 		return new CPlayState(pDlg);
-// 	}
+	if (state == PLAY)
+	{
+		return new CPlayState(pDlg);
+	}
 // 	else if (state == STOP)
 // 	{
 // 		return  new CStopState(pDlg);
 // 	}
-/*	else */if (state == INIT)
+	else if (state == INIT)
 	{
 		return new CInitState(pDlg, config);
 	}

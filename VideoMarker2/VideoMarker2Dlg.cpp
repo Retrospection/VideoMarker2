@@ -256,10 +256,9 @@ void CVideoMarker2Dlg::OnBnClickedOpenFileButton()
 
 void CVideoMarker2Dlg::OnBnClickedPlayVideoButton()
 {
-	//SetTimer(PLAY_TIMER, 40, NULL);
-//	m_Timer.StartTimer();
 	assert(!m_bPlaying);
 	m_PlayThread = std::thread(std::bind(&CVideoMarker2Dlg::Play, this));
+	m_PlayThread.detach();
 }
 
 void CVideoMarker2Dlg::OnBnClickedBackOneFrame()
@@ -327,23 +326,11 @@ void CVideoMarker2Dlg::OnTimer(UINT_PTR nIDEvent)
 
 void CVideoMarker2Dlg::Play()
 {
-// 	{
-// 		std::unique_lock<std::mutex> frameIndexLock(m_Mutex);
-// 		if (m_nCurrentFrameIndex + 1 >= m_nTotalFrameCount)
-// 		{
-// 			m_Timer.KillTimer();
-// 			return;
-// 		}
-// 		m_pState->ForwardOneFrame(m_nCurrentFrameIndex);
-// 		m_pState->RefreshButton();
-// 	}
 	m_bPlaying = true;
-	
-	while ((m_nCurrentFrameIndex + 1 <= m_nTotalFrameCount) && m_bPlaying)
+	while ((m_nCurrentFrameIndex + 1 < m_nTotalFrameCount) && m_bPlaying)
 	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(40));
-		//m_pPresenter->BackOneFrame();
-
+		std::this_thread::sleep_for(std::chrono::milliseconds(20));
+		m_pPresenter->ForwardOneFrame(m_nCurrentFrameIndex);
 	}
 	m_bPlaying = false;
 	m_pPresenter->Stop();
@@ -504,4 +491,9 @@ void CVideoMarker2Dlg::SetFrameRate(size_t frameRate)
 {
 //	size_t interval = 1000 / frameRate;
 //	m_Timer.SetInterval(interval);
+}
+
+void CVideoMarker2Dlg::Stop()
+{
+	m_bPlaying = false;
 }

@@ -98,6 +98,9 @@ protected:
 	int GetCurrentFrameIndex() const;
 	int GetTotalFrameCount() const;
 
+	void SetPlaying(bool bPlaying);
+	bool IsPlaying() const;
+
 protected:
 	CVideoMarker2Dlg* _pDlg;
 	CUI m_ui;

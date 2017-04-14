@@ -20,6 +20,9 @@ public:
 
 	virtual void OnLbnSelchangeList1() override;
 
+	virtual void Play() override;
+
+
 
 };
 

@@ -19,6 +19,9 @@ CPlayState::~CPlayState()
 
 void CPlayState::RefreshButton()
 {
+	m_ui.RefreshButton();
+	GetDlgItem(IDC_BUTTON_STEPBACK)->EnableWindow((GetCurrentFrameIndex() != 0) ? TRUE : FALSE);
+	GetDlgItem(IDC_BUTTON_STEPFORWARD)->EnableWindow((GetCurrentFrameIndex() < (GetTotalFrameCount() - 1)) ? TRUE : FALSE);
 }
 
 void CPlayState::Pause()
