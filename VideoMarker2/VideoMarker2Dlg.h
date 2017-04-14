@@ -87,8 +87,6 @@ private:
 	CVideoMarkerPresenter* m_pPresenter;
 	CNameInputDialog* m_pNameDlg;
 
-
-
 	std::thread m_PlayThread;
 	bool m_bPlaying = false;
 

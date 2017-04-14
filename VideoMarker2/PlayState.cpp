@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "PlayState.h"
-
 #include "State.h"
-
 #include "VideoMarkerPresenter.h"
+
+#include <thread>
 
 CPlayState::CPlayState(CVideoMarker2Dlg* pDlg) :CStateBase(pDlg)
 {
@@ -34,6 +34,16 @@ void CPlayState::Stop()
 {
 	GetPresenter()->Stop();
 //	SetState(STOP);
+}
+
+void CPlayState::Play()
+{
+	SetPlaying(true);
+	while ((GetCurrentFrameIndex() + 1 < GetTotalFrameCount()) && IsPlaying())
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(20));
+		GetPresenter()->ForwardOneFrame(GetCurrentFrameIndex());
+	}
 }
 
 

@@ -150,7 +150,6 @@ void CVideoMarkerPresenter::SeekTo(int nPos)
 	}
 	m_pVideoPlayer->GetNextFrame(rawFrame);
 	m_pTextMgr->GetFrameInfoByPos(frameInfo, m_pVideoPlayer->m_nCurrentFrameIndex);
-
 	std::cout << "总帧数为:" << m_pVideoPlayer->m_nTotalFrames << "当前帧号：" << m_pVideoPlayer->m_nCurrentFrameIndex << std::endl;
 	m_pDlg->SetCurrentFrameIndex(nPos);
 	m_pDlg->SetRawFrame(rawFrame);
