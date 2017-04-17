@@ -17,19 +17,23 @@ CPauseState::~CPauseState()
 
 void CPauseState::RefreshButton()
 {
-
+	m_ui.RefreshButton();
 }
 
 void CPauseState::Play()
 {
-	GetPresenter()->Play();
-//	SetState(PLAY);
+	StartPlayThread();
+	SetState(PLAY);
 }
 
 void CPauseState::Stop()
 {
+	if (IsPlaying())
+	{
+		SetPlaying(false);
+	}
 	GetPresenter()->Stop();
-//	SetState(STOP);
+	SetState(S1);
 }
 
 

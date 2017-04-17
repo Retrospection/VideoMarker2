@@ -13,3 +13,6 @@ StepForward StepBackward Slider AddMark Play Pause Stop
 play
 Pause Stop
 OpenProject SelectMark DeleteMark Undo Redo StepForward StepBackward Slider AddMark Play
+pause
+Play Stop
+OpenProject SelectMark DeleteMark Undo Redo StepForward StepBackward Slider AddMark Pause

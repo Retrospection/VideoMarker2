@@ -26,14 +26,18 @@ void CPlayState::RefreshButton()
 
 void CPlayState::Pause()
 {
-	GetPresenter()->Pause();
-//	SetState(PAUSE);
+
+	SetPlaying(false);
+	JoinPlayThread();
+	SetState(PAUSE);
 }
 
 void CPlayState::Stop()
 {
+	SetPlaying(false);
+	JoinPlayThread();
 	GetPresenter()->Stop();
-//	SetState(STOP);
+	SetState(S1);
 }
 
 

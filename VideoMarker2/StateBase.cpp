@@ -1,12 +1,11 @@
-m_pPictureBox
-m_pPictureBox
-m_pPictureBox
-m_pPictureBox
+
 #include "stdafx.h"
 #include "StateBase.h"
 #include "State.h"
 
 #include "VideoMarker2Dlg.h"
+
+#include <thread>
 
 CStateBase::CStateBase(CVideoMarker2Dlg* pDlg) :_pDlg(pDlg)
 {
@@ -196,6 +195,19 @@ CListBox* CStateBase::GetListBox() const
 	return &_pDlg->m_ListBox;
 }
 
+
+
+void CStateBase::StartPlayThread()
+{
+// 	if (_pDlg->m_PlayThread.joinable())
+// 	{
+// 		_pDlg->m_PlayThread.join();
+// 	}
+	JoinPlayThread();
+	_pDlg->m_PlayThread = std::thread(&CVideoMarker2Dlg::Play, _pDlg);
+
+}
+
 void CStateBase::SetPlaying(bool bPlaying)
 {
 	_pDlg->m_bPlaying = bPlaying;
@@ -205,6 +217,24 @@ bool CStateBase::IsPlaying() const
 {
 	return _pDlg->m_bPlaying;
 }
+
+void CStateBase::JoinPlayThread()
+{
+	if (_pDlg->m_PlayThread.joinable())
+	{
+		_pDlg->m_PlayThread.join();
+	}
+}
+
+// void CStateBase::SetPause(bool bPause)
+// {
+// 	_pDlg->m_bPause = bPause;
+// }
+// 
+// bool CStateBase::IsPause() const
+// {
+// 	return _pDlg->m_bPause;
+// }
 
 
 

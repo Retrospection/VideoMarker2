@@ -41,10 +41,10 @@ CStateBase* CStateFactory::Create(const std::string& state, CVideoMarker2Dlg* pD
 	{
 		return new CInitState(pDlg, config);
 	}
-// 	else if (state == PAUSE)
-// 	{
-// 		return new CPauseState(pDlg);
-// 	}
+	else if (state == PAUSE)
+	{
+		return new CPauseState(pDlg);
+	}
 // 	else if (state == EDIT_MARK)
 // 	{
 // 		return new CEditMarkState(pDlg);

@@ -12,7 +12,7 @@ public:
 public:
 	virtual std::vector<FaceInfo> GetUnsavedFacesInfo() = 0;
 	virtual FrameInfo GetFrameInfo() const = 0;
-	virtual void ClearDeleteFrameInfo() = 0;
+//	virtual void ClearDeleteFrameInfo() = 0;
 	virtual int GetCurrentFrameIndex() const = 0;
 	virtual void SetFrameInfo(const FrameInfo& frameInfo) = 0;
 	virtual void Refresh() = 0;

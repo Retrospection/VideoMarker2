@@ -28,7 +28,6 @@ public:
 	void Close();
 	void Play();
 	void Stop();
-	void Pause();
 	void SeekTo(int nPos);
 	void ForwardOneFrame(int nCurrentFrameIndex);
 	void BackOneFrame(int nCurrentFrameIndex);

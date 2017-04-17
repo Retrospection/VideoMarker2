@@ -101,6 +101,13 @@ protected:
 	void SetPlaying(bool bPlaying);
 	bool IsPlaying() const;
 
+// 	void SetPause(bool bPause);
+// 	bool IsPause() const;
+
+	void StartPlayThread();
+	void JoinPlayThread();
+
+
 protected:
 	CVideoMarker2Dlg* _pDlg;
 	CUI m_ui;

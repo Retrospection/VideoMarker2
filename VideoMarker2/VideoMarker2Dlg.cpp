@@ -23,6 +23,7 @@
 #include "StateFactory.h"
 #include "DataExchange.h"
 #include "StringHelper.h"
+#include "message.h"
 
 // CVideoMarker2Dlg 对话框
 
@@ -52,11 +53,9 @@ BEGIN_MESSAGE_MAP(CVideoMarker2Dlg, CDialogEx)
 	ON_WM_DESTROY()
 	ON_BN_CLICKED(IDC_BUTTON_STEPBACK, &CVideoMarker2Dlg::OnBnClickedBackOneFrame)
 	ON_BN_CLICKED(IDC_BUTTON_STEPFORWARD, &CVideoMarker2Dlg::OnBnClickedForwardOneFrame)
-	ON_BN_CLICKED(IDC_BUTTON5, &CVideoMarker2Dlg::OnBnClickedOpenTextFile)
 	ON_BN_CLICKED(IDC_BUTTON6, &CVideoMarker2Dlg::OnBnClickedStopButton)
 	ON_BN_CLICKED(IDC_BUTTON_PAUSE, &CVideoMarker2Dlg::OnBnClickedPauseButton)
 	ON_BN_CLICKED(IDC_BUTTON_ADDMARK, &CVideoMarker2Dlg::OnBnClickedAddMark)
-	ON_WM_TIMER()
 	ON_BN_CLICKED(IDC_BUTTON_UNDO, &CVideoMarker2Dlg::OnBnClickedButtonRevoke)
 	ON_BN_CLICKED(IDC_BUTTON_REDO, &CVideoMarker2Dlg::OnBnClickedButtonRedo)
 	ON_BN_CLICKED(IDC_BUTTON_OPENPROJECT, &CVideoMarker2Dlg::OnBnClickedButtonProject)
@@ -88,9 +87,7 @@ BOOL CVideoMarker2Dlg::OnInitDialog()
 	// 滑条初始化
 	m_Slider.SetRange(1, 100);
 	m_Slider.SetTicFreq(20);
-
 	LoadUIConfig();
-
 	SetState(INIT);
 	SetRawFrame(cv::Mat(1, 1, CV_8UC3, cv::Scalar(0, 0, 0)));
 
@@ -148,10 +145,17 @@ HCURSOR CVideoMarker2Dlg::OnQueryDragIcon()
 void CVideoMarker2Dlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	CSliderCtrl   *pSlidCtrl = (CSliderCtrl*)GetDlgItem(IDC_SLIDER_1);
+	//	m_pState->Pause();
+	m_pState->Pause();
+
 	{
-//		std::unique_lock<std::mutex> frameIndexLock(m_Mutex);
+		//std::lock_guard<std::mutex> lk(m_CurrentFrameIndexMutex);
 		m_pState->SeekTo(pSlidCtrl->GetPos());
 	}
+	
+
+
+// 	m_pState->Play();
 	m_pState->RefreshButton();
 	CDialogEx::OnHScroll(nSBCode, nPos, pScrollBar);
 
@@ -172,7 +176,7 @@ std::string CVideoMarker2Dlg::GetFileName() const
 std::string CVideoMarker2Dlg::GetTextFileName() const
 {
 	std::cout << m_strTextFileName << std::endl;
-	return m_strTextFileName;
+	return m_strTextFileName; 
 }
 
 void CVideoMarker2Dlg::SetFileOpenedStatus(bool status)
@@ -193,6 +197,7 @@ void CVideoMarker2Dlg::SetTotalFrameCount(int nTotalFrameCount)
 
 void CVideoMarker2Dlg::SetCurrentFrameIndex(int nCurrentFrameIndex)
 {
+//	std::lock_guard<std::mutex> guard(m_CurrentFrameIndexMutex);
 	assert(nCurrentFrameIndex >= 0 && nCurrentFrameIndex < m_nTotalFrameCount);
 	m_nCurrentFrameIndex = nCurrentFrameIndex;
 	std::cout << "CurrentFrameIndex:" << m_nCurrentFrameIndex << std::endl;
@@ -205,12 +210,11 @@ void CVideoMarker2Dlg::SetTextFileOpenedStatus(bool status)
 
 void CVideoMarker2Dlg::RefreshSlider()
 {
+//	std::lock_guard<std::mutex> guard(m_CurrentFrameIndexMutex);
 	CSliderCtrl* pSlidCtrl = (CSliderCtrl*)GetDlgItem(IDC_SLIDER_1);
 	pSlidCtrl->SetPos(m_nCurrentFrameIndex);
 	pSlidCtrl->SetRange(0, m_nTotalFrameCount == 0 ? 0 : m_nTotalFrameCount - 1);
 }
-
-
 
 void CVideoMarker2Dlg::SetFrameInfo(const FrameInfo& frameInfo)
 {
@@ -253,14 +257,6 @@ void CVideoMarker2Dlg::OnBnClickedOpenFileButton()
 	m_pState->Open();
 }
 
-
-void CVideoMarker2Dlg::OnBnClickedPlayVideoButton()
-{
-	assert(!m_bPlaying);
-	m_PlayThread = std::thread(std::bind(&CVideoMarker2Dlg::Play, this));
-	m_PlayThread.detach();
-}
-
 void CVideoMarker2Dlg::OnBnClickedBackOneFrame()
 {
 	m_pPictureBox->ClearUnsavedFaceInfo();
@@ -273,55 +269,33 @@ void CVideoMarker2Dlg::OnBnClickedForwardOneFrame()
 {
 	m_pPictureBox->ClearUnsavedFaceInfo();
 	m_pState->Pause();
-	m_pState->ForwardOneFrame(m_nCurrentFrameIndex);
+
+	while (!m_CurrentFrameIndexMutex.try_lock());
+		m_pState->ForwardOneFrame(m_nCurrentFrameIndex);
+		m_CurrentFrameIndexMutex.unlock();
+
 	m_pState->RefreshButton();
 }
 
-void CVideoMarker2Dlg::OnBnClickedOpenTextFile()
+void CVideoMarker2Dlg::OnBnClickedPlayVideoButton()
 {
-	CFileDialog fileDlg(TRUE, L"*.txt", NULL, OFN_FILEMUSTEXIST | OFN_READONLY | OFN_PATHMUSTEXIST,
-		L"文本文件|*.txt||", NULL);
-	fileDlg.m_ofn.lpstrTitle = L"选择要编辑的视频文件";
-	if (fileDlg.DoModal() != IDOK)
-	{
-		return;
-	}
-	m_strTextFileName = CStringHelper::ConvertCStringToString(fileDlg.GetPathName());
-	m_pState->OpenTextFile();
+	assert(!m_bPlaying);
+	m_pState->Play();
 }
 
 void CVideoMarker2Dlg::OnBnClickedStopButton()
 {
-//	m_Timer.KillTimer();
-	m_pPresenter->Stop();
+	m_pState->Stop();
 }
 
 void CVideoMarker2Dlg::OnBnClickedPauseButton()
 {
-//	m_Timer.KillTimer();
-	m_pPresenter->Pause();
+	m_pState->Pause();
 }
 
 void CVideoMarker2Dlg::OnBnClickedAddMark()
 {
 	m_pState->AddSaveMarkBtnClicked();
-}
-
-void CVideoMarker2Dlg::OnTimer(UINT_PTR nIDEvent)
-{
-	if (m_nCurrentFrameIndex+1 >= m_nTotalFrameCount)
-	{
-		KillTimer(PLAY_TIMER);
-		CDialogEx::OnTimer(nIDEvent);
-		return;
-	}
-	if (nIDEvent == PLAY_TIMER)
-	{
-		m_pState->ForwardOneFrame(m_nCurrentFrameIndex);
-		m_pState->RefreshButton();
-	}
-
-	CDialogEx::OnTimer(nIDEvent);
 }
 
 void CVideoMarker2Dlg::Play()
@@ -330,10 +304,13 @@ void CVideoMarker2Dlg::Play()
 	while ((m_nCurrentFrameIndex + 1 < m_nTotalFrameCount) && m_bPlaying)
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(20));
+		//std::unique_lock<std::mutex> lk(m_CurrentFrameIndexMutex);
 		m_pPresenter->ForwardOneFrame(m_nCurrentFrameIndex);
 	}
-	m_bPlaying = false;
-	m_pPresenter->Stop();
+// 	if (!m_bPause && !m_bPlaying)
+// 	{
+// 		m_pState->Stop();
+// 	}
 }
 
 void CVideoMarker2Dlg::ShowFrameInfoInListBox()
@@ -341,7 +318,6 @@ void CVideoMarker2Dlg::ShowFrameInfoInListBox()
 	DataExchange de(&m_FrameInfo, &m_ListBox);
 	de.Update(true);
 }
-
 
 void CVideoMarker2Dlg::OnBnClickedButtonRevoke()
 {
@@ -375,13 +351,9 @@ int CVideoMarker2Dlg::GetCurrentFrameIndex() const
 	return m_nCurrentFrameIndex;
 }
 
-
-
 void CVideoMarker2Dlg::OnBnClickedButtonProject()
 {
-	// TODO:  在此添加控件通知处理程序代码
-	CFileDialog fileDlg(TRUE, L"*.txt", NULL, OFN_FILEMUSTEXIST | OFN_READONLY | OFN_PATHMUSTEXIST,
-		L"文本文件|*.txt||", NULL);
+	CFileDialog fileDlg(TRUE, L"*.txt", NULL, OFN_FILEMUSTEXIST | OFN_READONLY | OFN_PATHMUSTEXIST, L"文本文件|*.txt||", NULL);
 	fileDlg.m_ofn.lpstrTitle = L"请选择工程文件";
 	if (fileDlg.DoModal() != IDOK)
 	{
@@ -431,9 +403,7 @@ void CVideoMarker2Dlg::LoadUIConfig()
 std::vector<std::string> CVideoMarker2Dlg::GetLines(const std::string& filename)
 {
 	std::ifstream ifs(filename);
-
 	assert(ifs.is_open());
-
 	std::vector<std::string> ret;
 	std::string line;
 	while (std::getline(ifs,line))
@@ -453,13 +423,6 @@ bool CVideoMarker2Dlg::GetUnsavedName2(std::string& unsavedName)
 	return true;
 }
 
-
-
-void CVideoMarker2Dlg::ClearDeleteFrameInfo()
-{
-}
-
-
 void CVideoMarker2Dlg::OnBnClickedButtonDeletemark()
 {
 	m_pState->DeleteMarkBtnClicked();
@@ -469,7 +432,6 @@ FrameInfo CVideoMarker2Dlg::GetFrameInfo() const
 {
 	return m_pPictureBox->GetFrameInfo();
 }
-
 
 void CVideoMarker2Dlg::OnBnClickedButtonSelectMark()
 {
@@ -481,16 +443,9 @@ std::vector<FaceInfo> CVideoMarker2Dlg::GetUnsavedFacesInfo()
 	return m_pPictureBox->GetUnsavedFrameInfo().facesInfo;
 }
 
-
 void CVideoMarker2Dlg::OnLbnSelchangeList1()
 {
 	m_pState->OnLbnSelchangeList1();
-}
-
-void CVideoMarker2Dlg::SetFrameRate(size_t frameRate)
-{
-//	size_t interval = 1000 / frameRate;
-//	m_Timer.SetInterval(interval);
 }
 
 void CVideoMarker2Dlg::Stop()

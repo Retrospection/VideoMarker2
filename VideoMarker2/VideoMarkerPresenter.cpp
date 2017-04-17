@@ -90,7 +90,8 @@ bool CVideoMarkerPresenter::OpenVideo(const std::string& strVideoFileName)
 	m_pDlg->SetRawFrame(frame);
 	m_pDlg->SetTotalFrameCount(m_pVideoPlayer->m_nTotalFrames);
 	m_pDlg->SetCurrentFrameIndex(0);
-	m_pDlg->SetFrameRate(m_pVideoPlayer->m_nFrameRate);
+
+//	m_pDlg->SetCurrentFrameIndex(m_pVideoPlayer->m_nTotalFrames - 20);
 	m_pDlg->Refresh();
 	return true;
 }
@@ -120,9 +121,7 @@ void CVideoMarkerPresenter::Play()
 }
 
 
-void CVideoMarkerPresenter::Pause()
-{
-}
+
 
 
 void CVideoMarkerPresenter::Stop()

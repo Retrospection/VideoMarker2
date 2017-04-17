@@ -13,6 +13,7 @@
 #include <vector>
 
 #include <mutex>
+#include <condition_variable>
 
 #include "afxcmn.h"
 #include "afxwin.h"
@@ -54,7 +55,6 @@ public:
 public:
 	virtual int GetCurrentFrameIndex() const override;
 	virtual std::vector<FaceInfo> GetUnsavedFacesInfo() override;
-	virtual void ClearDeleteFrameInfo() override;
 	virtual FrameInfo GetFrameInfo() const override;
 
 
@@ -69,7 +69,6 @@ public:
 	void SetTotalFrameCount(int nTotalFrameCount);
 	void SetCurrentFrameIndex(int nCurrentFrameIndex);
 	void SetFileOpenedStatus(bool status);
-	void SetFrameRate(size_t frameRate);
 	void ClearUnsavedFrameInfo();
 
 
@@ -78,8 +77,8 @@ public:
 
 	void Play();
 
-	void Stop();
 
+	void Stop();
 
 
 //////////////////////////////////////////////////////  实现  ////////////////////////////////////////////////
@@ -87,10 +86,13 @@ private:
 	CVideoMarkerPresenter* m_pPresenter;
 	CNameInputDialog* m_pNameDlg;
 
-
-
 	std::thread m_PlayThread;
 	bool m_bPlaying = false;
+	//bool m_bPause = false;
+
+	std::mutex m_CurrentFrameIndexMutex;
+	//std::condition_variable cv;
+	//bool m_bReady = false;
 
 private:
 	bool m_bStatus;
@@ -99,7 +101,6 @@ private:
 private:
  	int m_nTotalFrameCount;
 	FrameInfo m_FrameInfo;
-
 
 private:
 	std::string m_strTextFileName;
@@ -113,13 +114,11 @@ private:
 	CListBox m_ListBox;
 	CPictureBox* m_pPictureBox;
 
-// 状态管理
-// 在SetState(const std::string& state)中更新
-// 如果m_States中有，则直接从m_States中取出指针
-// 如果没有，new之后insert并return。
 private:
 	CStateBase* m_pState;
 	std::unordered_map<std::string, CStateBase*> m_States;
+
+
 	std::unordered_map<std::string, UIConfig> m_UIConfigs;
 	bool m_bUIConfigLoaded;
 
@@ -161,11 +160,9 @@ public:
 	afx_msg void OnBnClickedPlayVideoButton();
 	afx_msg void OnBnClickedBackOneFrame();
 	afx_msg void OnBnClickedForwardOneFrame();
-	afx_msg void OnBnClickedOpenTextFile();
 	afx_msg void OnBnClickedStopButton();
 	afx_msg void OnBnClickedPauseButton();
 	afx_msg void OnBnClickedAddMark();
-	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnBnClickedButtonRevoke();
 	afx_msg void OnBnClickedButtonRedo();
 	afx_msg void OnBnClickedButtonProject();
