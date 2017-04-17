@@ -15,6 +15,8 @@ public:
 
 	virtual void RefreshButton() override;
 
+	virtual void Play() override;
+
 
 };
 

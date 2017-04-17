@@ -230,6 +230,10 @@ void CVideoMarker2Dlg::SetState(const std::string& state)
 		m_pState = iter->second;
 		Refresh();
 		m_pState->RefreshButton();
+		if (state == PLAY)
+		{
+			m_pState->Play();
+		}
 
 		return;
 	}
@@ -257,6 +261,21 @@ void CVideoMarker2Dlg::OnBnClickedOpenFileButton()
 	m_pState->Open();
 }
 
+<<<<<<< HEAD
+=======
+
+void CVideoMarker2Dlg::OnBnClickedPlayVideoButton()
+{
+// 	assert(!m_bPlaying);
+// 	m_PlayThread = std::thread(std::bind(&CVideoMarker2Dlg::Play, this));
+// 	m_PlayThread.detach();
+
+	assert(!m_bPlaying);
+	m_pState->Play();
+
+}
+
+>>>>>>> tmp
 void CVideoMarker2Dlg::OnBnClickedBackOneFrame()
 {
 	m_pPictureBox->ClearUnsavedFaceInfo();
