@@ -81,8 +81,6 @@ BOOL CVideoMarker2Dlg::OnInitDialog()
 	freopen("CONOUT$", "w+t", stdout); // 重定向STDOUT
 
 
-	std::cout << "Hello,world!" << std::endl;
-
 
 	// 滑条初始化
 	m_Slider.SetRange(1, 100);
@@ -277,9 +275,7 @@ void CVideoMarker2Dlg::OnBnClickedForwardOneFrame()
 	m_pPictureBox->ClearUnsavedFaceInfo();
 	m_pState->Pause();
 
-	while (!m_CurrentFrameIndexMutex.try_lock());
-		m_pState->ForwardOneFrame(m_nCurrentFrameIndex);
-		m_CurrentFrameIndexMutex.unlock();
+	m_pState->ForwardOneFrame(m_nCurrentFrameIndex);
 
 	m_pState->RefreshButton();
 }
@@ -308,16 +304,28 @@ void CVideoMarker2Dlg::OnBnClickedAddMark()
 void CVideoMarker2Dlg::Play()
 {
 	m_bPlaying = true;
-	while ((m_nCurrentFrameIndex + 1 < m_nTotalFrameCount) && m_bPlaying)
+	while ((m_nCurrentFrameIndex + 1 < m_nTotalFrameCount)/* && m_bPlaying*/)
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(20));
-		//std::unique_lock<std::mutex> lk(m_CurrentFrameIndexMutex);
-		m_pPresenter->ForwardOneFrame(m_nCurrentFrameIndex);
+		while (!m_PlayingMutex.try_lock());
+		printf("[lock]---m_bPlaying has been locked in playing thread!\n");
+		if (m_bPlaying)
+		{
+			m_pPresenter->ForwardOneFrame(m_nCurrentFrameIndex);
+			printf("[thread run]---Play thread get next frame!\n");
+			++m_nFrameCounter;
+		}
+		else
+		{
+			printf("[thread exit]---Play thread will exit!\n");
+			break;
+		}
+		m_PlayingMutex.unlock();
+		printf("[unlock]---m_bPlaying has been unlocked!\n");
 	}
-// 	if (!m_bPause && !m_bPlaying)
-// 	{
-// 		m_pState->Stop();
-// 	}
+	m_PlayingMutex.unlock();
+	printf("[unlock]---m_bPlaying has been unlocked!\n");
+	assert(m_nCurrentFrameIndex == m_nFrameCounter);
 }
 
 void CVideoMarker2Dlg::ShowFrameInfoInListBox()
@@ -349,7 +357,7 @@ void CVideoMarker2Dlg::ClearUnsavedFrameInfo()
 unsigned int CVideoMarker2Dlg::ValidateFaceInfo()
 {
 	FrameInfo frameInfo = m_pPictureBox->GetFrameInfo();
-	std::cout << "待验证的 facesinfo 为: " << frameInfo.toString() << std::endl;
+	//std::cout << "待验证的 facesinfo 为: " << frameInfo.toString() << std::endl;
 	return m_pPresenter->ValidateFacesInfo(frameInfo.facesInfo);
 }
 
@@ -458,4 +466,16 @@ void CVideoMarker2Dlg::OnLbnSelchangeList1()
 void CVideoMarker2Dlg::Stop()
 {
 	m_bPlaying = false;
+}
+
+void CVideoMarker2Dlg::SetPlaying(bool bPlaying)
+{
+	while (!m_PlayingMutex.try_lock())
+	{
+		return;
+	}
+	printf("[lock]---m_bPlaying has been locked by button!\n");
+	m_bPlaying = bPlaying;
+	m_PlayingMutex.unlock();
+	printf("[unlock]---m_bPlaying has been unlocked!\n");
 }

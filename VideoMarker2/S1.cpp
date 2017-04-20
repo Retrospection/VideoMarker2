@@ -65,10 +65,8 @@ void CS1::OnLbnSelchangeList1()
 
 void CS1::Play()
 {
-
 	StartPlayThread();
 	SetState(PLAY);
-
 }
 
 

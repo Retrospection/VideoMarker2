@@ -2,6 +2,7 @@
 #include "PlayState.h"
 #include "State.h"
 #include "VideoMarkerPresenter.h"
+#include "VideoMarker2Dlg.h"
 
 #include <thread>
 
@@ -26,28 +27,33 @@ void CPlayState::RefreshButton()
 
 void CPlayState::Pause()
 {
-
-	SetPlaying(false);
-	JoinPlayThread();
-	SetState(PAUSE);
+	//SetPlaying(false);
+	_pDlg->SetPlaying(false);
+	if (!IsPlaying())
+	{
+		JoinPlayThread();
+		SetState(PAUSE);
+	}
 }
 
 void CPlayState::Stop()
 {
-	SetPlaying(false);
+	//SetPlaying(false);
+	_pDlg->SetPlaying(false);
 	JoinPlayThread();
 	GetPresenter()->Stop();
 	SetState(S1);
 }
 
-void CPlayState::Play()
-{
-	SetPlaying(true);
-	while ((GetCurrentFrameIndex() + 1 < GetTotalFrameCount()) && IsPlaying())
-	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(20));
-		GetPresenter()->ForwardOneFrame(GetCurrentFrameIndex());
-	}
-}
+// void CPlayState::Play()
+// {
+// 
+// 	_pDlg->SetPlaying(true);
+// 	while ((GetCurrentFrameIndex() + 1 < GetTotalFrameCount()) && IsPlaying())
+// 	{
+// 		std::this_thread::sleep_for(std::chrono::milliseconds(20));
+// 		GetPresenter()->ForwardOneFrame(GetCurrentFrameIndex());
+// 	}
+// }
 
 

@@ -77,8 +77,11 @@ public:
 
 	void Play();
 
+	void SetPlaying(bool bPlaying);
 
 	void Stop();
+
+
 
 
 //////////////////////////////////////////////////////  й╣ож  ////////////////////////////////////////////////
@@ -88,11 +91,9 @@ private:
 
 	std::thread m_PlayThread;
 	bool m_bPlaying = false;
-	//bool m_bPause = false;
 
-	std::mutex m_CurrentFrameIndexMutex;
-	//std::condition_variable cv;
-	//bool m_bReady = false;
+	std::mutex m_PlayingMutex;
+	size_t m_nFrameCounter = 0;
 
 private:
 	bool m_bStatus;
