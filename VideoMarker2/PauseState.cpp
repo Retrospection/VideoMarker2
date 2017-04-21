@@ -4,6 +4,7 @@
 #include "state.h"
 
 #include "VideoMarkerPresenter.h"
+#include "VideoMarker2Dlg.h"
 
 CPauseState::CPauseState(CVideoMarker2Dlg* pDlg)
 	:CStateBase(pDlg)
@@ -22,16 +23,14 @@ void CPauseState::RefreshButton()
 
 void CPauseState::Play()
 {
-	StartPlayThread();
+//	StartPlayThread();
+	SetTimer(_pDlg->m_hWnd, CVideoMarker2Dlg::PLAY_TIMER, 40, NULL);
 	SetState(PLAY);
 }
 
 void CPauseState::Stop()
 {
-	if (IsPlaying())
-	{
-		SetPlaying(false);
-	}
+	KillTimer(_pDlg->m_hWnd, CVideoMarker2Dlg::PLAY_TIMER);
 	GetPresenter()->Stop();
 	SetState(S1);
 }

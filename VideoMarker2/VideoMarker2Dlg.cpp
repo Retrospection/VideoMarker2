@@ -62,6 +62,7 @@ BEGIN_MESSAGE_MAP(CVideoMarker2Dlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_DELETEMARK, &CVideoMarker2Dlg::OnBnClickedButtonDeletemark)
 	ON_BN_CLICKED(IDC_BUTTON_SELECTMARK, &CVideoMarker2Dlg::OnBnClickedButtonSelectMark)
 	ON_LBN_SELCHANGE(IDC_LIST1, &CVideoMarker2Dlg::OnLbnSelchangeList1)
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 // CVideoMarker2Dlg 消息处理程序
@@ -143,17 +144,7 @@ HCURSOR CVideoMarker2Dlg::OnQueryDragIcon()
 void CVideoMarker2Dlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	CSliderCtrl   *pSlidCtrl = (CSliderCtrl*)GetDlgItem(IDC_SLIDER_1);
-	//	m_pState->Pause();
-	m_pState->Pause();
-
-	{
-		//std::lock_guard<std::mutex> lk(m_CurrentFrameIndexMutex);
-		m_pState->SeekTo(pSlidCtrl->GetPos());
-	}
-	
-
-
-// 	m_pState->Play();
+	m_pState->SeekTo(pSlidCtrl->GetPos());
 	m_pState->RefreshButton();
 	CDialogEx::OnHScroll(nSBCode, nPos, pScrollBar);
 
@@ -282,7 +273,7 @@ void CVideoMarker2Dlg::OnBnClickedForwardOneFrame()
 
 void CVideoMarker2Dlg::OnBnClickedPlayVideoButton()
 {
-	assert(!m_bPlaying);
+	//assert(!m_bPlaying);
 	m_pState->Play();
 }
 
@@ -303,29 +294,7 @@ void CVideoMarker2Dlg::OnBnClickedAddMark()
 
 void CVideoMarker2Dlg::Play()
 {
-	m_bPlaying = true;
-	while ((m_nCurrentFrameIndex + 1 < m_nTotalFrameCount)/* && m_bPlaying*/)
-	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(20));
-		while (!m_PlayingMutex.try_lock());
-		printf("[lock]---m_bPlaying has been locked in playing thread!\n");
-		if (m_bPlaying)
-		{
-			m_pPresenter->ForwardOneFrame(m_nCurrentFrameIndex);
-			printf("[thread run]---Play thread get next frame!\n");
-			++m_nFrameCounter;
-		}
-		else
-		{
-			printf("[thread exit]---Play thread will exit!\n");
-			break;
-		}
-		m_PlayingMutex.unlock();
-		printf("[unlock]---m_bPlaying has been unlocked!\n");
-	}
-	m_PlayingMutex.unlock();
-	printf("[unlock]---m_bPlaying has been unlocked!\n");
-	assert(m_nCurrentFrameIndex == m_nFrameCounter);
+	m_pPresenter->ForwardOneFrame(m_nCurrentFrameIndex);
 }
 
 void CVideoMarker2Dlg::ShowFrameInfoInListBox()
@@ -463,19 +432,30 @@ void CVideoMarker2Dlg::OnLbnSelchangeList1()
 	m_pState->OnLbnSelchangeList1();
 }
 
-void CVideoMarker2Dlg::Stop()
-{
-	m_bPlaying = false;
-}
+// void CVideoMarker2Dlg::Stop()
+// {
+// 	m_bPlaying = false;
+// }
+// 
+// void CVideoMarker2Dlg::SetPlaying(bool bPlaying)
+// {
+// 	while (!m_PlayingMutex.try_lock())
+// 	{
+// 		return;
+// 	}
+// 	printf("[lock]---m_bPlaying has been locked by button!\n");
+// 	m_bPlaying = bPlaying;
+// 	m_PlayingMutex.unlock();
+// 	printf("[unlock]---m_bPlaying has been unlocked!\n");
+// }
 
-void CVideoMarker2Dlg::SetPlaying(bool bPlaying)
+
+void CVideoMarker2Dlg::OnTimer(UINT_PTR nIDEvent)
 {
-	while (!m_PlayingMutex.try_lock())
+	if (nIDEvent == PLAY_TIMER)
 	{
-		return;
+		Play();
 	}
-	printf("[lock]---m_bPlaying has been locked by button!\n");
-	m_bPlaying = bPlaying;
-	m_PlayingMutex.unlock();
-	printf("[unlock]---m_bPlaying has been unlocked!\n");
+
+	__super::OnTimer(nIDEvent);
 }

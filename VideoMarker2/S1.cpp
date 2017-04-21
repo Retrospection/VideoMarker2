@@ -65,7 +65,8 @@ void CS1::OnLbnSelchangeList1()
 
 void CS1::Play()
 {
-	StartPlayThread();
+//	StartPlayThread();
+	SetTimer(_pDlg->m_hWnd, CVideoMarker2Dlg::PLAY_TIMER, 40,NULL);
 	SetState(PLAY);
 }
 

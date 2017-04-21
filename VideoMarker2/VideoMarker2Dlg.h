@@ -31,7 +31,6 @@ class CVideoMarkerPresenter;
 class CStateBase;
 class CPictureBox;
 
-const int PLAY_TIMER = 1;
 
 
 
@@ -74,26 +73,13 @@ public:
 
 	unsigned int ValidateFaceInfo();
 
-
-	void Play();
-
-	void SetPlaying(bool bPlaying);
-
-	void Stop();
-
-
+	static const UINT_PTR PLAY_TIMER = 1;
 
 
 //////////////////////////////////////////////////////  实现  ////////////////////////////////////////////////
 private:
 	CVideoMarkerPresenter* m_pPresenter;
 	CNameInputDialog* m_pNameDlg;
-
-	std::thread m_PlayThread;
-	bool m_bPlaying = false;
-
-	std::mutex m_PlayingMutex;
-	size_t m_nFrameCounter = 0;
 
 private:
 	bool m_bStatus;
@@ -135,6 +121,9 @@ private:
 	void LoadUIConfig();
 	std::vector<std::string> GetLines(const std::string& filename);
 
+	void Play();
+
+
 //////////////////////////////////////////////////////  实现  ////////////////////////////////////////////////
 
 
@@ -170,4 +159,5 @@ public:
 	afx_msg void OnBnClickedButtonDeletemark();
 	afx_msg void OnBnClickedButtonSelectMark();
 	afx_msg void OnLbnSelchangeList1();
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };

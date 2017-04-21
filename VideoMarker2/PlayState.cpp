@@ -27,20 +27,13 @@ void CPlayState::RefreshButton()
 
 void CPlayState::Pause()
 {
-	//SetPlaying(false);
-	_pDlg->SetPlaying(false);
-	if (!IsPlaying())
-	{
-		JoinPlayThread();
-		SetState(PAUSE);
-	}
+	KillTimer(_pDlg->m_hWnd, CVideoMarker2Dlg::PLAY_TIMER);
+	SetState(PAUSE);
 }
 
 void CPlayState::Stop()
 {
-	//SetPlaying(false);
-	_pDlg->SetPlaying(false);
-	JoinPlayThread();
+	KillTimer(_pDlg->m_hWnd, CVideoMarker2Dlg::PLAY_TIMER);
 	GetPresenter()->Stop();
 	SetState(S1);
 }

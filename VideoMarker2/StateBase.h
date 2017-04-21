@@ -98,14 +98,12 @@ protected:
 	int GetCurrentFrameIndex() const;
 	int GetTotalFrameCount() const;
 
-	void SetPlaying(bool bPlaying);
-	bool IsPlaying() const;
-
+//	void SetPlaying(bool bPlaying);
+//	bool IsPlaying() const;
 // 	void SetPause(bool bPause);
 // 	bool IsPause() const;
-
-	void StartPlayThread();
-	void JoinPlayThread();
+//	void StartPlayThread();
+//	void JoinPlayThread();
 
 
 protected:
