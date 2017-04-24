@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="State">
-      <UniqueIdentifier>{61920604-c172-45cc-879e-137f1b8c8f74}</UniqueIdentifier>
-    </Filter>
     <Filter Include="View">
       <UniqueIdentifier>{4854ec52-78a7-46cd-9654-1dddc137c91a}</UniqueIdentifier>
     </Filter>
@@ -28,44 +25,50 @@
     <Filter Include="App">
       <UniqueIdentifier>{1a3ed256-6ca2-4004-9cc0-544dabb915d5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="State\InitState">
-      <UniqueIdentifier>{b87de61b-75dc-4005-8a96-6e00931c5d37}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="State\StateFactory">
-      <UniqueIdentifier>{bd31ab3b-4d10-410f-a355-b23057368087}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="State\StateBase">
-      <UniqueIdentifier>{a935c75d-d959-4d37-bffd-9a3924fc0308}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="State\PlayState">
-      <UniqueIdentifier>{c52436ed-b103-4507-a401-461a4aecec03}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="State\PauseState">
-      <UniqueIdentifier>{6a84476e-03f3-4e5c-a1e2-6294958a57e1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="State\StateHeader">
-      <UniqueIdentifier>{3714edd3-4929-4ac8-8d0a-59d56cb4aa76}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="State\StopState">
-      <UniqueIdentifier>{98af68d3-6c85-43f3-862d-d7ef1ff09e82}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Util">
       <UniqueIdentifier>{87b7555d-2128-41e9-9de5-871d5cc80cc0}</UniqueIdentifier>
     </Filter>
     <Filter Include="Drawable">
       <UniqueIdentifier>{3e236ee6-15a8-44fc-b056-e74f72a6c0f7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="State\S1">
-      <UniqueIdentifier>{05d49263-9c8e-4d61-aab5-a51b0e1702cf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="State\S5">
-      <UniqueIdentifier>{6f20a05c-d203-414a-9234-d198ab24cbda}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Util\CvvImage">
       <UniqueIdentifier>{9b4fe784-882a-4968-9620-9ffae33e3bd2}</UniqueIdentifier>
     </Filter>
     <Filter Include="Primitive">
       <UniqueIdentifier>{161466c7-d1ff-4ad3-b693-9097088248f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PictureBoxState">
+      <UniqueIdentifier>{872037e2-0798-4050-9747-67596c9f6022}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DlgState">
+      <UniqueIdentifier>{61920604-c172-45cc-879e-137f1b8c8f74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DlgState\InitState">
+      <UniqueIdentifier>{b87de61b-75dc-4005-8a96-6e00931c5d37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DlgState\StateFactory">
+      <UniqueIdentifier>{bd31ab3b-4d10-410f-a355-b23057368087}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DlgState\StateBase">
+      <UniqueIdentifier>{a935c75d-d959-4d37-bffd-9a3924fc0308}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DlgState\PlayState">
+      <UniqueIdentifier>{c52436ed-b103-4507-a401-461a4aecec03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DlgState\PauseState">
+      <UniqueIdentifier>{6a84476e-03f3-4e5c-a1e2-6294958a57e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DlgState\StateHeader">
+      <UniqueIdentifier>{3714edd3-4929-4ac8-8d0a-59d56cb4aa76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DlgState\StopState">
+      <UniqueIdentifier>{98af68d3-6c85-43f3-862d-d7ef1ff09e82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DlgState\S1">
+      <UniqueIdentifier>{05d49263-9c8e-4d61-aab5-a51b0e1702cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DlgState\S5">
+      <UniqueIdentifier>{6f20a05c-d203-414a-9234-d198ab24cbda}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -103,25 +106,25 @@
       <Filter>App</Filter>
     </ClInclude>
     <ClInclude Include="InitState.h">
-      <Filter>State\InitState</Filter>
+      <Filter>DlgState\InitState</Filter>
     </ClInclude>
     <ClInclude Include="StateFactory.h">
-      <Filter>State\StateFactory</Filter>
+      <Filter>DlgState\StateFactory</Filter>
     </ClInclude>
     <ClInclude Include="StateBase.h">
-      <Filter>State\StateBase</Filter>
+      <Filter>DlgState\StateBase</Filter>
     </ClInclude>
     <ClInclude Include="PlayState.h">
-      <Filter>State\PlayState</Filter>
+      <Filter>DlgState\PlayState</Filter>
     </ClInclude>
     <ClInclude Include="PauseState.h">
-      <Filter>State\PauseState</Filter>
+      <Filter>DlgState\PauseState</Filter>
     </ClInclude>
     <ClInclude Include="State.h">
-      <Filter>State\StateHeader</Filter>
+      <Filter>DlgState\StateHeader</Filter>
     </ClInclude>
     <ClInclude Include="StopState.h">
-      <Filter>State\StopState</Filter>
+      <Filter>DlgState\StopState</Filter>
     </ClInclude>
     <ClInclude Include="PictureBox.h">
       <Filter>View</Filter>
@@ -157,10 +160,10 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="S1.h">
-      <Filter>State\S1</Filter>
+      <Filter>DlgState\S1</Filter>
     </ClInclude>
     <ClInclude Include="S5.h">
-      <Filter>State\S5</Filter>
+      <Filter>DlgState\S5</Filter>
     </ClInclude>
     <ClInclude Include="S8.h">
       <Filter>头文件</Filter>
@@ -183,22 +186,7 @@
     <ClInclude Include="S13.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="PBStateBase.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="PBInitState.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="PBAddState.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="PBSelectState.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="FaceInfoManager.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="PBModifyState.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="ActiveBoxManager.h">
@@ -209,6 +197,21 @@
     </ClInclude>
     <ClInclude Include="message.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PBAddState.h">
+      <Filter>PictureBoxState</Filter>
+    </ClInclude>
+    <ClInclude Include="PBInitState.h">
+      <Filter>PictureBoxState</Filter>
+    </ClInclude>
+    <ClInclude Include="PBModifyState.h">
+      <Filter>PictureBoxState</Filter>
+    </ClInclude>
+    <ClInclude Include="PBSelectState.h">
+      <Filter>PictureBoxState</Filter>
+    </ClInclude>
+    <ClInclude Include="PBStateBase.h">
+      <Filter>PictureBoxState</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -234,22 +237,22 @@
       <Filter>App</Filter>
     </ClCompile>
     <ClCompile Include="InitState.cpp">
-      <Filter>State\InitState</Filter>
+      <Filter>DlgState\InitState</Filter>
     </ClCompile>
     <ClCompile Include="StateFactory.cpp">
-      <Filter>State\StateFactory</Filter>
+      <Filter>DlgState\StateFactory</Filter>
     </ClCompile>
     <ClCompile Include="StateBase.cpp">
-      <Filter>State\StateBase</Filter>
+      <Filter>DlgState\StateBase</Filter>
     </ClCompile>
     <ClCompile Include="PlayState.cpp">
-      <Filter>State\PlayState</Filter>
+      <Filter>DlgState\PlayState</Filter>
     </ClCompile>
     <ClCompile Include="PauseState.cpp">
-      <Filter>State\PauseState</Filter>
+      <Filter>DlgState\PauseState</Filter>
     </ClCompile>
     <ClCompile Include="StopState.cpp">
-      <Filter>State\StopState</Filter>
+      <Filter>DlgState\StopState</Filter>
     </ClCompile>
     <ClCompile Include="PictureBox.cpp">
       <Filter>View</Filter>
@@ -267,10 +270,10 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="S1.cpp">
-      <Filter>State\S1</Filter>
+      <Filter>DlgState\S1</Filter>
     </ClCompile>
     <ClCompile Include="S5.cpp">
-      <Filter>State\S5</Filter>
+      <Filter>DlgState\S5</Filter>
     </ClCompile>
     <ClCompile Include="NameInputDialog.cpp">
       <Filter>View</Filter>
@@ -281,23 +284,23 @@
     <ClCompile Include="S13.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="PBStateBase.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="PBInitState.cpp">
+    <ClCompile Include="ActiveBoxManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="PBAddState.cpp">
-      <Filter>源文件</Filter>
+      <Filter>PictureBoxState</Filter>
     </ClCompile>
-    <ClCompile Include="PBSelectState.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="PBInitState.cpp">
+      <Filter>PictureBoxState</Filter>
     </ClCompile>
     <ClCompile Include="PBModifyState.cpp">
-      <Filter>源文件</Filter>
+      <Filter>PictureBoxState</Filter>
     </ClCompile>
-    <ClCompile Include="ActiveBoxManager.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="PBSelectState.cpp">
+      <Filter>PictureBoxState</Filter>
+    </ClCompile>
+    <ClCompile Include="PBStateBase.cpp">
+      <Filter>PictureBoxState</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -4,7 +4,7 @@ class CPauseState :
 	public CStateBase
 {
 public:
-	CPauseState(CVideoMarker2Dlg* pDlg);
+	CPauseState(CVideoMarker2Dlg* pDlg, const UIConfig& config);
 	~CPauseState();
 
 	virtual void RefreshButton() override;

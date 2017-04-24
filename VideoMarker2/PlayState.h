@@ -4,7 +4,7 @@ class CPlayState :
 	public CStateBase
 {
 public:
-	CPlayState(CVideoMarker2Dlg* pDlg);
+	CPlayState(CVideoMarker2Dlg* pDlg, const UIConfig& config);
 	~CPlayState();
 
 public:

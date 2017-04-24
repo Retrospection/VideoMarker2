@@ -25,7 +25,7 @@ public:
 	virtual void SetState(size_t nEditType);
 
 protected:
-	void OnLButtonDown2(UINT nFlags, CPoint point);
+//	void OnLButtonDown2(UINT nFlags, CPoint point);
 
 
 	bool IsDrawing() const;

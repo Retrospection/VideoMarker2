@@ -3,22 +3,9 @@
 
 #include "PictureBox.h"
 #include "DBox.h"
+#include "constant.h"
 
 #include <iostream>
-
-
-
-const cv::Scalar Green{ 0, 255, 0 };
-const cv::Scalar Red{ 0, 0, 255 };
-const cv::Scalar Black{ 0, 0, 0 };
-const cv::Scalar Blue{ 255, 0, 0 };
-
-const cv::Scalar ColorUnsaved = Red;
-const cv::Scalar ColorSaved = Red;
-const cv::Scalar ColorHighLight = Green;
-const cv::Scalar ColorSelected = Blue;
-
-
 
 CPBAddState::CPBAddState(CPictureBox* ptr)
 	:CPBStateBase(ptr)

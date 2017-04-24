@@ -31,7 +31,7 @@ CStateBase* CStateFactory::Create(const std::string& state, CVideoMarker2Dlg* pD
 
 	if (state == PLAY)
 	{
-		return new CPlayState(pDlg);
+		return new CPlayState(pDlg, config);
 	}
 // 	else if (state == STOP)
 // 	{
@@ -43,7 +43,7 @@ CStateBase* CStateFactory::Create(const std::string& state, CVideoMarker2Dlg* pD
 	}
 	else if (state == PAUSE)
 	{
-		return new CPauseState(pDlg);
+		return new CPauseState(pDlg, config);
 	}
 // 	else if (state == EDIT_MARK)
 // 	{

@@ -101,24 +101,6 @@ void CPictureBox::OnLButtonDown(UINT nFlags, CPoint point)
 	CStatic::OnLButtonDown(nFlags, point);
 }
 
-void CPictureBox::OnLButtonDown2(UINT nFlags, CPoint point)
-{
-// 	m_bDrawing = true;
-// 	cv::Point _point{ m_Trans.Trans({ point.x, point.y, 1, 1 }, Transformer::Coordinate::PictureBox, Transformer::Coordinate::Raw).tl() };
-// 	m_nModifiedFaceInfoIndex = m_pFaceInfoManager->SelectEditPoint(_point);
-// 	if (m_nModifiedFaceInfoIndex != -1)
-// 	{
-// 		SetState("Modify");
-// 	}
-// 
-// 	std::cout << "EditBoxes Index: " << m_nModifiedFaceInfoIndex << std::endl;
-// 	m_ActiveBoxManager.SetStartActivePoint({ point.x, point.y });
-// 
-// 	Invalidate(FALSE);
-// 	CStatic::OnLButtonDown(nFlags, point);
-}
-
-
 
 void CPictureBox::OnMouseMove(UINT nFlags, CPoint point)
 {
@@ -254,7 +236,13 @@ void CPictureBox::DrawFrameInfo(cv::Mat& img)
 // 	}
 // 	m_drawables.clear();
 
-	std::cout << "DrawableActiveBox: " << m_DrawableActiveBox.size() << std::endl;
+ 
+ 	printf("----------------------------------------------\n");
+// 	printf("[num] -- number of ActiveBox is %d\n", 1);
+// 	printf("[num] -- number of SavedFaces is %d\n", m_DrawableSavedFacesInfo.size());
+// 	printf("[num] -- number of SelectedFaces is %d\n", m_DrawableSelectedFacesInfo.size());
+// 	printf("[num] -- number of HighLightFaces is %d\n", m_DrawableHighlightFacesInfo.size());
+
 	for (auto& drawable : m_DrawableActiveBox)
 	{
 		drawable->Draw(img);
@@ -328,7 +316,8 @@ void CPictureBox::ClearHighLight()
 
 void CPictureBox::SetState(const std::string& state)
 {
-	std::cout << "set state to " << state << std::endl;
+//	std::cout << "set state to " << state << std::endl;
+	printf("set state to %s\n", state.c_str());
 	SAFE_DELETE(m_pState);
 	if (state == "INIT")
 	{

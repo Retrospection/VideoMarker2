@@ -42,40 +42,17 @@ void CPBSelectState::OnLButtonDown(UINT nFlags, CPoint point)
 
 void CPBSelectState::OnLButtonUp(UINT nFlags, CPoint point)
 {
-//	SetActivePoint({ point.x, point.y }, ACTIVE_POINT_END);
 	SetEndActivePoint({ point.x, point.y });
 	SelectBox();
 }
 
 void CPBSelectState::OnMouseMove(UINT nFlags, CPoint point)
 {
-//	assert(GetEditType() == CPictureBox::SELECT_MARK_STATE);
-// 	if (!IsInRoi(point))
-// 	{
-// 		ResetActivePoints();
-// 		return;
-// 	}
-// 
-// 	SetActivePoint({ point.x, point.y }, ACTIVE_POINT_END);
 	SetEndActivePoint({ point.x, point.y });
 }
 
 void CPBSelectState::DrawActiveBox()
 {
-// 	if (!HasChosenEditPoint())
-// 	{
-// 		cv::Rect rc;
-// // 		if (GetActiveBoxEx(rc))
-// // 		{
-// // 			AddDrawables(new DBox(rc, ColorUnsaved));
-// // 		}
-// 		if (GetActiveBoxFromActiveBoxManager(rc))
-// 		{
-// 			AddDrawables(new DBox(rc, ColorUnsaved));
-// 		}
-// 	}
-
 	assert(!HasChosenEditPoint());
 	UpdateDrawableActiveBox();
-
 }

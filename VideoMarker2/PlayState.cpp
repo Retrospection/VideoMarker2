@@ -6,7 +6,7 @@
 
 #include <thread>
 
-CPlayState::CPlayState(CVideoMarker2Dlg* pDlg) :CStateBase(pDlg)
+CPlayState::CPlayState(CVideoMarker2Dlg* pDlg, const UIConfig& config) :CStateBase(pDlg, config)
 {
 }
 

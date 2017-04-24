@@ -328,6 +328,7 @@ public:
 			toBeUpdated.push_back(new DFaceInfo(FaceInfo{ faceinfoex.GetFaceInfo().strPersonName, m_pTrans->Trans(faceinfoex.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi) }, ColorSaved));
 		}
 		m_bSavedChanged = false;
+		printf("Saved faces have been updated....\n");
 	}
 
 	void UpdateDrawableSelectedFacesInfo(std::vector<IDrawable*>& toBeUpdated)
@@ -352,6 +353,8 @@ public:
 			}
 		}
 		m_bSelectedChanged = false;
+		printf("Selected faces have been updated....\n");
+
 	}
 
 
@@ -375,6 +378,8 @@ public:
 			}
 		}
 		m_bHighlightChanged = false;
+		printf("Highlight faces have been updated....\n");
+
 	}
 
 private:

@@ -30,10 +30,10 @@ void CPBStateBase::OnLButtonDown(UINT nFlags, CPoint point)
 
 }
 
-void CPBStateBase::OnLButtonDown2(UINT nFlags, CPoint point)
-{
-	m_pPictureBox->OnLButtonDown2(nFlags, point);
-}
+// void CPBStateBase::OnLButtonDown2(UINT nFlags, CPoint point)
+// {
+// 	m_pPictureBox->OnLButtonDown2(nFlags, point);
+// }
 
 void CPBStateBase::OnLButtonUp(UINT nFlags, CPoint point)
 {

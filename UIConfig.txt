@@ -11,8 +11,8 @@ S13
 OpenProject SelectMark DeleteMark Undo Redo
 StepForward StepBackward Slider AddMark Play Pause Stop
 play
-Pause Stop
-OpenProject SelectMark DeleteMark Undo Redo StepForward StepBackward Slider AddMark Play
+Pause Stop Slider
+OpenProject SelectMark DeleteMark Undo Redo StepForward StepBackward AddMark Play
 pause
-Play Stop
-OpenProject SelectMark DeleteMark Undo Redo StepForward StepBackward Slider AddMark Pause
+Play Stop SelectMark DeleteMark Undo Redo StepForward StepBackward Slider AddMark
+OpenProject Pause

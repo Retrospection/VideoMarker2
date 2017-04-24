@@ -91,7 +91,6 @@ private:
 
 private:
 	int m_nModifiedFaceInfoIndex;
-//	size_t m_nEditType;
 
 	Transformer m_Trans;
 	std::vector<IDrawable*> m_drawables;
@@ -113,7 +112,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	void OnLButtonDown2(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	virtual void PreSubclassWindow();

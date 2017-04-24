@@ -6,8 +6,8 @@
 #include "VideoMarkerPresenter.h"
 #include "VideoMarker2Dlg.h"
 
-CPauseState::CPauseState(CVideoMarker2Dlg* pDlg)
-	:CStateBase(pDlg)
+CPauseState::CPauseState(CVideoMarker2Dlg* pDlg, const UIConfig& config)
+	:CStateBase(pDlg, config)
 {
 }
 
