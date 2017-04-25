@@ -13,5 +13,15 @@ public:
 
 	virtual void Stop() override;
 
+	virtual void AddSaveMarkBtnClicked() override;
+
+	virtual void Undo() override;
+
+	virtual void Redo() override;
+
+	virtual void SelectMarkBtnClicked() override;
+
+	virtual void OnLbnSelchangeList1() override;
+
 };
 

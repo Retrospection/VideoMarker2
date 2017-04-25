@@ -237,7 +237,7 @@ void CPictureBox::DrawFrameInfo(cv::Mat& img)
 // 	m_drawables.clear();
 
  
- 	printf("----------------------------------------------\n");
+// 	printf("----------------------------------------------\n");
 // 	printf("[num] -- number of ActiveBox is %d\n", 1);
 // 	printf("[num] -- number of SavedFaces is %d\n", m_DrawableSavedFacesInfo.size());
 // 	printf("[num] -- number of SelectedFaces is %d\n", m_DrawableSelectedFacesInfo.size());
@@ -318,6 +318,7 @@ void CPictureBox::SetState(const std::string& state)
 {
 //	std::cout << "set state to " << state << std::endl;
 	printf("set state to %s\n", state.c_str());
+	m_pFaceInfoManager->ResetSelect();
 	SAFE_DELETE(m_pState);
 	if (state == "INIT")
 	{
@@ -335,8 +336,7 @@ void CPictureBox::SetState(const std::string& state)
 	{
 		m_pState = new CPBModifyState(this);
 	}
-
-	std::cout << "Current State::::::" << state << std::endl;
+	
 }
 
 bool CPictureBox::IsInRoi(const CPoint& point)

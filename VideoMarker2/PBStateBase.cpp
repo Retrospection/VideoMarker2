@@ -217,6 +217,7 @@ void CPBStateBase::SetState(size_t nEditType)
 	{
 		m_pPictureBox->SetState("Modify");
 	}
+	
 }
 
 bool CPBStateBase::SelectEditPoint(const cv::Point& pt)

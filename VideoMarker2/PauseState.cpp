@@ -35,4 +35,40 @@ void CPauseState::Stop()
 	SetState(S1);
 }
 
+void CPauseState::AddSaveMarkBtnClicked()
+{
+	_pDlg->SetDlgItemText(IDC_BUTTON_ADDMARK, L"完成编辑");
+	GetPictureBox()->SetEditType(CPictureBox::ADD_MARK_STATE);
+	SetState(S5);
+}
+
+void CPauseState::Undo()
+{
+
+}
+
+void CPauseState::Redo()
+{
+
+}
+
+void CPauseState::SelectMarkBtnClicked()
+{
+	GetPictureBox()->SetEditType(CPictureBox::SELECT_MARK_STATE);
+	_pDlg->SetDlgItemText(IDC_BUTTON_SELECTMARK, L"保存修改");
+	SetState(S13);
+}
+
+void CPauseState::OnLbnSelchangeList1()
+{
+	int result = GetListBox()->GetCurSel();
+	if (result < 0)
+	{
+		return;
+	}
+	size_t i = static_cast<size_t>(result);
+	std::cout << "ListBox: " << i << std::endl;
+	GetPictureBox()->SetHighLight(i);
+}
+
 

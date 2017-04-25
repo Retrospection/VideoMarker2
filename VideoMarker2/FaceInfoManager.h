@@ -8,7 +8,7 @@
 #include "Transformer.h"
 
 
-#include <mutex>
+
 
 #include <string>
 #include <vector>
@@ -108,8 +108,6 @@ private:
 	}
 };
 
-
-
 class FaceInfoManager
 {
 public:
@@ -118,9 +116,7 @@ public:
 	{
 		m_FacesInfo.push_back({});
 	}
-
 	~FaceInfoManager(){}
-
 	std::vector<FaceInfo> GetUnsavedFacesInfo() const
 	{
 		std::vector<FaceInfo> ret;
@@ -139,54 +135,43 @@ public:
 		auto pred = [](const FaceInfoEx& fiex){ return !fiex.bSaved; };
 		m_FacesInfo[m_nPos].erase(std::remove_if(m_FacesInfo[m_nPos].begin(), m_FacesInfo[m_nPos].end(), pred), m_FacesInfo[m_nPos].end());
 	}
-
 	std::vector<FaceInfo> GetFacesInfo()
 	{
 		
 		std::vector<FaceInfo> ret(m_FacesInfo[m_nPos].size());
-		{
-			std::unique_lock<std::mutex> FrameInfoLock(m_Mutex);
-			auto fn = [](const FaceInfoEx& fiex){ return fiex.GetFaceInfo(); };
-			std::transform(m_FacesInfo[m_nPos].begin(), m_FacesInfo[m_nPos].end(), ret.begin(), fn);
-		}
+		auto fn = [](const FaceInfoEx& fiex){ return fiex.GetFaceInfo(); };
+		std::transform(m_FacesInfo[m_nPos].begin(), m_FacesInfo[m_nPos].end(), ret.begin(), fn);
 		return ret;
 
 	}
-
 	std::vector<FaceInfoEx> GetFacesInfoEx() const
 	{
 		return m_FacesInfo[m_nPos];
 	}
-
-
-
 	FrameInfo GetFrameInfo()
 	{
 		FrameInfo ret;
 		ret.facesInfo = GetFacesInfo();
 		return std::move(ret);
 	} 
-
-
 	void SetFrameInfo(const FrameInfo& frameInfo)
 	{
-		{
-			std::unique_lock<std::mutex> FrameInfoLock(m_Mutex);
-			m_FacesInfo.clear();
-			m_nPos = 0;
-			m_bSavedChanged = true;
-			std::vector<FaceInfoEx> temp(frameInfo.facesInfo.size());
-			std::transform(frameInfo.facesInfo.begin(), frameInfo.facesInfo.end(), temp.begin(), [](const FaceInfo& info){ return FaceInfoEx{ info, false, false, true }; });
-			m_FacesInfo.push_back(temp);
-			SnapShot();
-		}
-	}
 
+		m_FacesInfo.clear();
+		m_nPos = 0;
+		m_bSavedChanged = true;
+		std::vector<FaceInfoEx> temp(frameInfo.facesInfo.size());
+		std::transform(frameInfo.facesInfo.begin(), frameInfo.facesInfo.end(), temp.begin(), [](const FaceInfo& info){ return FaceInfoEx{ info, false, false, true }; });
+		m_FacesInfo.push_back(temp);
+		SnapShot();
+
+	}
 	unsigned int Add(const FaceInfo& faceInfo)
 	{
 		SnapShot();
 		m_FacesInfo.rbegin()->push_back({ faceInfo, false, false, false });
-		std::cout << ToString();
+		m_bSavedChanged = true;
+		//std::cout << ToString();
 		return 0;
 	}
 	void DeleteSelected()
@@ -200,7 +185,6 @@ public:
 		m_bSelectedChanged = true;
 		m_bSavedChanged = true;
 	}
-
 	void Select(const cv::Rect& rc)
 	{
 		for (auto& faceInfo : m_FacesInfo[m_nPos])
@@ -245,13 +229,10 @@ public:
 		}
 		return m_nEditType;
 	}
-
 	void ClearSelectEditPoint()
 	{
 		m_nEditType = -1;
 	}
-
-
 	void Move(const cv::Point& point)
 	{
 		if (m_bFirstMove)
@@ -271,8 +252,6 @@ public:
 		}
 		m_LastPos = point;
 	}
-
-
 	void Undo()
 	{
 		if (m_nPos == 0)
@@ -291,14 +270,12 @@ public:
 		++m_nPos;
 		std::cout << ToString();
 	}
-
 	void SetHighLight(size_t nIndex)
 	{
 		ClearHighLight();
 		m_bHighlightChanged = true;
 		m_FacesInfo[m_nPos][nIndex].bIsHighLight = true;
 	}
-
 	void ClearHighLight()
 	{
 		for (auto& faceinfoEx : m_FacesInfo[m_nPos])
@@ -308,9 +285,6 @@ public:
 		}
 		
 	}
-
-
-
 	void UpdateDrawableSavedFacesInfo(std::vector<IDrawable*>& toBeUpdated)
 	{
 		if (!m_bSavedChanged)
@@ -328,9 +302,8 @@ public:
 			toBeUpdated.push_back(new DFaceInfo(FaceInfo{ faceinfoex.GetFaceInfo().strPersonName, m_pTrans->Trans(faceinfoex.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi) }, ColorSaved));
 		}
 		m_bSavedChanged = false;
-		printf("Saved faces have been updated....\n");
+		//printf("Saved faces have been updated....\n");
 	}
-
 	void UpdateDrawableSelectedFacesInfo(std::vector<IDrawable*>& toBeUpdated)
 	{
 		if (!m_bSelectedChanged)
@@ -353,11 +326,9 @@ public:
 			}
 		}
 		m_bSelectedChanged = false;
-		printf("Selected faces have been updated....\n");
+		//printf("Selected faces have been updated....\n");
 
 	}
-
-
 	void UpdateDrawableHighlightFacesInfo(std::vector<IDrawable*>& toBeUpdated)
 	{
 		if (!m_bHighlightChanged)
@@ -378,9 +349,19 @@ public:
 			}
 		}
 		m_bHighlightChanged = false;
-		printf("Highlight faces have been updated....\n");
+		//printf("Highlight faces have been updated....\n");
 
 	}
+
+	void ResetSelect()
+	{
+		m_bSelectedChanged = true;
+		for (auto faceinfoex : m_FacesInfo[m_nPos])
+		{
+			faceinfoex.bIsSelected = false;
+		}
+	}
+
 
 private:
 	std::string ToString() const
@@ -404,18 +385,15 @@ private:
 		m_FacesInfo.push_back(m_FacesInfo[m_nPos]);
 		++m_nPos;
 	}
-
 	void ResetSelected()
 	{
 		std::for_each(m_FacesInfo[m_nPos].begin(), m_FacesInfo[m_nPos].end(), [](FaceInfoEx& fiex){ fiex.bIsSelected = false; });
+		m_bSelectedChanged = true;
 	}
-
-
 	bool IsOverlapping(const cv::Rect& rc1, const cv::Rect& rc2)const
 	{
 		return ((rc1 & rc2).area() > 0);
 	}
-
 
 	int m_nEditType;
 	cv::Point m_LastPos;
@@ -427,10 +405,8 @@ private:
 	bool m_bSelectedChanged;
 	bool m_bHighlightChanged;
 	
-	
 	Transformer* m_pTrans;
 	size_t m_nPos;
 
-	std::mutex m_Mutex;
-
+//	std::mutex m_Mutex;
 };

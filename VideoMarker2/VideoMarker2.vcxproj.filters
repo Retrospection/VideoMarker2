@@ -70,6 +70,9 @@
     <Filter Include="DlgState\S5">
       <UniqueIdentifier>{6f20a05c-d203-414a-9234-d198ab24cbda}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DlgState\S13">
+      <UniqueIdentifier>{3d40b7bd-02d9-4aee-822c-9b8fcdb0eaec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -183,9 +186,6 @@
     <ClInclude Include="RectEx.h">
       <Filter>Primitive</Filter>
     </ClInclude>
-    <ClInclude Include="S13.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="FaceInfoManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -212,6 +212,9 @@
     </ClInclude>
     <ClInclude Include="PBStateBase.h">
       <Filter>PictureBoxState</Filter>
+    </ClInclude>
+    <ClInclude Include="S13.h">
+      <Filter>DlgState\S13</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -281,9 +284,6 @@
     <ClCompile Include="UnsavedFrameInfo.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="S13.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="ActiveBoxManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -301,6 +301,9 @@
     </ClCompile>
     <ClCompile Include="PBStateBase.cpp">
       <Filter>PictureBoxState</Filter>
+    </ClCompile>
+    <ClCompile Include="S13.cpp">
+      <Filter>DlgState\S13</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

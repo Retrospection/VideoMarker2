@@ -22,7 +22,7 @@ public:
 
 	virtual void Play() override;
 
-
+	virtual void Stop() override;
 
 };
 
