@@ -62,7 +62,9 @@ public:
 
 public:
 	virtual void SetFrameInfo(const FrameInfo& frameInfo) override;
-	void SetNewFrameInfo(const FrameInfo& newFrameInfo);
+	void UpdateListBoxFrameInfo(const FrameInfo& newFrameInfo);
+
+
 
 	void SetTextFileOpenedStatus(bool status);
 	void SetRawFrame(const cv::Mat& frame);
@@ -75,6 +77,21 @@ public:
 	unsigned int ValidateFaceInfo();
 
 	static const UINT_PTR PLAY_TIMER = 1;
+
+
+	struct ListBoxFaceInfo
+	{
+		bool bDeleted;
+		bool bNew;
+		FaceInfo faceInfo;
+	};
+
+	struct ListBoxFrameInfo
+	{
+		std::vector<ListBoxFaceInfo> listBoxFacesInfo;
+	};
+
+
 
 
 //////////////////////////////////////////////////////  实现  ////////////////////////////////////////////////
@@ -91,6 +108,9 @@ private:
 	FrameInfo m_FrameInfo;
 
 	FrameInfo m_NewFrameInfo;
+
+	ListBoxFrameInfo m_ListBoxFrameInfo;
+	
 
 private:
 	std::string m_strTextFileName;
@@ -125,6 +145,11 @@ private:
 	std::vector<std::string> GetLines(const std::string& filename);
 
 	void Play();
+
+private:
+	ListBoxFrameInfo FindOutDeletedFaceInfo(const FrameInfo& newFrameInfo, const FrameInfo& oldFrameInfo);
+	ListBoxFrameInfo FindOutAddFaceInfo(const FrameInfo& newFrameInfo, const FrameInfo& oldFrameInfo);
+
 
 
 //////////////////////////////////////////////////////  实现  ////////////////////////////////////////////////

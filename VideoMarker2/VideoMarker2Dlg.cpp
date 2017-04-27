@@ -299,8 +299,8 @@ void CVideoMarker2Dlg::Play()
 void CVideoMarker2Dlg::ShowFrameInfoInListBox()
 {
 	//DataExchange de(&m_FrameInfo, &m_ListBox);
-	DataExchange de(&m_NewFrameInfo, &m_ListBox);
-	de.Update(true);
+	DataExchange de(&m_ListBoxFrameInfo, &m_ListBox);
+	de.Update2(true);
 }
 
 void CVideoMarker2Dlg::OnBnClickedButtonRevoke()
@@ -460,7 +460,70 @@ void CVideoMarker2Dlg::OnTimer(UINT_PTR nIDEvent)
 	__super::OnTimer(nIDEvent);
 }
 
-void CVideoMarker2Dlg::SetNewFrameInfo(const FrameInfo& newFrameInfo)
+void CVideoMarker2Dlg::UpdateListBoxFrameInfo(const FrameInfo& newFrameInfo)
 {
 	m_NewFrameInfo = newFrameInfo;
+
+	if (newFrameInfo.facesInfo.size() <= m_FrameInfo.facesInfo.size())
+	{
+		m_ListBoxFrameInfo = FindOutDeletedFaceInfo(newFrameInfo, m_FrameInfo);
+	}
+	else
+	{
+		m_ListBoxFrameInfo = FindOutAddFaceInfo(newFrameInfo, m_FrameInfo);
+	}
+	m_FrameInfo = newFrameInfo;
+}
+
+CVideoMarker2Dlg::ListBoxFrameInfo CVideoMarker2Dlg::FindOutDeletedFaceInfo(const FrameInfo& newFrameInfo, const FrameInfo& oldFrameInfo)
+{
+	ListBoxFrameInfo ret;
+	size_t i = 0, j = 0;
+	for (; i < oldFrameInfo.facesInfo.size() && j < newFrameInfo.facesInfo.size(); ++i, ++j)
+	{
+		if (newFrameInfo.facesInfo[j].strPersonName == oldFrameInfo.facesInfo[i].strPersonName)
+		{
+			ret.listBoxFacesInfo.push_back({ false, false, oldFrameInfo.facesInfo[i] });
+		}
+		else
+		{
+			ret.listBoxFacesInfo.push_back({ true, false, oldFrameInfo.facesInfo[i] });
+			++i;
+		}
+	}
+	if (i < oldFrameInfo.facesInfo.size())
+	{
+		for (; i < oldFrameInfo.facesInfo.size(); ++i)
+		{
+			ret.listBoxFacesInfo.push_back({ true, false, oldFrameInfo.facesInfo[i] });
+		}
+	}
+	return ret;
+}
+
+CVideoMarker2Dlg::ListBoxFrameInfo CVideoMarker2Dlg::FindOutAddFaceInfo(const FrameInfo& newFrameInfo, const FrameInfo& oldFrameInfo)
+{
+	ListBoxFrameInfo ret;
+	size_t i = 0, j = 0;
+	for (; i < oldFrameInfo.facesInfo.size() && j < newFrameInfo.facesInfo.size(); ++i ,++j)
+	{
+		if (newFrameInfo.facesInfo[j].strPersonName == oldFrameInfo.facesInfo[i].strPersonName)
+		{
+			ret.listBoxFacesInfo.push_back({ false, false, newFrameInfo.facesInfo[j] });
+		}
+		else
+		{
+			ret.listBoxFacesInfo.push_back({ false, true, newFrameInfo.facesInfo[j] });
+			++j;
+		}
+	}
+	if (j < newFrameInfo.facesInfo.size())
+	{
+		for (; j < newFrameInfo.facesInfo.size(); ++j)
+		{
+			ret.listBoxFacesInfo.push_back({ false, true, newFrameInfo.facesInfo[j] });
+		}
+	}
+
+	return ret;
 }

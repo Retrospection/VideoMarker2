@@ -49,8 +49,7 @@ void CStateBase::OpenProject()
 
 void CStateBase::AddSaveMarkBtnClicked()
 {
-// 	SetState(S5);
-// 	_pDlg->SetDlgItemText(IDC_BUTTON_ADDMARK,L"Íê³É±à¼­");
+
 }
 
 

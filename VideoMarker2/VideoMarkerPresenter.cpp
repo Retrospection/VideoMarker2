@@ -4,6 +4,9 @@
 #include <string>
 #include <codecvt>
 #include <fstream>
+#include <set>
+#include <iostream>
+
 
 #include "NameInputDialog.h"
 
@@ -174,6 +177,7 @@ void CVideoMarkerPresenter::OpenTextFile()
 	FrameInfo frameInfo;
 	m_pTextMgr->GetFrameInfoByPos(frameInfo, m_pVideoPlayer->m_nCurrentFrameIndex);
 	m_pDlg->SetFrameInfo(frameInfo);
+	
 	m_pDlg->Refresh();
 }
 
@@ -189,6 +193,7 @@ bool CVideoMarkerPresenter::OpenTextFile(const std::string& strTextFileName)
 	FrameInfo frameInfo;
 	m_pTextMgr->GetFrameInfoByPos(frameInfo, m_pVideoPlayer->m_nCurrentFrameIndex);
 	m_pDlg->SetFrameInfo(frameInfo);
+	m_pDlg->UpdateListBoxFrameInfo(frameInfo);   // new
 	m_pDlg->Refresh();
 	return true;
 }
@@ -206,26 +211,6 @@ void CVideoMarkerPresenter::AddMark()
 
 void CVideoMarkerPresenter::SaveMark()
 {
-// 	std::vector<cv::Rect> unsavedBox = m_pDlg->GetUnsavedBox();
-// 	std::vector<std::string> unsavedName = m_pDlg->GetUnsavedName();
-// 	assert(unsavedName.size() == unsavedBox.size());
-// 	if (unsavedBox.empty())
-// 	{
-// 		return;
-// 	}
-// 
-// 	FrameInfo newFrameInfo;
-// 
-// 	for (size_t i = 0; i < unsavedBox.size(); ++i)
-// 	{
-// 		newFrameInfo.facesInfo.push_back({ unsavedName[i], unsavedBox[i] });
-// 	}
-// 
-// 	assert(m_pVideoPlayer->m_nCurrentFrameIndex >= 0);
-// 	
-// 	m_pTextMgr->AddFaceInfo(frameIndex, newFrameInfo);
-// 	m_pDlg->ClearUnsavedFrameInfo();
-
 	// ±£´æ
 	size_t frameIndex = static_cast<size_t>(m_pVideoPlayer->m_nCurrentFrameIndex);
 	FrameInfo frameInfo = m_pDlg->GetFrameInfo();
@@ -258,7 +243,6 @@ unsigned int CVideoMarkerPresenter::ValidateFaceInfo(const FaceInfo& info, size_
 	return (pos == std::end(m_validator)) ? VALID : pos->first;
 }
 
-#include <set>
 unsigned int CVideoMarkerPresenter::ValidateFacesInfo(const std::vector<FaceInfo>& facesInfo)
 {
 	unsigned int ret = CheckStage1(facesInfo);
@@ -316,7 +300,6 @@ bool CVideoMarkerPresenter::CheckOverlapping(const std::vector<FaceInfo>& facesI
 	return true;
 }
 
-#include <iostream>
 
 int CVideoMarkerPresenter::OpenProject()
 {

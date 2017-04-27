@@ -112,7 +112,6 @@ void CPictureBox::OnMouseMove(UINT nFlags, CPoint point)
 void CPictureBox::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	m_pState->OnLButtonUp(nFlags, point);
-	//Invalidate(FALSE);
 	((CVideoMarker2Dlg*)GetParent())->Refresh();
 	m_ActiveBoxManager.ResetActiveBox();
 	CStatic::OnLButtonUp(nFlags, point);
@@ -122,7 +121,7 @@ FrameInfo CPictureBox::GetUnsavedFrameInfo() const
 {
 	FrameInfo ret;
 	ret.facesInfo = m_pFaceInfoManager->GetUnsavedFacesInfo();
-	return std::move(ret);
+	return ret;
 }
 
 
@@ -237,12 +236,6 @@ void CPictureBox::DrawFrameInfo(cv::Mat& img)
 // 	}
 // 	m_drawables.clear();
 
- 
-// 	printf("----------------------------------------------\n");
-// 	printf("[num] -- number of ActiveBox is %d\n", 1);
-// 	printf("[num] -- number of SavedFaces is %d\n", m_DrawableSavedFacesInfo.size());
-// 	printf("[num] -- number of SelectedFaces is %d\n", m_DrawableSelectedFacesInfo.size());
-// 	printf("[num] -- number of HighLightFaces is %d\n", m_DrawableHighlightFacesInfo.size());
 
 	for (auto& drawable : m_DrawableActiveBox)
 	{

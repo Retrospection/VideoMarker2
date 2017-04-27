@@ -229,7 +229,7 @@ void CPBStateBase::UpdateDlgFrameInfo()
 {
 	CVideoMarker2Dlg* pDlg = dynamic_cast<CVideoMarker2Dlg*>(m_pPictureBox->GetParent());
 	FrameInfo frameinfo = m_pPictureBox->GetFrameInfo();
-	pDlg->SetNewFrameInfo(m_pPictureBox->GetFrameInfo());
+	pDlg->UpdateListBoxFrameInfo(m_pPictureBox->GetFrameInfo());
 
 }
 
