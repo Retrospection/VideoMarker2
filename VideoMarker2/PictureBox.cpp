@@ -112,7 +112,8 @@ void CPictureBox::OnMouseMove(UINT nFlags, CPoint point)
 void CPictureBox::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	m_pState->OnLButtonUp(nFlags, point);
-	Invalidate(FALSE);
+	//Invalidate(FALSE);
+	((CVideoMarker2Dlg*)GetParent())->Refresh();
 	m_ActiveBoxManager.ResetActiveBox();
 	CStatic::OnLButtonUp(nFlags, point);
 }

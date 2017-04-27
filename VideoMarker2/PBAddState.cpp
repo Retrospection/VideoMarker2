@@ -35,13 +35,13 @@ void CPBAddState::OnLButtonUp(UINT nFlags, CPoint point)
 	}
 
 	activeBox = Trans(activeBox, Transformer::Coordinate::Roi, Transformer::Coordinate::Raw);
-	AddFaceInfo({ strPersonName, activeBox });
+	AddFaceInfoToPictureBox({ strPersonName, activeBox });
 	unsigned int result = ValidateFaceInfo();
 	if (result != 0)
 	{
 		HandleInvalidFaceInfo(result);
 	}
-
+	UpdateDlgFrameInfo();
 }
 
 void CPBAddState::OnMouseMove(UINT nFlags, CPoint point)

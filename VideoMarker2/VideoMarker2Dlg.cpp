@@ -186,7 +186,6 @@ void CVideoMarker2Dlg::SetTotalFrameCount(int nTotalFrameCount)
 
 void CVideoMarker2Dlg::SetCurrentFrameIndex(int nCurrentFrameIndex)
 {
-//	std::lock_guard<std::mutex> guard(m_CurrentFrameIndexMutex);
 	assert(nCurrentFrameIndex >= 0 && nCurrentFrameIndex < m_nTotalFrameCount);
 	m_nCurrentFrameIndex = nCurrentFrameIndex;
 	std::cout << "CurrentFrameIndex:" << m_nCurrentFrameIndex << std::endl;
@@ -199,7 +198,7 @@ void CVideoMarker2Dlg::SetTextFileOpenedStatus(bool status)
 
 void CVideoMarker2Dlg::RefreshSlider()
 {
-//	std::lock_guard<std::mutex> guard(m_CurrentFrameIndexMutex);
+
 	CSliderCtrl* pSlidCtrl = (CSliderCtrl*)GetDlgItem(IDC_SLIDER_1);
 	pSlidCtrl->SetPos(m_nCurrentFrameIndex);
 	pSlidCtrl->SetRange(0, m_nTotalFrameCount == 0 ? 0 : m_nTotalFrameCount - 1);
@@ -299,7 +298,8 @@ void CVideoMarker2Dlg::Play()
 
 void CVideoMarker2Dlg::ShowFrameInfoInListBox()
 {
-	DataExchange de(&m_FrameInfo, &m_ListBox);
+	//DataExchange de(&m_FrameInfo, &m_ListBox);
+	DataExchange de(&m_NewFrameInfo, &m_ListBox);
 	de.Update(true);
 }
 
@@ -458,4 +458,9 @@ void CVideoMarker2Dlg::OnTimer(UINT_PTR nIDEvent)
 	}
 
 	__super::OnTimer(nIDEvent);
+}
+
+void CVideoMarker2Dlg::SetNewFrameInfo(const FrameInfo& newFrameInfo)
+{
+	m_NewFrameInfo = newFrameInfo;
 }

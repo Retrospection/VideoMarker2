@@ -126,7 +126,7 @@ bool CPBStateBase::GetActiveBox(cv::Rect& rc)
 	return m_pPictureBox->GetActiveBox(rc);
 }
 
-void CPBStateBase::AddFaceInfo(const FaceInfo& faceInfo)
+void CPBStateBase::AddFaceInfoToPictureBox(const FaceInfo& faceInfo)
 {
 	m_pPictureBox->m_pFaceInfoManager->Add(faceInfo);
 }
@@ -225,13 +225,15 @@ bool CPBStateBase::SelectEditPoint(const cv::Point& pt)
 	return m_pPictureBox->m_pFaceInfoManager->SelectEditPoint(pt) != -1;
 }
 
-// void CPBStateBase::DrawActiveBox2()
-// {
-// 	for (auto drawable : m_pPictureBox->m_DrawableActiveBox)
-// 	{
-// 		drawable->Draw(m_pPictureBox->m_image);
-// 	}
-// }
+void CPBStateBase::UpdateDlgFrameInfo()
+{
+	CVideoMarker2Dlg* pDlg = dynamic_cast<CVideoMarker2Dlg*>(m_pPictureBox->GetParent());
+	FrameInfo frameinfo = m_pPictureBox->GetFrameInfo();
+	pDlg->SetNewFrameInfo(m_pPictureBox->GetFrameInfo());
+
+}
+
+
 
 
 

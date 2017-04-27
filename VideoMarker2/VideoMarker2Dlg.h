@@ -62,6 +62,7 @@ public:
 
 public:
 	virtual void SetFrameInfo(const FrameInfo& frameInfo) override;
+	void SetNewFrameInfo(const FrameInfo& newFrameInfo);
 
 	void SetTextFileOpenedStatus(bool status);
 	void SetRawFrame(const cv::Mat& frame);
@@ -88,6 +89,8 @@ private:
 private:
  	int m_nTotalFrameCount;
 	FrameInfo m_FrameInfo;
+
+	FrameInfo m_NewFrameInfo;
 
 private:
 	std::string m_strTextFileName;

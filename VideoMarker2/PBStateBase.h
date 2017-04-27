@@ -38,7 +38,7 @@ protected:
 	bool HasChosenEditPoint() const;
 
 	void MoveEditPoint(const cv::Point& pt);
-	void AddFaceInfo(const FaceInfo& faceInfo);
+	void AddFaceInfoToPictureBox(const FaceInfo& faceInfo);
 	unsigned int ValidateFaceInfo();
 	void HandleInvalidFaceInfo(unsigned int result);
 	void SelectBox();
@@ -71,6 +71,8 @@ protected:
 
 	static const bool ACTIVE_POINT_BEGIN = true;
 	static const bool ACTIVE_POINT_END = false;
+
+	void UpdateDlgFrameInfo();
 
 
 private:
