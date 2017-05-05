@@ -29,6 +29,7 @@ void CS5::AddSaveMarkBtnClicked()
 	GetPresenter()->SaveMark();
 	_pDlg->SetDlgItemText(IDC_BUTTON_ADDMARK, L"Ìí¼Ó±ê×¢");
 	GetPictureBox()->SetEditType(CPictureBox::INIT_STATE);
+	_pDlg->UpdateListBoxFrameInfo(_pDlg->GetFrameInfo());
 	SetState(S1);
 }
 

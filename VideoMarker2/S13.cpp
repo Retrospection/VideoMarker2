@@ -24,11 +24,13 @@ void CS13::SelectMarkBtnClicked()
 	GetPresenter()->SaveMark();
 	_pDlg->SetDlgItemText(IDC_BUTTON_SELECTMARK, L"Ñ¡Ôñ±ê×¢");
 	GetPictureBox()->SetEditType(CPictureBox::INIT_STATE);
+	_pDlg->UpdateListBoxFrameInfo(_pDlg->GetFrameInfo());
 	SetState(S1);
 }
 
 void CS13::DeleteMarkBtnClicked()
 {
 	GetPictureBox()->DeleteSelectedFacesInfo();
+	_pDlg->UpdateListBoxFrameInfo(_pDlg->GetFrameInfo());
 	_pDlg->Refresh();
 }

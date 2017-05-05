@@ -306,11 +306,15 @@ void CVideoMarker2Dlg::ShowFrameInfoInListBox()
 void CVideoMarker2Dlg::OnBnClickedButtonRevoke()
 {
 	m_pPictureBox->Undo();
+	UpdateListBoxFrameInfo(m_pPictureBox->GetFrameInfo());
+	Refresh();
 }
 
 void CVideoMarker2Dlg::OnBnClickedButtonRedo()
 {
 	m_pPictureBox->Redo();
+	UpdateListBoxFrameInfo(m_pPictureBox->GetFrameInfo());
+	Refresh();
 }
 
 void CVideoMarker2Dlg::ClearHighLight()
@@ -345,7 +349,6 @@ void CVideoMarker2Dlg::OnBnClickedButtonProject()
 	}
 	m_strProjectFileName = CStringHelper::ConvertCStringToString(fileDlg.GetPathName());
 	m_pState->OpenProject();
-
 }
 
 std::string CVideoMarker2Dlg::GetProjectFileName() const
@@ -479,11 +482,12 @@ CVideoMarker2Dlg::ListBoxFrameInfo CVideoMarker2Dlg::FindOutDeletedFaceInfo(cons
 {
 	ListBoxFrameInfo ret;
 	size_t i = 0, j = 0;
-	for (; i < oldFrameInfo.facesInfo.size() && j < newFrameInfo.facesInfo.size(); ++i, ++j)
+	for (; i < oldFrameInfo.facesInfo.size() && j < newFrameInfo.facesInfo.size(); )
 	{
 		if (newFrameInfo.facesInfo[j].strPersonName == oldFrameInfo.facesInfo[i].strPersonName)
 		{
 			ret.listBoxFacesInfo.push_back({ false, false, oldFrameInfo.facesInfo[i] });
+			++i, ++j;
 		}
 		else
 		{
@@ -499,7 +503,7 @@ CVideoMarker2Dlg::ListBoxFrameInfo CVideoMarker2Dlg::FindOutDeletedFaceInfo(cons
 		}
 	}
 	return ret;
-}
+} 
 
 CVideoMarker2Dlg::ListBoxFrameInfo CVideoMarker2Dlg::FindOutAddFaceInfo(const FrameInfo& newFrameInfo, const FrameInfo& oldFrameInfo)
 {

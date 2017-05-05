@@ -79,6 +79,11 @@ public:
 	bool bIsHighLight;
 	bool bSaved;
 
+
+// 	/////////////////
+// 	bool bNewInfo;
+// 	bool bDeleted;
+
 private:
 	void UpdateEditRects()
 	{
@@ -156,7 +161,6 @@ public:
 	} 
 	void SetFrameInfo(const FrameInfo& frameInfo)
 	{
-
 		m_FacesInfo.clear();
 		m_nPos = 0;
 		m_bSavedChanged = true;
@@ -164,16 +168,17 @@ public:
 		std::transform(frameInfo.facesInfo.begin(), frameInfo.facesInfo.end(), temp.begin(), [](const FaceInfo& info){ return FaceInfoEx{ info, false, false, true }; });
 		m_FacesInfo.push_back(temp);
 		SnapShot();
-
 	}
-	unsigned int Add(const FaceInfo& faceInfo)
+
+	unsigned int AddFaceInfo(const FaceInfo& faceInfo)
 	{
 		SnapShot();
 		m_FacesInfo.rbegin()->push_back({ faceInfo, false, false, false });
 		m_bSavedChanged = true;
-		//std::cout << ToString();
+
 		return 0;
 	}
+
 	void DeleteSelected()
 	{
 		if (m_FacesInfo[m_nPos].end() == std::find_if(m_FacesInfo[m_nPos].begin(), m_FacesInfo[m_nPos].end(), [](const FaceInfoEx& info){ return info.bIsSelected; }))
@@ -259,7 +264,6 @@ public:
 			return;
 		}
 		--m_nPos;
-		std::cout << ToString();
 	}
 	void Redo()
 	{
@@ -268,7 +272,6 @@ public:
 			return;
 		}
 		++m_nPos;
-		std::cout << ToString();
 	}
 	void SetHighLight(size_t nIndex)
 	{
@@ -302,7 +305,6 @@ public:
 			toBeUpdated.push_back(new DFaceInfo(FaceInfo{ faceinfoex.GetFaceInfo().strPersonName, m_pTrans->Trans(faceinfoex.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi) }, ColorSaved));
 		}
 		m_bSavedChanged = false;
-		//printf("Saved faces have been updated....\n");
 	}
 	void UpdateDrawableSelectedFacesInfo(std::vector<IDrawable*>& toBeUpdated)
 	{

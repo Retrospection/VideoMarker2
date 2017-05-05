@@ -61,13 +61,5 @@ CStateBase* CStateFactory::Create(const std::string& state, CVideoMarker2Dlg* pD
 	{
 		return new CS13(pDlg, config);
 	}
-// 	else if (state == S12)
-// 	{
-// 		return new CS12(pDlg, config);
-// 	}
-// 	else if (state == S8)
-// 	{
-// 		return new CS8(pDlg, config);
-// 	}
 	return nullptr;
 }

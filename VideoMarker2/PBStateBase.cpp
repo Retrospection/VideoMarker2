@@ -128,7 +128,7 @@ bool CPBStateBase::GetActiveBox(cv::Rect& rc)
 
 void CPBStateBase::AddFaceInfoToPictureBox(const FaceInfo& faceInfo)
 {
-	m_pPictureBox->m_pFaceInfoManager->Add(faceInfo);
+	m_pPictureBox->m_pFaceInfoManager->AddFaceInfo(faceInfo);
 }
 
 unsigned int CPBStateBase::ValidateFaceInfo()

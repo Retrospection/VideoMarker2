@@ -208,35 +208,6 @@ void CPictureBox::DrawFrameInfo(cv::Mat& img)
 	m_pState->DrawSavedFacesInfo();
 	m_pState->DrawSelectedFacesInfo();
 	m_pState->DrawHighlightFacesInfo();
-// 	for (auto& faceInfo:facesInfo)
-// 	{
-// /* 		if (!faceInfo.bIsSelected && !faceInfo.bIsHighLight && faceInfo.bSaved)
-// // 		{
-// // 			m_drawables.push_back(new DFaceInfo(FaceInfo{ faceInfo.GetFaceInfo().strPersonName, m_Trans.Trans(faceInfo.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi) }, ColorSaved));
-// // 		}
-// // 		else */
-// 		if (!faceInfo.bIsSelected && !faceInfo.bIsHighLight && !faceInfo.bSaved)
-// 		{
-// 			m_drawables.push_back(new DFaceInfo(FaceInfo{ faceInfo.GetFaceInfo().strPersonName, m_Trans.Trans(faceInfo.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi) }, ColorUnsaved));
-// 		}
-// 		else if (faceInfo.bIsSelected && !faceInfo.bIsHighLight)
-// 		{
-// 			FaceInfoEx ex{ faceInfo.GetFaceInfo().strPersonName, m_Trans.Trans(faceInfo.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi), true, false, true };
-// 			m_drawables.push_back(new DEditBox(ex.GetEditBox().rc, ex.GetEditBox().editMark,ex.GetFaceInfo().strPersonName,ex.GetFaceInfo().box.tl(), ColorSelected));
-// 		}
-// 		else if (faceInfo.bIsHighLight)
-// 		{
-// 			m_drawables.push_back(new DFaceInfo(faceInfo.GetFaceInfo(), ColorHighLight));
-// 		}
-// 	}
-// 	for (auto& drawable : m_drawables)
-// 	{
-// 		drawable->Draw(img);
-// 		delete drawable;
-// 	}
-// 	m_drawables.clear();
-
-
 	for (auto& drawable : m_DrawableActiveBox)
 	{
 		drawable->Draw(img);
@@ -261,13 +232,13 @@ void CPictureBox::DrawFrameInfo(cv::Mat& img)
 void CPictureBox::Undo()
 {
 	m_pFaceInfoManager->Undo();
-	Invalidate(FALSE);
+	//Invalidate(FALSE);
 }
 
 void CPictureBox::Redo()
 {
 	m_pFaceInfoManager->Redo();
-	Invalidate(FALSE);
+	//Invalidate(FALSE);
 
 }
 
