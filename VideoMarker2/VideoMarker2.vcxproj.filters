@@ -263,6 +263,9 @@
     <ClCompile Include="StopState.cpp">
       <Filter>DlgState</Filter>
     </ClCompile>
+    <ClCompile Include="FaceInfoManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="VideoMarker2.rc">

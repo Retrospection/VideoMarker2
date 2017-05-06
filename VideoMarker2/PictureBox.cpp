@@ -256,7 +256,7 @@ void CPictureBox::SelectBox()
 	{
 		square = m_Trans.Trans(square, Transformer::Coordinate::Roi, Transformer::Coordinate::Raw);
 	}
-	m_pFaceInfoManager->Select(square);
+	m_pFaceInfoManager->SelectBBox(square);
 }
 
 void CPictureBox::DeleteSelectedFacesInfo()
@@ -323,7 +323,7 @@ bool CPictureBox::GetActiveBoxEx(cv::Rect& activeBox) const
 void CPictureBox::ClearSelectEditPoint()
 {
 	m_nModifiedFaceInfoIndex = -1;
-	m_pFaceInfoManager->ClearSelectEditPoint();
+	m_pFaceInfoManager->ResetSelectedEditPoint();
 }
 
 

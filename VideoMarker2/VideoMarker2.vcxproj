@@ -157,6 +157,7 @@
   <ItemGroup>
     <ClCompile Include="ActiveBoxManager.cpp" />
     <ClCompile Include="CvvImage.cpp" />
+    <ClCompile Include="FaceInfoManager.cpp" />
     <ClCompile Include="InitState.cpp" />
     <ClCompile Include="NameInputDialog.cpp" />
     <ClCompile Include="PauseState.cpp" />

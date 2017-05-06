@@ -298,7 +298,6 @@ void CVideoMarker2Dlg::Play()
 
 void CVideoMarker2Dlg::ShowFrameInfoInListBox()
 {
-	//DataExchange de(&m_FrameInfo, &m_ListBox);
 	DataExchange de(&m_ListBoxFrameInfo, &m_ListBox);
 	de.Update2(true);
 }

@@ -48,7 +48,7 @@ public:
 
 public:
 	std::string GetFileName() const;
-	std::string GetTextFileName()const;
+	std::string GetTextFileName() const;
 	std::string GetProjectFileName() const;
 
 public:
@@ -114,7 +114,7 @@ private:
 
 private:
 	std::string m_strTextFileName;
-	std::string m_strVideoFileName;
+	std::string m_strVideoFileName; 
 	std::string m_strProjectFileName;
 
 // ¿Ø¼þ
