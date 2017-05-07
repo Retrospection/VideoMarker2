@@ -27,7 +27,7 @@ CVideoMarkerPresenter::CVideoMarkerPresenter(CVideoMarker2Dlg* pDlg)
 	this->m_pVideoPlayer = new CVideoPlayer();
 	this->m_pTextMgr = new CTextFileManager();
 
-	m_validator[0] =std::make_pair(BOX_SMALL_ERROR, [](const FaceInfo& info, const FrameInfo&)
+	m_validator[0] = std::make_pair(BOX_SMALL_ERROR, [](const FaceInfo& info, const FrameInfo&)
 	{
 		return (info.box.width >= 20 && info.box.height >= 20);
 	});
@@ -66,13 +66,10 @@ void CVideoMarkerPresenter::Close()
 		return;
 	}
 	m_pVideoPlayer->Close();
-	m_pDlg->SetFileOpenedStatus(false);
 	cv::Mat blackframe(1, 1, CV_8UC3, cv::Scalar(0, 0, 0));
 	m_pDlg->SetRawFrame(blackframe);
 	m_pDlg->SetCurrentFrameIndex(0);
 	m_pDlg->SetTotalFrameCount(0);
-
-	m_pDlg->SetTextFileOpenedStatus(false);
 	m_pDlg->SetFrameInfo({});
 
 
@@ -87,14 +84,11 @@ bool CVideoMarkerPresenter::OpenVideo(const std::string& strVideoFileName)
 	{
 		return false;
 	}
-	m_pDlg->SetFileOpenedStatus(bResult);
 	cv::Mat frame;
 	m_pVideoPlayer->GetNextFrame(frame);
 	m_pDlg->SetRawFrame(frame);
 	m_pDlg->SetTotalFrameCount(m_pVideoPlayer->m_nTotalFrames);
 	m_pDlg->SetCurrentFrameIndex(0);
-
-//	m_pDlg->SetCurrentFrameIndex(m_pVideoPlayer->m_nTotalFrames - 20);
 	m_pDlg->Refresh();
 	return true;
 }
@@ -172,8 +166,6 @@ void CVideoMarkerPresenter::ForwardOneFrame(int nCurrentFrameIndex)
 void CVideoMarkerPresenter::OpenTextFile()
 {
 	std::string strFileName = m_pDlg->GetTextFileName();
-	m_pDlg->SetTextFileOpenedStatus(m_pTextMgr->Open(strFileName));
-
 	FrameInfo frameInfo;
 	m_pTextMgr->GetFrameInfoByPos(frameInfo, m_pVideoPlayer->m_nCurrentFrameIndex);
 	m_pDlg->SetFrameInfo(frameInfo);
@@ -189,11 +181,10 @@ bool CVideoMarkerPresenter::OpenTextFile(const std::string& strTextFileName)
 	{
 		return false;
 	}
-	m_pDlg->SetTextFileOpenedStatus(bResult);
 	FrameInfo frameInfo;
 	m_pTextMgr->GetFrameInfoByPos(frameInfo, m_pVideoPlayer->m_nCurrentFrameIndex);
 	m_pDlg->SetFrameInfo(frameInfo);
-	m_pDlg->UpdateListBoxFrameInfo(frameInfo);   // new
+//	m_pDlg->UpdateListBoxFrameInfo(frameInfo);   // new  TODO
 	m_pDlg->Refresh();
 	return true;
 }

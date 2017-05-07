@@ -91,7 +91,7 @@ public:
 protected:
 	void SetState(const std::string& state);
 	CWnd* GetDlgItem(int nID);
-	bool IsTextFileOpened() const;
+//	bool IsTextFileOpened() const;
 	CVideoMarkerPresenter* GetPresenter();
 	CPictureBox* GetPictureBox() const;
 	CListBox* GetListBox() const;

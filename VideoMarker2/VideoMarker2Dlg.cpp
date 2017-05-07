@@ -153,7 +153,7 @@ void CVideoMarker2Dlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar
 void CVideoMarker2Dlg::Refresh()
 {
 	RefreshSlider();
-	ShowFrameInfoInListBox();
+	RefreshListBox();
 	Invalidate(FALSE);   // FIX IT
 }
 
@@ -166,11 +166,6 @@ std::string CVideoMarker2Dlg::GetTextFileName() const
 {
 	std::cout << m_strTextFileName << std::endl;
 	return m_strTextFileName; 
-}
-
-void CVideoMarker2Dlg::SetFileOpenedStatus(bool status)
-{
-	m_bStatus = status;
 }
 
 void CVideoMarker2Dlg::SetRawFrame(const cv::Mat& frame)
@@ -191,10 +186,6 @@ void CVideoMarker2Dlg::SetCurrentFrameIndex(int nCurrentFrameIndex)
 	std::cout << "CurrentFrameIndex:" << m_nCurrentFrameIndex << std::endl;
 }
 
-void CVideoMarker2Dlg::SetTextFileOpenedStatus(bool status)
-{
-	m_bTextStatus = status;
-}
 
 void CVideoMarker2Dlg::RefreshSlider()
 {
@@ -207,7 +198,6 @@ void CVideoMarker2Dlg::RefreshSlider()
 void CVideoMarker2Dlg::SetFrameInfo(const FrameInfo& frameInfo)
 {
 	m_pPictureBox->SetFrameInfo(frameInfo);
-	m_FrameInfo = frameInfo;
 }
 
 void CVideoMarker2Dlg::SetState(const std::string& state)
@@ -291,12 +281,8 @@ void CVideoMarker2Dlg::OnBnClickedAddMark()
 	m_pState->AddSaveMarkBtnClicked();
 }
 
-void CVideoMarker2Dlg::Play()
-{
-	m_pPresenter->ForwardOneFrame(m_nCurrentFrameIndex);
-}
 
-void CVideoMarker2Dlg::ShowFrameInfoInListBox()
+void CVideoMarker2Dlg::RefreshListBox()
 {
 	DataExchange de(&m_ListBoxFrameInfo, &m_ListBox);
 	de.Update2(true);
@@ -305,14 +291,14 @@ void CVideoMarker2Dlg::ShowFrameInfoInListBox()
 void CVideoMarker2Dlg::OnBnClickedButtonRevoke()
 {
 	m_pPictureBox->Undo();
-	UpdateListBoxFrameInfo(m_pPictureBox->GetFrameInfo());
+//	UpdateListBoxFrameInfo(m_pPictureBox->GetFrameInfo());       TODO
 	Refresh();
 }
 
 void CVideoMarker2Dlg::OnBnClickedButtonRedo()
 {
 	m_pPictureBox->Redo();
-	UpdateListBoxFrameInfo(m_pPictureBox->GetFrameInfo());
+//	UpdateListBoxFrameInfo(m_pPictureBox->GetFrameInfo());      TODO
 	Refresh();
 }
 
@@ -329,7 +315,6 @@ void CVideoMarker2Dlg::ClearUnsavedFrameInfo()
 unsigned int CVideoMarker2Dlg::ValidateFaceInfo()
 {
 	FrameInfo frameInfo = m_pPictureBox->GetFrameInfo();
-	//std::cout << "待验证的 facesinfo 为: " << frameInfo.toString() << std::endl;
 	return m_pPresenter->ValidateFacesInfo(frameInfo.facesInfo);
 }
 
@@ -434,47 +419,35 @@ void CVideoMarker2Dlg::OnLbnSelchangeList1()
 	m_pState->OnLbnSelchangeList1();
 }
 
-// void CVideoMarker2Dlg::Stop()
-// {
-// 	m_bPlaying = false;
-// }
-// 
-// void CVideoMarker2Dlg::SetPlaying(bool bPlaying)
-// {
-// 	while (!m_PlayingMutex.try_lock())
-// 	{
-// 		return;
-// 	}
-// 	printf("[lock]---m_bPlaying has been locked by button!\n");
-// 	m_bPlaying = bPlaying;
-// 	m_PlayingMutex.unlock();
-// 	printf("[unlock]---m_bPlaying has been unlocked!\n");
-// }
-
-
 void CVideoMarker2Dlg::OnTimer(UINT_PTR nIDEvent)
 {
 	if (nIDEvent == PLAY_TIMER)
 	{
-		Play();
+		m_pPresenter->ForwardOneFrame(m_nCurrentFrameIndex);
 	}
-
 	__super::OnTimer(nIDEvent);
 }
 
-void CVideoMarker2Dlg::UpdateListBoxFrameInfo(const FrameInfo& newFrameInfo)
-{
-	m_NewFrameInfo = newFrameInfo;
+// void CVideoMarker2Dlg::UpdateListBoxFrameInfo(const FrameInfo& newFrameInfo)
+// {
+// 	m_NewFrameInfo = newFrameInfo;
+// 	if (newFrameInfo.facesInfo.size() <= m_FrameInfo.facesInfo.size())
+// 	{
+// 		m_ListBoxFrameInfo = FindOutDeletedFaceInfo(newFrameInfo, m_FrameInfo);
+// 	}
+// 	else
+// 	{
+// 		m_ListBoxFrameInfo = FindOutAddFaceInfo(newFrameInfo, m_FrameInfo);
+// 	}
+// 	m_FrameInfo = newFrameInfo;
+// }
 
-	if (newFrameInfo.facesInfo.size() <= m_FrameInfo.facesInfo.size())
+void CVideoMarker2Dlg::UpdateListBoxFrameInfo(const std::vector<FaceInfoEx>& newFrameInfo)
+{
+	for (auto faceInfoEx : newFrameInfo)
 	{
-		m_ListBoxFrameInfo = FindOutDeletedFaceInfo(newFrameInfo, m_FrameInfo);
+		m_ListBoxFrameInfo.listBoxFacesInfo.push_back({ faceInfoEx.bDeleted, faceInfoEx.bNewInfo, faceInfoEx.GetFaceInfo() });
 	}
-	else
-	{
-		m_ListBoxFrameInfo = FindOutAddFaceInfo(newFrameInfo, m_FrameInfo);
-	}
-	m_FrameInfo = newFrameInfo;
 }
 
 CVideoMarker2Dlg::ListBoxFrameInfo CVideoMarker2Dlg::FindOutDeletedFaceInfo(const FrameInfo& newFrameInfo, const FrameInfo& oldFrameInfo)

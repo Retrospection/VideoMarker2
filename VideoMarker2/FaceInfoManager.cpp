@@ -148,7 +148,7 @@ void FaceInfoManager::SetFrameInfo(const FrameInfo& frameInfo)
 	m_bSavedChanged = true;
 
 	std::vector<FaceInfoEx> temp(frameInfo.facesInfo.size());
-	std::transform(frameInfo.facesInfo.begin(), frameInfo.facesInfo.end(), temp.begin(), [](const FaceInfo& info){ return FaceInfoEx{ info, false, false, true }; });
+	std::transform(frameInfo.facesInfo.begin(), frameInfo.facesInfo.end(), temp.begin(), [](const FaceInfo& info){ return FaceInfoEx{ info.strPersonName, info.box, false, false, true, false, false }; });
 	m_FacesInfo.push_back(temp);
 	SnapShot();
 }
@@ -156,7 +156,7 @@ void FaceInfoManager::SetFrameInfo(const FrameInfo& frameInfo)
 unsigned int FaceInfoManager::AddFaceInfo(const FaceInfo& faceInfo)
 {
 	SnapShot();
-	m_FacesInfo.rbegin()->push_back({ faceInfo, false, false, false });
+	m_FacesInfo.rbegin()->push_back({ faceInfo.strPersonName, faceInfo.box, false, false, false, true, false });
 	m_bSavedChanged = true;
 
 	return 0;
@@ -305,7 +305,6 @@ void FaceInfoManager::UpdateDrawableSelectedFacesInfo(std::vector<IDrawable*>& t
 		return;
 	}
 	for (auto drawable : toBeUpdated)
-
 	{
 		delete drawable;
 	}
@@ -315,7 +314,7 @@ void FaceInfoManager::UpdateDrawableSelectedFacesInfo(std::vector<IDrawable*>& t
 	{
 		if (faceinfoex.bIsSelected)
 		{
-			FaceInfoEx ex{ faceinfoex.GetFaceInfo().strPersonName, m_pTrans->Trans(faceinfoex.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi), true, false, true };
+			FaceInfoEx ex{ faceinfoex.GetFaceInfo().strPersonName, m_pTrans->Trans(faceinfoex.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi), true, false, true,false, false };
 			toBeUpdated.push_back(new DEditBox(ex.GetEditBox().rc, ex.GetEditBox().editMark, ex.GetFaceInfo().strPersonName, ex.GetFaceInfo().box.tl(), ColorSelected));
 		}
 	}

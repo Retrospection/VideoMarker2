@@ -60,8 +60,10 @@ private:
 
 
 public:
+	// 打开工程，前进后退，播放改变当前帧时改变FrameInfo使用的函数。
 	void SetFrameInfo(const FrameInfo& frameInfo);
 private:
+
 	void DrawFrameInfo(cv::Mat& img);
 	FrameInfo m_FrameInfo;
 

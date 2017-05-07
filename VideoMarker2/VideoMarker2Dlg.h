@@ -12,8 +12,6 @@
 #include <unordered_map>
 #include <vector>
 
-#include <mutex>
-#include <condition_variable>
 
 #include "afxcmn.h"
 #include "afxwin.h"
@@ -24,6 +22,7 @@
 #include "PictureBox.h"
 #include "NameInputDialog.h"
 #include "IVideoMarker2.h"
+#include "FaceInfoManager.h"
 
 #include "MyTimer.h"
 
@@ -61,16 +60,14 @@ public:
 
 
 public:
-	virtual void SetFrameInfo(const FrameInfo& frameInfo) override;
-	void UpdateListBoxFrameInfo(const FrameInfo& newFrameInfo);
-
-
-
-	void SetTextFileOpenedStatus(bool status);
 	void SetRawFrame(const cv::Mat& frame);
+	virtual void SetFrameInfo(const FrameInfo& frameInfo) override;
 	void SetTotalFrameCount(int nTotalFrameCount);
 	void SetCurrentFrameIndex(int nCurrentFrameIndex);
-	void SetFileOpenedStatus(bool status);
+
+//	void UpdateListBoxFrameInfo(const FrameInfo& newFrameInfo);      TODO
+	void UpdateListBoxFrameInfo(const std::vector<FaceInfoEx>& newFrameInfo);
+
 	void ClearUnsavedFrameInfo();
 
 
@@ -98,37 +95,25 @@ public:
 private:
 	CVideoMarkerPresenter* m_pPresenter;
 	CNameInputDialog* m_pNameDlg;
-
-private:
-	bool m_bStatus;
-	bool m_bTextStatus;
+	CSliderCtrl m_Slider;
+	CListBox m_ListBox;
+	CPictureBox* m_pPictureBox;
 
 private:
  	int m_nTotalFrameCount;
-	FrameInfo m_FrameInfo;
-
-	FrameInfo m_NewFrameInfo;
-
+	int m_nCurrentFrameIndex;
+// 	FrameInfo m_FrameInfo;
+// 	FrameInfo m_NewFrameInfo;
 	ListBoxFrameInfo m_ListBoxFrameInfo;
-	
 
 private:
 	std::string m_strTextFileName;
 	std::string m_strVideoFileName; 
 	std::string m_strProjectFileName;
 
-// ¿Ø¼þ
-private:
-	CSliderCtrl m_Slider;
-	int m_nCurrentFrameIndex;
-	CListBox m_ListBox;
-	CPictureBox* m_pPictureBox;
-
 private:
 	CStateBase* m_pState;
 	std::unordered_map<std::string, CStateBase*> m_States;
-
-
 	std::unordered_map<std::string, UIConfig> m_UIConfigs;
 	bool m_bUIConfigLoaded;
 
@@ -136,7 +121,7 @@ private:
 	void SetState(const std::string& state);
 
 	// ListBox Ïà¹Ø
-	void ShowFrameInfoInListBox();
+	void RefreshListBox();
 	void ClearHighLight();
 
 	// UIConfig
@@ -144,7 +129,6 @@ private:
 	void LoadUIConfig();
 	std::vector<std::string> GetLines(const std::string& filename);
 
-	void Play();
 
 private:
 	ListBoxFrameInfo FindOutDeletedFaceInfo(const FrameInfo& newFrameInfo, const FrameInfo& oldFrameInfo);

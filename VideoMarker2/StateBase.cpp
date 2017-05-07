@@ -135,10 +135,10 @@ CWnd* CStateBase::GetDlgItem(int nID)
 	return _pDlg->GetDlgItem(nID);
 }
 
-bool CStateBase::IsTextFileOpened() const
-{
-	return _pDlg->m_bTextStatus;
-}
+// bool CStateBase::IsTextFileOpened() const
+// {
+// 	return _pDlg->m_bTextStatus;
+// }
 
 CVideoMarkerPresenter* CStateBase::GetPresenter()
 {

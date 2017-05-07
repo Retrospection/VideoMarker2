@@ -150,10 +150,12 @@ void CPictureBox::DrawItem(LPDRAWITEMSTRUCT /*lpDrawItemStruct*/)
 	ReleaseDC(pDC);
 }
 
+
 void CPictureBox::SetFrameInfo(const FrameInfo& frameInfo)
 {
 	m_pFaceInfoManager->SetFrameInfo(frameInfo);
 	Invalidate(FALSE);
+	// TODO : 更新DLG中的FrameInfo，从此函数更新的FrameInfo，两个flag都为false
 }
 
 void CPictureBox::SetHighLight(size_t nIndex)
@@ -281,7 +283,6 @@ void CPictureBox::ClearHighLight()
 
 void CPictureBox::SetState(const std::string& state)
 {
-//	std::cout << "set state to " << state << std::endl;
 	printf("set state to %s\n", state.c_str());
 	m_pFaceInfoManager->ResetSelect();
 	SAFE_DELETE(m_pState);

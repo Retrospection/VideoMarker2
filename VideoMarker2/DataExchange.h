@@ -18,7 +18,6 @@ public:
 			std::wstring str = ConvertFromFrameInfo(faceInfo);
 			m_pBox->AddString(str.c_str());
 		}
-
 	}
 
 	void Update2(bool)

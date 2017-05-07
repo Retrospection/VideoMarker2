@@ -42,6 +42,8 @@ void CPBAddState::OnLButtonUp(UINT nFlags, CPoint point)
 		HandleInvalidFaceInfo(result);
 	}
 	UpdateDlgFrameInfo();
+
+	// TODO
 }
 
 void CPBAddState::OnMouseMove(UINT nFlags, CPoint point)
