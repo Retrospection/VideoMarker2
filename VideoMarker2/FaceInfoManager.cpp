@@ -164,12 +164,27 @@ unsigned int FaceInfoManager::AddFaceInfo(const FaceInfo& faceInfo)
 
 void FaceInfoManager::DeleteSelected()
 {
+	// 先检查是否有被选中的 FaceInfo，如果没有直接返回，如果有则执行删除
 	if (m_FacesInfo[m_nPos].end() == std::find_if(m_FacesInfo[m_nPos].begin(), m_FacesInfo[m_nPos].end(), [](const FaceInfoEx& info){ return info.bIsSelected; }))
 	{
 		return;
 	}
 	SnapShot();
-	m_FacesInfo[m_nPos].erase(std::remove_if(m_FacesInfo[m_nPos].begin(), m_FacesInfo[m_nPos].end(), [](const FaceInfoEx& info){ return info.bIsSelected; }), m_FacesInfo[m_nPos].end());
+
+
+// 	m_FacesInfo[m_nPos].erase(std::remove_if(m_FacesInfo[m_nPos].begin(), m_FacesInfo[m_nPos].end(), [](const FaceInfoEx& info){ return info.bIsSelected; }), m_FacesInfo[m_nPos].end());
+// 	m_bSelectedChanged = true;
+// 	m_bSavedChanged = true;
+
+
+	// 把所有选中了的 FaceInfo 标记为 Deleted。
+	for (auto& faceInfo : m_FacesInfo[m_nPos])
+	{
+		if (faceInfo.bIsSelected)
+		{
+			faceInfo.bDeleted = true;
+		}
+	}
 	m_bSelectedChanged = true;
 	m_bSavedChanged = true;
 }
@@ -363,7 +378,7 @@ std::string FaceInfoManager::ToString() const
 
 void FaceInfoManager::SnapShot()
 {
-	std::cout << "--------------------------------------------------" << std::endl;
+//	std::cout << "--------------------------------------------------" << std::endl;
 	if (m_nPos != m_FacesInfo.size() - 1)
 	{
 		m_FacesInfo.resize(1 + m_nPos);

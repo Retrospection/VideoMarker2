@@ -31,6 +31,6 @@ void CS13::SelectMarkBtnClicked()
 void CS13::DeleteMarkBtnClicked()
 {
 	GetPictureBox()->DeleteSelectedFacesInfo();
-//	_pDlg->UpdateListBoxFrameInfo(_pDlg->GetFrameInfo());    TODO
+	_pDlg->UpdateListBoxFrameInfo(GetPictureBox()->GetFaceInfoEx());    
 	_pDlg->Refresh();
 }

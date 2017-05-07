@@ -154,8 +154,15 @@ void CPictureBox::DrawItem(LPDRAWITEMSTRUCT /*lpDrawItemStruct*/)
 void CPictureBox::SetFrameInfo(const FrameInfo& frameInfo)
 {
 	m_pFaceInfoManager->SetFrameInfo(frameInfo);
-	Invalidate(FALSE);
-	// TODO : 更新DLG中的FrameInfo，从此函数更新的FrameInfo，两个flag都为false
+	
+	// 将FrameInfo转换为FaceInfoEx,设置给DLG.
+	std::vector<FaceInfoEx> newFrameInfo;
+	for (auto faceInfo : frameInfo.facesInfo)
+	{
+		newFrameInfo.push_back(FaceInfoEx(faceInfo.strPersonName, faceInfo.box, false, false, true, false, false));
+	}
+	((CVideoMarker2Dlg*)GetParent())->UpdateListBoxFrameInfo(newFrameInfo);
+	
 }
 
 void CPictureBox::SetHighLight(size_t nIndex)
@@ -326,6 +333,13 @@ void CPictureBox::ClearSelectEditPoint()
 	m_nModifiedFaceInfoIndex = -1;
 	m_pFaceInfoManager->ResetSelectedEditPoint();
 }
+
+std::vector<FaceInfoEx> CPictureBox::GetFaceInfoEx() const
+{
+	return m_pFaceInfoManager->GetFacesInfoEx();
+}
+
+
 
 
 

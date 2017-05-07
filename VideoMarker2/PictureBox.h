@@ -16,7 +16,7 @@ class IDrawable;
 class SelectItemManager;
 class CUnsavedFrameInfo;
 class FaceInfoManager;
-
+class FaceInfoEx;
 class CPBStateBase;
 
 class CPictureBox : public CStatic
@@ -31,6 +31,7 @@ public:
 
 	unsigned int ValidateFaceInfo();
 	FrameInfo GetFrameInfo() const;
+	std::vector<FaceInfoEx> GetFaceInfoEx() const;
 
 	void SetState(const std::string& state);
 

@@ -183,7 +183,7 @@ void CVideoMarker2Dlg::SetCurrentFrameIndex(int nCurrentFrameIndex)
 {
 	assert(nCurrentFrameIndex >= 0 && nCurrentFrameIndex < m_nTotalFrameCount);
 	m_nCurrentFrameIndex = nCurrentFrameIndex;
-	std::cout << "CurrentFrameIndex:" << m_nCurrentFrameIndex << std::endl;
+//	std::cout << "CurrentFrameIndex:" << m_nCurrentFrameIndex << std::endl;
 }
 
 
@@ -428,22 +428,10 @@ void CVideoMarker2Dlg::OnTimer(UINT_PTR nIDEvent)
 	__super::OnTimer(nIDEvent);
 }
 
-// void CVideoMarker2Dlg::UpdateListBoxFrameInfo(const FrameInfo& newFrameInfo)
-// {
-// 	m_NewFrameInfo = newFrameInfo;
-// 	if (newFrameInfo.facesInfo.size() <= m_FrameInfo.facesInfo.size())
-// 	{
-// 		m_ListBoxFrameInfo = FindOutDeletedFaceInfo(newFrameInfo, m_FrameInfo);
-// 	}
-// 	else
-// 	{
-// 		m_ListBoxFrameInfo = FindOutAddFaceInfo(newFrameInfo, m_FrameInfo);
-// 	}
-// 	m_FrameInfo = newFrameInfo;
-// }
 
 void CVideoMarker2Dlg::UpdateListBoxFrameInfo(const std::vector<FaceInfoEx>& newFrameInfo)
 {
+	m_ListBoxFrameInfo.listBoxFacesInfo.clear();
 	for (auto faceInfoEx : newFrameInfo)
 	{
 		m_ListBoxFrameInfo.listBoxFacesInfo.push_back({ faceInfoEx.bDeleted, faceInfoEx.bNewInfo, faceInfoEx.GetFaceInfo() });

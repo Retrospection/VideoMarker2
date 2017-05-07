@@ -104,7 +104,7 @@ void CVideoMarkerPresenter::Play()
 	m_pVideoPlayer->GetNextFrame(frame);
 	m_pTextMgr->GetFrameInfoByPos(frameInfo, m_pVideoPlayer->m_nCurrentFrameIndex);
 
-	std::cout << "总帧数为:" << m_pVideoPlayer->m_nTotalFrames << "当前帧号：" << m_pVideoPlayer->m_nCurrentFrameIndex << std::endl;
+//	std::cout << "总帧数为:" << m_pVideoPlayer->m_nTotalFrames << "当前帧号：" << m_pVideoPlayer->m_nCurrentFrameIndex << std::endl;
 	m_pDlg->SetRawFrame(frame);
 	m_pDlg->SetTotalFrameCount(m_pVideoPlayer->m_nTotalFrames);
 	m_pDlg->SetCurrentFrameIndex(m_pVideoPlayer->m_nCurrentFrameIndex);
@@ -146,7 +146,7 @@ void CVideoMarkerPresenter::SeekTo(int nPos)
 	}
 	m_pVideoPlayer->GetNextFrame(rawFrame);
 	m_pTextMgr->GetFrameInfoByPos(frameInfo, m_pVideoPlayer->m_nCurrentFrameIndex);
-	std::cout << "总帧数为:" << m_pVideoPlayer->m_nTotalFrames << "当前帧号：" << m_pVideoPlayer->m_nCurrentFrameIndex << std::endl;
+//	std::cout << "总帧数为:" << m_pVideoPlayer->m_nTotalFrames << "当前帧号：" << m_pVideoPlayer->m_nCurrentFrameIndex << std::endl;
 	m_pDlg->SetCurrentFrameIndex(nPos);
 	m_pDlg->SetRawFrame(rawFrame);
 	m_pDlg->SetFrameInfo(frameInfo);
@@ -184,7 +184,6 @@ bool CVideoMarkerPresenter::OpenTextFile(const std::string& strTextFileName)
 	FrameInfo frameInfo;
 	m_pTextMgr->GetFrameInfoByPos(frameInfo, m_pVideoPlayer->m_nCurrentFrameIndex);
 	m_pDlg->SetFrameInfo(frameInfo);
-//	m_pDlg->UpdateListBoxFrameInfo(frameInfo);   // new  TODO
 	m_pDlg->Refresh();
 	return true;
 }

@@ -228,9 +228,8 @@ bool CPBStateBase::SelectEditPoint(const cv::Point& pt)
 void CPBStateBase::UpdateDlgFrameInfo()
 {
 	CVideoMarker2Dlg* pDlg = dynamic_cast<CVideoMarker2Dlg*>(m_pPictureBox->GetParent());
-	FrameInfo frameinfo = m_pPictureBox->GetFrameInfo();
-	//pDlg->UpdateListBoxFrameInfo(m_pPictureBox->GetFrameInfo());    TODO
-
+	std::vector<FaceInfoEx> FacesInfoEx = m_pPictureBox->m_pFaceInfoManager->GetFacesInfoEx();
+	pDlg->UpdateListBoxFrameInfo(FacesInfoEx);  
 }
 
 
