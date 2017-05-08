@@ -262,6 +262,9 @@ void FaceInfoManager::Move(const cv::Point& point)
 
 void FaceInfoManager::Undo()
 {
+	m_bSelectedChanged = true;
+	m_bSavedChanged = true;
+	m_bHighlightChanged = true;
 	if (m_nPos == 0)
 	{
 		return;
@@ -271,6 +274,9 @@ void FaceInfoManager::Undo()
 
 void FaceInfoManager::Redo()
 {
+	m_bSelectedChanged = true;
+	m_bSavedChanged = true;
+	m_bHighlightChanged = true;
 	if (m_nPos == m_FacesInfo.size() - 1)
 	{
 		return;
@@ -308,7 +314,10 @@ void FaceInfoManager::UpdateDrawableSavedFacesInfo(std::vector<IDrawable*>& toBe
 	cv::Rect rc;
 	for (auto faceinfoex : m_FacesInfo[m_nPos])
 	{
-		toBeUpdated.push_back(new DFaceInfo(FaceInfo{ faceinfoex.GetFaceInfo().strPersonName, m_pTrans->Trans(faceinfoex.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi) }, ColorSaved));
+		if (!faceinfoex.bDeleted)    // TODO
+		{
+			toBeUpdated.push_back(new DFaceInfo(FaceInfo{ faceinfoex.GetFaceInfo().strPersonName, m_pTrans->Trans(faceinfoex.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi) }, ColorSaved));
+		}
 	}
 	m_bSavedChanged = false;
 }
@@ -327,7 +336,7 @@ void FaceInfoManager::UpdateDrawableSelectedFacesInfo(std::vector<IDrawable*>& t
 	cv::Rect rc;
 	for (auto faceinfoex : m_FacesInfo[m_nPos])
 	{
-		if (faceinfoex.bIsSelected)
+		if (faceinfoex.bIsSelected && !faceinfoex.bDeleted)   // TODO
 		{
 			FaceInfoEx ex{ faceinfoex.GetFaceInfo().strPersonName, m_pTrans->Trans(faceinfoex.GetFaceInfo().box, Transformer::Coordinate::Raw, Transformer::Coordinate::Roi), true, false, true,false, false };
 			toBeUpdated.push_back(new DEditBox(ex.GetEditBox().rc, ex.GetEditBox().editMark, ex.GetFaceInfo().strPersonName, ex.GetFaceInfo().box.tl(), ColorSelected));

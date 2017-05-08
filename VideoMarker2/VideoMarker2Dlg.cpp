@@ -291,14 +291,14 @@ void CVideoMarker2Dlg::RefreshListBox()
 void CVideoMarker2Dlg::OnBnClickedButtonRevoke()
 {
 	m_pPictureBox->Undo();
-//	UpdateListBoxFrameInfo(m_pPictureBox->GetFrameInfo());       TODO
+	UpdateListBoxFrameInfo(m_pPictureBox->GetFaceInfoEx());       
 	Refresh();
 }
 
 void CVideoMarker2Dlg::OnBnClickedButtonRedo()
 {
 	m_pPictureBox->Redo();
-//	UpdateListBoxFrameInfo(m_pPictureBox->GetFrameInfo());      TODO
+	UpdateListBoxFrameInfo(m_pPictureBox->GetFaceInfoEx());    
 	Refresh();
 }
 

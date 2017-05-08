@@ -236,6 +236,7 @@ void CPictureBox::DrawFrameInfo(cv::Mat& img)
 	{
 		drawable->Draw(img);
 	}
+	std::cout << "size of facesInfo is " << facesInfo.size() << std::endl;
 }
 
 void CPictureBox::Undo()
@@ -248,7 +249,6 @@ void CPictureBox::Redo()
 {
 	m_pFaceInfoManager->Redo();
 	//Invalidate(FALSE);
-
 }
 
 
