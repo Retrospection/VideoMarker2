@@ -1,13 +1,13 @@
 init
 OpenProject
 AddMark Undo Redo Slider DeleteMark SelectMark StepForward StepBackward Play Pause Stop
-S1
+projectOpened
 OpenProject AddMark Slider SelectMark Play Pause Stop
 Undo Redo DeleteMark
-S5
+AddMark
 OpenProject AddMark Undo Redo
 StepForward StepBackward Slider DeleteMark SelectMark Play Pause Stop
-S13
+SelectMark
 OpenProject SelectMark DeleteMark Undo Redo
 StepForward StepBackward Slider AddMark Play Pause Stop
 play

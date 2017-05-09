@@ -35,7 +35,7 @@ void CPlayState::Stop()
 {
 	KillTimer(_pDlg->m_hWnd, CVideoMarker2Dlg::PLAY_TIMER);
 	GetPresenter()->Stop();
-	SetState(S1);
+	SetState(ProjectOpened);
 }
 
 // void CPlayState::Play()

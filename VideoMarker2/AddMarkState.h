@@ -1,12 +1,12 @@
 #pragma once
 #include "StateBase.h"
 
-class CS5 :
+class CAddMarkState :
 	public CStateBase
 {
 public:
-	CS5(CVideoMarker2Dlg* pDlg, const UIConfig& config);
-	virtual ~CS5();
+	CAddMarkState(CVideoMarker2Dlg* pDlg, const UIConfig& config);
+	virtual ~CAddMarkState();
 
 	virtual void RefreshButton() override;
 

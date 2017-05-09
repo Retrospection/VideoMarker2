@@ -1,34 +1,33 @@
 #include "stdafx.h"
-#include "S13.h"
+#include "SelectMarkState.h"
 
 #include "State.h"
 #include "VideoMarker2Dlg.h"
 
-CS13::CS13(CVideoMarker2Dlg* pDlg, const UIConfig& config) :CStateBase(pDlg, config)
+CSelectMarkState::CSelectMarkState(CVideoMarker2Dlg* pDlg, const UIConfig& config) :CStateBase(pDlg, config)
 {
 }
 
 
-CS13::~CS13()
+CSelectMarkState::~CSelectMarkState()
 {
 }
 
-void CS13::RefreshButton()
+void CSelectMarkState::RefreshButton()
 {
 	m_ui.RefreshButton();
-//	GetPictureBox()->SetDrawable(true);
 }
 
-void CS13::SelectMarkBtnClicked()
+void CSelectMarkState::SelectMarkBtnClicked()
 {
 	GetPresenter()->SaveMark();
 	_pDlg->SetDlgItemText(IDC_BUTTON_SELECTMARK, L"Ñ¡Ôñ±ê×¢");
 	GetPictureBox()->SetEditType(CPictureBox::INIT_STATE);
 //	_pDlg->UpdateListBoxFrameInfo(_pDlg->GetFrameInfo());    TODO
-	SetState(S1);
+	SetState(ProjectOpened);
 }
 
-void CS13::DeleteMarkBtnClicked()
+void CSelectMarkState::DeleteMarkBtnClicked()
 {
 	GetPictureBox()->DeleteSelectedFacesInfo();
 	_pDlg->UpdateListBoxFrameInfo(GetPictureBox()->GetFaceInfoEx());    

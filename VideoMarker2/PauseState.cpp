@@ -32,14 +32,14 @@ void CPauseState::Stop()
 {
 	KillTimer(_pDlg->m_hWnd, CVideoMarker2Dlg::PLAY_TIMER);
 	GetPresenter()->Stop();
-	SetState(S1);
+	SetState(ProjectOpened);
 }
 
 void CPauseState::AddSaveMarkBtnClicked()
 {
 	_pDlg->SetDlgItemText(IDC_BUTTON_ADDMARK, L"完成编辑");
 	GetPictureBox()->SetEditType(CPictureBox::ADD_MARK_STATE);
-	SetState(S5);
+	SetState(AddMark);
 }
 
 void CPauseState::Undo()
@@ -56,7 +56,7 @@ void CPauseState::SelectMarkBtnClicked()
 {
 	GetPictureBox()->SetEditType(CPictureBox::SELECT_MARK_STATE);
 	_pDlg->SetDlgItemText(IDC_BUTTON_SELECTMARK, L"保存修改");
-	SetState(S13);
+	SetState(SelectMark);
 }
 
 void CPauseState::OnLbnSelchangeList1()

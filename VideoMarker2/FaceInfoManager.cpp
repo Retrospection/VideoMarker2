@@ -137,8 +137,18 @@ std::vector<FaceInfoEx> FaceInfoManager::GetFacesInfoEx() const
 FrameInfo FaceInfoManager::GetFrameInfo()
 {
 	FrameInfo ret;
-	ret.facesInfo = GetFacesInfo();
-	return std::move(ret);
+	std::vector<FaceInfoEx> temp = GetFacesInfoEx();
+	for (auto faceInfoEx : temp)
+	{
+		if (faceInfoEx.bDeleted)
+		{
+			continue;
+		}
+		ret.facesInfo.push_back(faceInfoEx.GetFaceInfo());
+	}
+
+
+	return ret;
 }
 
 void FaceInfoManager::SetFrameInfo(const FrameInfo& frameInfo)

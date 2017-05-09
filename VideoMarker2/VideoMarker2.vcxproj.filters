@@ -159,15 +159,6 @@
     <ClInclude Include="PlayState.h">
       <Filter>DlgState</Filter>
     </ClInclude>
-    <ClInclude Include="S1.h">
-      <Filter>DlgState</Filter>
-    </ClInclude>
-    <ClInclude Include="S5.h">
-      <Filter>DlgState</Filter>
-    </ClInclude>
-    <ClInclude Include="S13.h">
-      <Filter>DlgState</Filter>
-    </ClInclude>
     <ClInclude Include="StateBase.h">
       <Filter>DlgState</Filter>
     </ClInclude>
@@ -178,6 +169,15 @@
       <Filter>DlgState</Filter>
     </ClInclude>
     <ClInclude Include="StopState.h">
+      <Filter>DlgState</Filter>
+    </ClInclude>
+    <ClInclude Include="ProjectOpenedState.h">
+      <Filter>DlgState</Filter>
+    </ClInclude>
+    <ClInclude Include="AddMarkState.h">
+      <Filter>DlgState</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectMarkState.h">
       <Filter>DlgState</Filter>
     </ClInclude>
   </ItemGroup>
@@ -245,15 +245,6 @@
     <ClCompile Include="PlayState.cpp">
       <Filter>DlgState</Filter>
     </ClCompile>
-    <ClCompile Include="S1.cpp">
-      <Filter>DlgState</Filter>
-    </ClCompile>
-    <ClCompile Include="S5.cpp">
-      <Filter>DlgState</Filter>
-    </ClCompile>
-    <ClCompile Include="S13.cpp">
-      <Filter>DlgState</Filter>
-    </ClCompile>
     <ClCompile Include="StateBase.cpp">
       <Filter>DlgState</Filter>
     </ClCompile>
@@ -265,6 +256,15 @@
     </ClCompile>
     <ClCompile Include="FaceInfoManager.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ProjectOpenedState.cpp">
+      <Filter>DlgState</Filter>
+    </ClCompile>
+    <ClCompile Include="AddMarkState.cpp">
+      <Filter>DlgState</Filter>
+    </ClCompile>
+    <ClCompile Include="SelectMarkState.cpp">
+      <Filter>DlgState</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

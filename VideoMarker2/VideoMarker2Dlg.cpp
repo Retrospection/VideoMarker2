@@ -438,56 +438,56 @@ void CVideoMarker2Dlg::UpdateListBoxFrameInfo(const std::vector<FaceInfoEx>& new
 	}
 }
 
-CVideoMarker2Dlg::ListBoxFrameInfo CVideoMarker2Dlg::FindOutDeletedFaceInfo(const FrameInfo& newFrameInfo, const FrameInfo& oldFrameInfo)
-{
-	ListBoxFrameInfo ret;
-	size_t i = 0, j = 0;
-	for (; i < oldFrameInfo.facesInfo.size() && j < newFrameInfo.facesInfo.size(); )
-	{
-		if (newFrameInfo.facesInfo[j].strPersonName == oldFrameInfo.facesInfo[i].strPersonName)
-		{
-			ret.listBoxFacesInfo.push_back({ false, false, oldFrameInfo.facesInfo[i] });
-			++i, ++j;
-		}
-		else
-		{
-			ret.listBoxFacesInfo.push_back({ true, false, oldFrameInfo.facesInfo[i] });
-			++i;
-		}
-	}
-	if (i < oldFrameInfo.facesInfo.size())
-	{
-		for (; i < oldFrameInfo.facesInfo.size(); ++i)
-		{
-			ret.listBoxFacesInfo.push_back({ true, false, oldFrameInfo.facesInfo[i] });
-		}
-	}
-	return ret;
-} 
-
-CVideoMarker2Dlg::ListBoxFrameInfo CVideoMarker2Dlg::FindOutAddFaceInfo(const FrameInfo& newFrameInfo, const FrameInfo& oldFrameInfo)
-{
-	ListBoxFrameInfo ret;
-	size_t i = 0, j = 0;
-	for (; i < oldFrameInfo.facesInfo.size() && j < newFrameInfo.facesInfo.size(); ++i ,++j)
-	{
-		if (newFrameInfo.facesInfo[j].strPersonName == oldFrameInfo.facesInfo[i].strPersonName)
-		{
-			ret.listBoxFacesInfo.push_back({ false, false, newFrameInfo.facesInfo[j] });
-		}
-		else
-		{
-			ret.listBoxFacesInfo.push_back({ false, true, newFrameInfo.facesInfo[j] });
-			++j;
-		}
-	}
-	if (j < newFrameInfo.facesInfo.size())
-	{
-		for (; j < newFrameInfo.facesInfo.size(); ++j)
-		{
-			ret.listBoxFacesInfo.push_back({ false, true, newFrameInfo.facesInfo[j] });
-		}
-	}
-
-	return ret;
-}
+// CVideoMarker2Dlg::ListBoxFrameInfo CVideoMarker2Dlg::FindOutDeletedFaceInfo(const FrameInfo& newFrameInfo, const FrameInfo& oldFrameInfo)
+// {
+// 	ListBoxFrameInfo ret;
+// 	size_t i = 0, j = 0;
+// 	for (; i < oldFrameInfo.facesInfo.size() && j < newFrameInfo.facesInfo.size(); )
+// 	{
+// 		if (newFrameInfo.facesInfo[j].strPersonName == oldFrameInfo.facesInfo[i].strPersonName)
+// 		{
+// 			ret.listBoxFacesInfo.push_back({ false, false, oldFrameInfo.facesInfo[i] });
+// 			++i, ++j;
+// 		}
+// 		else
+// 		{
+// 			ret.listBoxFacesInfo.push_back({ true, false, oldFrameInfo.facesInfo[i] });
+// 			++i;
+// 		}
+// 	}
+// 	if (i < oldFrameInfo.facesInfo.size())
+// 	{
+// 		for (; i < oldFrameInfo.facesInfo.size(); ++i)
+// 		{
+// 			ret.listBoxFacesInfo.push_back({ true, false, oldFrameInfo.facesInfo[i] });
+// 		}
+// 	}
+// 	return ret;
+// } 
+// 
+// CVideoMarker2Dlg::ListBoxFrameInfo CVideoMarker2Dlg::FindOutAddFaceInfo(const FrameInfo& newFrameInfo, const FrameInfo& oldFrameInfo)
+// {
+// 	ListBoxFrameInfo ret;
+// 	size_t i = 0, j = 0;
+// 	for (; i < oldFrameInfo.facesInfo.size() && j < newFrameInfo.facesInfo.size(); ++i ,++j)
+// 	{
+// 		if (newFrameInfo.facesInfo[j].strPersonName == oldFrameInfo.facesInfo[i].strPersonName)
+// 		{
+// 			ret.listBoxFacesInfo.push_back({ false, false, newFrameInfo.facesInfo[j] });
+// 		}
+// 		else
+// 		{
+// 			ret.listBoxFacesInfo.push_back({ false, true, newFrameInfo.facesInfo[j] });
+// 			++j;
+// 		}
+// 	}
+// 	if (j < newFrameInfo.facesInfo.size())
+// 	{
+// 		for (; j < newFrameInfo.facesInfo.size(); ++j)
+// 		{
+// 			ret.listBoxFacesInfo.push_back({ false, true, newFrameInfo.facesInfo[j] });
+// 		}
+// 	}
+// 
+// 	return ret;
+// }

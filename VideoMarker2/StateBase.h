@@ -91,19 +91,11 @@ public:
 protected:
 	void SetState(const std::string& state);
 	CWnd* GetDlgItem(int nID);
-//	bool IsTextFileOpened() const;
 	CVideoMarkerPresenter* GetPresenter();
 	CPictureBox* GetPictureBox() const;
 	CListBox* GetListBox() const;
 	int GetCurrentFrameIndex() const;
 	int GetTotalFrameCount() const;
-
-//	void SetPlaying(bool bPlaying);
-//	bool IsPlaying() const;
-// 	void SetPause(bool bPause);
-// 	bool IsPause() const;
-//	void StartPlayThread();
-//	void JoinPlayThread();
 
 
 protected:

@@ -65,7 +65,7 @@ public:
 	void SetTotalFrameCount(int nTotalFrameCount);
 	void SetCurrentFrameIndex(int nCurrentFrameIndex);
 
-//	void UpdateListBoxFrameInfo(const FrameInfo& newFrameInfo);      TODO
+
 	void UpdateListBoxFrameInfo(const std::vector<FaceInfoEx>& newFrameInfo);
 
 	void ClearUnsavedFrameInfo();
@@ -102,8 +102,6 @@ private:
 private:
  	int m_nTotalFrameCount;
 	int m_nCurrentFrameIndex;
-// 	FrameInfo m_FrameInfo;
-// 	FrameInfo m_NewFrameInfo;
 	ListBoxFrameInfo m_ListBoxFrameInfo;
 
 private:
@@ -130,9 +128,9 @@ private:
 	std::vector<std::string> GetLines(const std::string& filename);
 
 
-private:
-	ListBoxFrameInfo FindOutDeletedFaceInfo(const FrameInfo& newFrameInfo, const FrameInfo& oldFrameInfo);
-	ListBoxFrameInfo FindOutAddFaceInfo(const FrameInfo& newFrameInfo, const FrameInfo& oldFrameInfo);
+// private:
+// 	ListBoxFrameInfo FindOutDeletedFaceInfo(const FrameInfo& newFrameInfo, const FrameInfo& oldFrameInfo);
+// 	ListBoxFrameInfo FindOutAddFaceInfo(const FrameInfo& newFrameInfo, const FrameInfo& oldFrameInfo);
 
 
 

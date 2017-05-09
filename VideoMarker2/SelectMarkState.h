@@ -1,11 +1,11 @@
 #pragma once
 #include "StateBase.h"
-class CS13 :
+class CSelectMarkState :
 	public CStateBase
 {
 public:
-	CS13(CVideoMarker2Dlg* pDlg, const UIConfig& config);
-	virtual ~CS13();
+	CSelectMarkState(CVideoMarker2Dlg* pDlg, const UIConfig& config);
+	virtual ~CSelectMarkState();
 
 	virtual void RefreshButton() override;
 

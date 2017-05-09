@@ -2,11 +2,11 @@
 
 #include "StateBase.h"
 
-class CS1 : public CStateBase
+class CProjectOpenedState : public CStateBase
 {
 public:
-	CS1(CVideoMarker2Dlg* pDlg, const UIConfig& config);
-	virtual ~CS1();
+	CProjectOpenedState(CVideoMarker2Dlg* pDlg, const UIConfig& config);
+	virtual ~CProjectOpenedState();
 
 	virtual void RefreshButton() override;
 

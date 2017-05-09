@@ -9,7 +9,7 @@
 #include "RectEx.h"
 
 
-class CS5;
+class CAddMarkState;
 class CS12;
 class CStateBase;
 class IDrawable;

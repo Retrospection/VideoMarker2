@@ -6,9 +6,9 @@
 #include "PauseState.h"
 #include "EditMarkState.h"
 #include "VideoMarker2Dlg.h"
-#include "S1.h"
-#include "S5.h"
-#include "S13.h"
+#include "ProjectOpenedState.h"
+#include "AddMarkState.h"
+#include "SelectMarkState.h"
 
 
 CStateFactory::CStateFactory()
@@ -49,17 +49,17 @@ CStateBase* CStateFactory::Create(const std::string& state, CVideoMarker2Dlg* pD
 // 	{
 // 		return new CEditMarkState(pDlg);
 // 	}
-	else if (state == S1)
+	else if (state == ProjectOpened)
 	{
-		return new CS1(pDlg,config);
+		return new CProjectOpenedState(pDlg,config);
 	}
-	else if (state == S5)
+	else if (state == AddMark)
 	{
-		return new CS5(pDlg, config);
+		return new CAddMarkState(pDlg, config);
 	}
-	else if (state == S13)
+	else if (state == SelectMark)
 	{
-		return new CS13(pDlg, config);
+		return new CSelectMarkState(pDlg, config);
 	}
 	return nullptr;
 }

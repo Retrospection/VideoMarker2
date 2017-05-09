@@ -30,10 +30,6 @@ void CPBStateBase::OnLButtonDown(UINT nFlags, CPoint point)
 
 }
 
-// void CPBStateBase::OnLButtonDown2(UINT nFlags, CPoint point)
-// {
-// 	m_pPictureBox->OnLButtonDown2(nFlags, point);
-// }
 
 void CPBStateBase::OnLButtonUp(UINT nFlags, CPoint point)
 {
@@ -74,11 +70,6 @@ bool CPBStateBase::IsDrawing() const
 {
 	return m_pPictureBox->m_bDrawing;
 }
-
-// int CPBStateBase::GetEditType() const
-// {
-// 	return m_pPictureBox->m_nEditType;
-// }
 
 bool CPBStateBase::IsInRoi(const CPoint& pt) const
 {
