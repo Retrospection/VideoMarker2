@@ -17,23 +17,9 @@ FaceInfoEx::FaceInfoEx(const std::string& strPersonName, const cv::Rect& rc,
 	: m_strPersonName(strPersonName), m_Box(*reinterpret_cast<const RectEx*>(&rc)), 
 	bIsSelected(isSelected), bIsHighLight(isHighLight), bSaved(isSaved), bNewInfo(isNew), bDeleted(deleted)
 {
-
+	UpdateEditRects();
 }
 
-// FaceInfoEx::FaceInfoEx(const FaceInfo& faceInfo) : m_Box(*reinterpret_cast<const RectEx*>(&faceInfo.box)), m_strPersonName(faceInfo.strPersonName)
-// {
-// 	UpdateEditRects();
-// }
-// 
-// FaceInfoEx::FaceInfoEx(const std::string& strPersonName, const cv::Rect& rc, bool isSelected, bool isHighLight, bool isSaved) : m_Box(*reinterpret_cast<const RectEx*>(&rc)), m_strPersonName(strPersonName)
-// {
-// 	UpdateEditRects();
-// }
-// 
-// FaceInfoEx::FaceInfoEx(const FaceInfo& faceInfo, bool isSelected, bool isHighLight, bool isSaved) : m_Box(*reinterpret_cast<const RectEx*>(&faceInfo.box)), m_strPersonName(faceInfo.strPersonName), bIsSelected(isSelected), bIsHighLight(isHighLight), bSaved(isSaved)
-// {
-// 	UpdateEditRects();
-// }
 
 int FaceInfoEx::Hit(const cv::Point& pt) const
 {

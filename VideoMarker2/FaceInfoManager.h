@@ -31,10 +31,6 @@ public:
 	FaceInfoEx(const std::string& strPersonName, const cv::Rect& rc,
 		bool isSelected, bool isHighLight, bool isSaved, bool isNew, bool deleted);
 
-// 	FaceInfoEx(const FaceInfo& faceInfo);
-// 	FaceInfoEx(const std::string& strPersonName, const cv::Rect& rc, bool isSelected, bool isHighLight, bool isSaved);
-// 	FaceInfoEx(const FaceInfo& faceInfo, bool isSelected, bool isHighLight, bool isSaved);
-
 	// 根据 pt 找出被选中的 EditBox 是哪一个
 	// 返回值： EditBox 的索引
 	int Hit(const cv::Point& pt) const;

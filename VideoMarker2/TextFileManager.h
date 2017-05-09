@@ -16,9 +16,9 @@ public:
 
 	bool GetFrameInfoByPos(FrameInfo& frameInfo, size_t nPos);
 
-	void AddFaceInfo(int nPos, const std::string& strPersonName, const cv::Point& p1, const cv::Point& p2);
-	void AddFaceInfo(int nPos, const std::string& strPersonName, const cv::Rect boxes);
-	void AddFaceInfo(size_t nPos, const FrameInfo& newFrameInfo);
+// 	void AddFaceInfo(int nPos, const std::string& strPersonName, const cv::Point& p1, const cv::Point& p2);
+// 	void AddFaceInfo(int nPos, const std::string& strPersonName, const cv::Rect boxes);
+// 	void AddFaceInfo(size_t nPos, const FrameInfo& newFrameInfo);
 	void UpdateFrameInfo(int nPos, const FrameInfo& frameInfo);
 
 

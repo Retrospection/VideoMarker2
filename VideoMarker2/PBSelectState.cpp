@@ -36,8 +36,6 @@ void CPBSelectState::OnLButtonDown(UINT nFlags, CPoint point)
 		SetState(CPictureBox::MODIFY_MARK_STATE);
 	}
 	SetStartActivePoint(_point);
-	
-
 }
 
 void CPBSelectState::OnLButtonUp(UINT nFlags, CPoint point)

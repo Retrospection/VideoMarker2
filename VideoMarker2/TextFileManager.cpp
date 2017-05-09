@@ -111,22 +111,22 @@ std::vector<std::string> CTextFileManager::Split(const std::string& str, const s
 	return std::move(ret);
 }
 
-void CTextFileManager::AddFaceInfo(int nPos, const std::string&  strPersonName, const cv::Point& p1, const cv::Point& p2)
-{
-	m_FrameInfos[nPos].facesInfo.push_back({ strPersonName, *reinterpret_cast<RectEx*>(&cv::Rect{ p1, p2 }) });
-}
-
-void CTextFileManager::AddFaceInfo(int nPos, const std::string&  strPersonName, const cv::Rect boxes)
-{
-	m_FrameInfos[nPos].facesInfo.push_back({ strPersonName, *reinterpret_cast<const RectEx*>(&boxes) });
-}
-
-void CTextFileManager::AddFaceInfo(size_t nPos, const FrameInfo& newFrameInfo)
-{
-	assert(nPos < m_FrameInfos.size());
-	m_FrameInfos[nPos].facesInfo.insert(m_FrameInfos[nPos].facesInfo.end(),newFrameInfo.facesInfo.begin(), newFrameInfo.facesInfo.end());
-	SaveToTextFile();
-}
+// void CTextFileManager::AddFaceInfo(int nPos, const std::string&  strPersonName, const cv::Point& p1, const cv::Point& p2)
+// {
+// 	m_FrameInfos[nPos].facesInfo.push_back({ strPersonName, *reinterpret_cast<RectEx*>(&cv::Rect{ p1, p2 }) });
+// }
+// 
+// void CTextFileManager::AddFaceInfo(int nPos, const std::string&  strPersonName, const cv::Rect boxes)
+// {
+// 	m_FrameInfos[nPos].facesInfo.push_back({ strPersonName, *reinterpret_cast<const RectEx*>(&boxes) });
+// }
+// 
+// void CTextFileManager::AddFaceInfo(size_t nPos, const FrameInfo& newFrameInfo)
+// {
+// 	assert(nPos < m_FrameInfos.size());
+// 	m_FrameInfos[nPos].facesInfo.insert(m_FrameInfos[nPos].facesInfo.end(),newFrameInfo.facesInfo.begin(), newFrameInfo.facesInfo.end());
+// 	SaveToTextFile();
+// }
 
 void CTextFileManager::SaveToTextFile()
 {
