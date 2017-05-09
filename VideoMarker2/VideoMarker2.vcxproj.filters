@@ -43,6 +43,9 @@
     <Filter Include="DlgState">
       <UniqueIdentifier>{61920604-c172-45cc-879e-137f1b8c8f74}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Dialog">
+      <UniqueIdentifier>{9b72228c-8381-4693-94f2-cab01274db11}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -111,9 +114,6 @@
     <ClInclude Include="DEditBox.h">
       <Filter>Drawable</Filter>
     </ClInclude>
-    <ClInclude Include="NameInputDialog.h">
-      <Filter>View</Filter>
-    </ClInclude>
     <ClInclude Include="UnsavedFrameInfo.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -180,6 +180,9 @@
     <ClInclude Include="SelectMarkState.h">
       <Filter>DlgState</Filter>
     </ClInclude>
+    <ClInclude Include="NameInputDialog.h">
+      <Filter>Dialog</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -211,9 +214,6 @@
     </ClCompile>
     <ClCompile Include="Transformer.cpp">
       <Filter>Util</Filter>
-    </ClCompile>
-    <ClCompile Include="NameInputDialog.cpp">
-      <Filter>View</Filter>
     </ClCompile>
     <ClCompile Include="UnsavedFrameInfo.cpp">
       <Filter>源文件</Filter>
@@ -265,6 +265,9 @@
     </ClCompile>
     <ClCompile Include="SelectMarkState.cpp">
       <Filter>DlgState</Filter>
+    </ClCompile>
+    <ClCompile Include="NameInputDialog.cpp">
+      <Filter>Dialog</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

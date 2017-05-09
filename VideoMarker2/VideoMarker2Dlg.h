@@ -128,12 +128,6 @@ private:
 	std::vector<std::string> GetLines(const std::string& filename);
 
 
-// private:
-// 	ListBoxFrameInfo FindOutDeletedFaceInfo(const FrameInfo& newFrameInfo, const FrameInfo& oldFrameInfo);
-// 	ListBoxFrameInfo FindOutAddFaceInfo(const FrameInfo& newFrameInfo, const FrameInfo& oldFrameInfo);
-
-
-
 //////////////////////////////////////////////////////  й╣ож  ////////////////////////////////////////////////
 
 

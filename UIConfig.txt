@@ -2,8 +2,8 @@ init
 OpenProject
 AddMark Undo Redo Slider DeleteMark SelectMark StepForward StepBackward Play Pause Stop
 projectOpened
-OpenProject AddMark Slider SelectMark Play Pause Stop
-Undo Redo DeleteMark
+OpenProject AddMark Slider SelectMark Play Stop
+Undo Redo DeleteMark Pause
 AddMark
 OpenProject AddMark Undo Redo
 StepForward StepBackward Slider DeleteMark SelectMark Play Pause Stop

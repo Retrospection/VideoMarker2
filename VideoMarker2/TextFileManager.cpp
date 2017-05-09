@@ -144,25 +144,6 @@ bool CTextFileManager::IsOpened() const
 	return !m_strTextFileName.empty();
 }
 
-void CTextFileManager::Close()
-{
-	// TODO
-}
-
-
-void CTextFileManager::DeleteFrameInfo(size_t nPos, const std::vector<size_t>& deleteIndexes)
-{
-	FrameInfo newFrameInfo;
-	for (size_t i = 0; i < m_FrameInfos[nPos].facesInfo.size(); ++i)
-	{
-		if (std::none_of(deleteIndexes.begin(), deleteIndexes.end(), [&](int index){return index == i; }))
-		{
-			newFrameInfo.facesInfo.push_back(m_FrameInfos[nPos].facesInfo[i]);
-		}
-	}
-	m_FrameInfos[nPos] = newFrameInfo;
-}
-
 void CTextFileManager::UpdateFrameInfo(int nPos, const FrameInfo& frameInfo)
 {
 	std::cout << "TextMgr 要更新的 FrameInfo 为：" << frameInfo.toString() << std::endl;
@@ -170,8 +151,4 @@ void CTextFileManager::UpdateFrameInfo(int nPos, const FrameInfo& frameInfo)
 	SaveToTextFile();
 }
 
-std::vector<FrameInfo> CTextFileManager::GetFrameInfo()
-{
-	return std::move(m_FrameInfos); 
-}
 
