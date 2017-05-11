@@ -17,31 +17,59 @@ CTextFileManager::~CTextFileManager()
 }
 
 
-
-bool CTextFileManager::Open(const std::string& strFileName)
+bool CTextFileManager::Open(const std::string& strFileName, size_t nBufferSize)
 {
-	// If the text file has been opened, return true.
-	if (m_strTextFileName == strFileName)
-	{
-		return true;
-	}
-
-	// try to open the text file.
-	std::ifstream ifs(strFileName);
-	if (!ifs.is_open())
+	m_Ifs.open(strFileName);
+	if (!m_Ifs.is_open())
 	{
 		return false;
 	}
 
-	// reset the text file name and the container.
+	m_nBufferSize = nBufferSize;
 	m_strTextFileName = strFileName;
-	m_FrameInfos.clear(); 
-	return ParseAllFrameInfoFromTextFile(ifs);
+
+	m_FrameInfos.clear();
+	m_Buffer.clear();
+
+	for (size_t i = 0; i < m_nBufferSize; ++i)
+	{
+		std::string buf;
+		if (!std::getline(m_Ifs,buf))
+		{
+			break;
+		}
+		m_Buffer.push_back(buf);
+		buf.clear();
+	}
+
+	ParseAllFrameInfoFromBuffer();
+	return true;
 }
+
+bool CTextFileManager::IsOpened() const
+{
+	return m_Ifs.is_open();
+}
+
 
 bool CTextFileManager::GetFrameInfoByPos(FrameInfo& frameInfo, size_t nPos)
 {
-	if (m_FrameInfos.empty() || nPos >= m_FrameInfos.size())
+	if (nPos > m_FrameInfos.size())
+	{
+		size_t nLinesToBeRead = CalculateNumbersOfLineToRead(nPos);
+		std::string buf;
+		for (size_t i = 0; i < nLinesToBeRead; ++i)
+		{
+			if (!std::getline(m_Ifs, buf))
+			{
+				break;
+			}
+			m_Buffer.push_back(buf);
+			buf.clear();
+		}
+		ParseAllFrameInfoFromBuffer();
+	}
+	if (nPos >= m_FrameInfos.size())
 	{
 		return false;
 	}
@@ -49,21 +77,52 @@ bool CTextFileManager::GetFrameInfoByPos(FrameInfo& frameInfo, size_t nPos)
 	return true;
 }
 
-bool CTextFileManager::ParseAllFrameInfoFromTextFile(std::ifstream& ifs)
+
+void CTextFileManager::UpdateFrameInfo(int nPos, const FrameInfo& frameInfo)
 {
-	std::string buffer;
-	while (std::getline(ifs, buffer))
+	std::cout << "TextMgr 要更新的 FrameInfo 为：" << frameInfo.toString() << std::endl;
+	m_FrameInfos[nPos] = frameInfo;
+	SaveToTextFile();
+}
+
+
+
+// TODO : 在保存之前，完全载入文件，然后从头输出FrameInfo信息。
+void CTextFileManager::SaveToTextFile()
+{
+	std::string buf;
+	while (std::getline(m_Ifs, buf))
 	{
-		if (!SaveOneFrameInfo(buffer))
+		m_Buffer.push_back(buf);
+	}
+	ParseAllFrameInfoFromBuffer();
+
+	std::ofstream ofs(m_strTextFileName);
+	for (size_t i = 0; i < m_FrameInfos.size() - 1; ++i)
+	{
+		ofs << m_FrameInfos[i].toString() << std::endl;
+	}
+	ofs << m_FrameInfos[m_FrameInfos.size() - 1].toString();
+	ofs.close();
+}
+
+
+bool CTextFileManager::ParseAllFrameInfoFromBuffer()
+{
+	for (auto str : m_Buffer)
+	{
+		if (!ParseFrameInfoFromString(str))
 		{
 			return false;
 		}
-		buffer.clear();
 	}
+	m_Buffer.clear();
 	return true;
 }
 
-bool CTextFileManager::SaveOneFrameInfo(const std::string& buffer)
+
+
+bool CTextFileManager::ParseFrameInfoFromString(const std::string& buffer)
 {
 	std::vector<std::string> strFrameInfo = Split(buffer, " ");
 
@@ -111,44 +170,14 @@ std::vector<std::string> CTextFileManager::Split(const std::string& str, const s
 	return std::move(ret);
 }
 
-// void CTextFileManager::AddFaceInfo(int nPos, const std::string&  strPersonName, const cv::Point& p1, const cv::Point& p2)
-// {
-// 	m_FrameInfos[nPos].facesInfo.push_back({ strPersonName, *reinterpret_cast<RectEx*>(&cv::Rect{ p1, p2 }) });
-// }
-// 
-// void CTextFileManager::AddFaceInfo(int nPos, const std::string&  strPersonName, const cv::Rect boxes)
-// {
-// 	m_FrameInfos[nPos].facesInfo.push_back({ strPersonName, *reinterpret_cast<const RectEx*>(&boxes) });
-// }
-// 
-// void CTextFileManager::AddFaceInfo(size_t nPos, const FrameInfo& newFrameInfo)
-// {
-// 	assert(nPos < m_FrameInfos.size());
-// 	m_FrameInfos[nPos].facesInfo.insert(m_FrameInfos[nPos].facesInfo.end(),newFrameInfo.facesInfo.begin(), newFrameInfo.facesInfo.end());
-// 	SaveToTextFile();
-// }
 
-void CTextFileManager::SaveToTextFile()
-{
-	std::ofstream ofs(m_strTextFileName);
-	for (size_t i = 0; i < m_FrameInfos.size() - 1; ++i)
-	{
-		ofs << m_FrameInfos[i].toString() << std::endl; 
-	}
-	ofs << m_FrameInfos[m_FrameInfos.size() - 1].toString();
-	ofs.close();
-}
 
-bool CTextFileManager::IsOpened() const
-{
-	return !m_strTextFileName.empty();
-}
 
-void CTextFileManager::UpdateFrameInfo(int nPos, const FrameInfo& frameInfo)
+
+
+size_t CTextFileManager::CalculateNumbersOfLineToRead(size_t nLineNumber)
 {
-	std::cout << "TextMgr 要更新的 FrameInfo 为：" << frameInfo.toString() << std::endl;
-	m_FrameInfos[nPos] = frameInfo;
-	SaveToTextFile();
+	return (((nLineNumber / m_nBufferSize) + 1) * m_nBufferSize) - m_FrameInfos.size();
 }
 
 
