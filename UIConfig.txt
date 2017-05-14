@@ -5,11 +5,11 @@ projectOpened
 OpenProject AddMark Slider SelectMark Play Stop
 Undo Redo DeleteMark Pause
 AddMark
-OpenProject AddMark Undo Redo
-StepForward StepBackward Slider DeleteMark SelectMark Play Pause Stop
+OpenProject AddMark Undo
+StepForward StepBackward Slider DeleteMark SelectMark Play Pause Stop Redo
 SelectMark
-OpenProject SelectMark DeleteMark Undo Redo
-StepForward StepBackward Slider AddMark Play Pause Stop
+OpenProject SelectMark DeleteMark Undo
+StepForward StepBackward Slider AddMark Play Pause Stop Redo
 play
 Pause Stop Slider
 OpenProject SelectMark DeleteMark Undo Redo StepForward StepBackward AddMark Play

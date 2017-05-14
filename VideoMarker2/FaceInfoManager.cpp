@@ -407,3 +407,13 @@ bool FaceInfoManager::IsOverlapping(const cv::Rect& rc1, const cv::Rect& rc2) co
 {
 	return ((rc1 & rc2).area() > 0);
 }
+
+bool FaceInfoManager::CanUndo() const
+{
+	return m_nPos != 0;
+}
+
+bool FaceInfoManager::CanRedo() const
+{
+	return m_nPos != (m_FacesInfo.size() - 1);
+}

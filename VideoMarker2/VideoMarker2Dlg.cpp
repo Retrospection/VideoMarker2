@@ -290,6 +290,14 @@ void CVideoMarker2Dlg::RefreshListBox()
 void CVideoMarker2Dlg::OnBnClickedButtonRevoke()
 {
 	m_pPictureBox->Undo();
+	if (!m_pPictureBox->CanUndo())
+	{
+		GetDlgItem(IDC_BUTTON_UNDO)->EnableWindow(FALSE);
+	}
+	if (m_pPictureBox->CanRedo())
+	{
+		GetDlgItem(IDC_BUTTON_REDO)->EnableWindow(TRUE);
+	}
 	UpdateListBoxFrameInfo(m_pPictureBox->GetFaceInfoEx());       
 	Refresh();
 }
@@ -297,6 +305,15 @@ void CVideoMarker2Dlg::OnBnClickedButtonRevoke()
 void CVideoMarker2Dlg::OnBnClickedButtonRedo()
 {
 	m_pPictureBox->Redo();
+	if (!m_pPictureBox->CanRedo())
+	{
+		GetDlgItem(IDC_BUTTON_REDO)->EnableWindow(FALSE);
+	}
+	if (m_pPictureBox->CanUndo())
+	{
+		GetDlgItem(IDC_BUTTON_UNDO)->EnableWindow(TRUE);
+	}
+
 	UpdateListBoxFrameInfo(m_pPictureBox->GetFaceInfoEx());    
 	Refresh();
 }
@@ -420,12 +437,14 @@ void CVideoMarker2Dlg::OnLbnSelchangeList1()
 
 void CVideoMarker2Dlg::OnTimer(UINT_PTR nIDEvent)
 {
+	std::cout << "µ±Ç°Ö¡ºÅ£º" << m_nCurrentFrameIndex << " -- ×ÜÖ¡ºÅ£º" << m_nTotalFrameCount << std::endl;
 	if (nIDEvent == PLAY_TIMER)
 	{
 		if (m_nCurrentFrameIndex >= m_nTotalFrameCount -1)
 		{
 			__super::OnTimer(nIDEvent);
 			KillTimer(PLAY_TIMER);
+			m_pState->Stop();
 			return;
 		}
 		m_pPresenter->ForwardOneFrame(m_nCurrentFrameIndex);

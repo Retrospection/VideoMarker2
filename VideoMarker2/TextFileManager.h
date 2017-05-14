@@ -15,7 +15,7 @@ public:
 	bool Open(const std::string& strFileName, size_t nBufferSize = 1500);
 
 	bool IsOpened()const;
-
+	 
 	bool GetFrameInfoByPos(FrameInfo& frameInfo, size_t nPos);
 	void UpdateFrameInfo(int nPos, const FrameInfo& frameInfo);
 	void SaveToTextFile(); 

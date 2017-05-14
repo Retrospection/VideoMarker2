@@ -65,7 +65,7 @@ void CProjectOpenedState::OnLbnSelchangeList1()
 
 void CProjectOpenedState::Play()
 {
-	SetTimer(_pDlg->m_hWnd, CVideoMarker2Dlg::PLAY_TIMER, 40,NULL);
+	SetTimer(_pDlg->m_hWnd, CVideoMarker2Dlg::PLAY_TIMER, 40, NULL);
 	SetState(PLAY);
 }
 

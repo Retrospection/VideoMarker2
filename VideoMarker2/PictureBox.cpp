@@ -339,6 +339,16 @@ std::vector<FaceInfoEx> CPictureBox::GetFaceInfoEx() const
 	return m_pFaceInfoManager->GetFacesInfoEx();
 }
 
+bool CPictureBox::CanUndo() const
+{
+	return m_pFaceInfoManager->CanUndo();
+}
+
+bool CPictureBox::CanRedo() const
+{
+	return m_pFaceInfoManager->CanRedo();
+}
+
 
 
 

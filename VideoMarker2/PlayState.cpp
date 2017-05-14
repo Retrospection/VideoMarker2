@@ -38,15 +38,5 @@ void CPlayState::Stop()
 	SetState(ProjectOpened);
 }
 
-// void CPlayState::Play()
-// {
-// 
-// 	_pDlg->SetPlaying(true);
-// 	while ((GetCurrentFrameIndex() + 1 < GetTotalFrameCount()) && IsPlaying())
-// 	{
-// 		std::this_thread::sleep_for(std::chrono::milliseconds(20));
-// 		GetPresenter()->ForwardOneFrame(GetCurrentFrameIndex());
-// 	}
-// }
 
 

@@ -83,6 +83,9 @@ public:
 	FrameInfo GetFrameInfo(); 
 	void SetFrameInfo(const FrameInfo& frameInfo);
 
+	bool CanUndo() const;
+	bool CanRedo() const;
+
 	unsigned int AddFaceInfo(const FaceInfo& faceInfo);
 
 	void DeleteSelected();

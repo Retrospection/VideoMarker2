@@ -38,6 +38,9 @@ public:
 	bool IsInRoi(const CPoint& pt);
 	void ClearSelectEditPoint();
 
+	bool CanUndo() const;
+	bool CanRedo() const;
+
 ///////////////////////// Unsaved ///////////////////////////////
 public:
 	FrameInfo GetUnsavedFrameInfo() const;
